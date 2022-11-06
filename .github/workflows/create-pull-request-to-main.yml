@@ -1,0 +1,25 @@
+name: Create Pull Request to Master
+
+on:
+  push:
+    branches:
+      - 'develop'
+
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  create-pull-request:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Check If Pull Request Exists
+        id: check_pr
+        run: |
+          echo "COUNT=$(gh pr list -H ${{ github.ref_name }} | wc -l)" >> $GITHUB_OUTPUT
+      - name: Create Pull Request
+        if: steps.check_pr.outputs.COUNT == 0
+        run: |
+          gh pr create -B master -t 'Develop' -b '' -r hiroki0525
