@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist",
+    "sourceMap": true,
+    "target": "es6",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "strict": true,
+    "declaration": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
+  },
+  "include": ["src/**/*"],
+  "exclude": [
+    "node_modules",
+    "src/**/*.test.ts"
+  ]
+}
