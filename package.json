@@ -1,6 +1,6 @@
 {
   "name": "idle-task",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Improve your website performance by executing JavaScript during a browser's idle periods🚀",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -68,5 +68,18 @@
       "path": "dist/index.js",
       "limit": "4500 ms"
     }
-  ]
+  ],
+  "release": {
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/changelog",
+      "@semantic-release/npm",
+      "@semantic-release/github",
+      "@semantic-release/git",
+      "@semantic-release/release-notes-generator"
+    ],
+    "branches": [
+      "main"
+    ]
+  }
 }
