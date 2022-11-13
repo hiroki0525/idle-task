@@ -43,7 +43,10 @@ You can run a task preferentially using `priority: 'high'` (default is `false`) 
 
 `setIdleTask` returns task id which is necessary for `cancelIdleTask` and `isRunIdleTask` .
 
-### cancelIdleTask
+I recommend less than **50 ms** to execute a task because of [RAIL model](https://web.dev/i18n/en/rail/) .
+If you want to know how long did it take to finish a task, please use [debug mode](#debug-boolean) .
+
+### `cancelIdleTask`
 
 ```javascript
 const taskId = setIdleTask(() => console.log("task will be canceled."));
@@ -52,7 +55,7 @@ cancelIdleTask(taskId);
 
 You can stop to run a task by using `cancelIdleTask` if it is not executed.
 
-### cancelAllIdleTasks
+### `cancelAllIdleTasks`
 
 ```javascript
 setIdleTask(() => console.log("task 1 will be canceled."));
@@ -63,7 +66,7 @@ cancelAllIdleTasks();
 
 You can stop to run all tasks by using `cancelAllIdleTasks` if they are not executed.
 
-### isRunIdleTask
+### `isRunIdleTask`
 
 ```javascript
 const taskId = setIdleTask(() => console.log("task"));
@@ -75,7 +78,7 @@ if (isRun) {
 
 You can know whether the task is executed or not by using `isRunIdleTask` .
 
-### configureIdleTask
+### `configureIdleTask`
 
 ```javascript
 configureIdleTask({
@@ -88,11 +91,19 @@ You can set properties as below.
 
 #### interval?: number
 
-`idle-task` checks tasks which was registered by `setIdleTask` **during a browser's idle periods** , so they will not always be executed. 
+`idle-task` checks tasks which was registered by `setIdleTask` **during a browser's idle periods, so they will not always be executed** . 
 
 Please set `interval` if you want to guarantee to run tasks as much as possible.
 
 Even if the browser is not idle, `idle-task` checks tasks every 1000 ms when `interval` is `1000` and **will execute tasks without negative impact on performance**.
+
+#### debug?: boolean
+
+If `debug` is `true`, you can know how long did it take to finish the task via the web console.
+
+I recommend less than **50 ms** to execute a task because of [RAIL model](https://web.dev/i18n/en/rail/) .
+
+The default is `process.env.NODE_ENV === 'development'` .
 
 ## License
 

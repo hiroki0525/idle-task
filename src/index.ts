@@ -30,9 +30,12 @@ let requestIdleCallbackId = NaN;
 
 export type ConfigureOptions = {
   readonly interval?: number;
+  readonly debug?: boolean;
 };
 
-let taskGlobalOptions: ConfigureOptions | undefined;
+let taskGlobalOptions: ConfigureOptions = {
+  debug: process.env.NODE_ENV === 'development',
+};
 
 export const configureIdleTask = (options: ConfigureOptions): void => {
   taskGlobalOptions = options;
@@ -54,11 +57,25 @@ const runIdleTasks = (deadline: IdleDeadline): void => {
     tasks.length > 0
   ) {
     const task = tasks.shift() as IdleTask;
-    task();
+    if (taskGlobalOptions.debug) {
+      const start = Date.now();
+      task();
+      const executionTime = Date.now() - start;
+      const logArgs = [
+        `%cidle-task`,
+        `background: #717171; color: white; padding: 2px 3px; border-radius: 2px; font-size: 0.8em;`,
+        `${task.name || 'anonymous'}(${
+          task[idleTaskIdProp]
+        }) took ${executionTime} ms`,
+      ];
+      console[executionTime > 50 ? 'warn' : 'info'](...logArgs);
+    } else {
+      task();
+    }
   }
   if (tasks.length > 0) {
     requestIdleCallbackId = requestIdleCallback(runIdleTasks, {
-      timeout: taskGlobalOptions?.interval,
+      timeout: taskGlobalOptions.interval,
     });
     return;
   }
@@ -84,7 +101,7 @@ export const setIdleTask = (
     return idleTaskId;
   }
   requestIdleCallbackId = requestIdleCallback(runIdleTasks, {
-    timeout: taskGlobalOptions?.interval,
+    timeout: taskGlobalOptions.interval,
   });
   return idleTaskId;
 };
