@@ -46,6 +46,31 @@ You can run a task preferentially using `priority: 'high'` (default is `false`) 
 I recommend less than **50 ms** to execute a task because of [RAIL model](https://web.dev/i18n/en/rail/) .
 If you want to know how long did it take to finish a task, please use [debug mode](#debug-boolean) .
 
+### `waitForIdleTask`
+
+```javascript
+const generateRandomNumber = () => Math.floor( Math.random() * 100 );
+const taskId = setIdleTask(generateRandomNumber);
+const randomNumber = await waitForIdleTask(taskId);
+```
+
+You can get the result of the task by using `waitForIdleTask` .
+
+This example is to get `number`, but you can get `Promise` like `fetch` .
+
+```typescript
+const checkAccessTokenWhenIdle = (accessToken: string): Promise<any> => {
+    const fetchCheckAccessToken = async (): Promise<any> => {
+        const response = await fetch(`https://yourdomain/api/check?accessToken=${accessToken}`);
+        return response.json();
+    };
+    const taskId = setIdleTask(fetchCheckAccessToken);
+    return waitForIdleTask(taskId);
+}
+
+const { isOk } = await checkAccessTokenWhenIdle();
+```
+
 ### `cancelIdleTask`
 
 ```javascript
