@@ -19,10 +19,12 @@ if (typeof self !== 'undefined') {
   }
 }
 
-export type VoidFunction = () => void | Promise<void>;
+export type IdleTaskFunction = () => any;
 const idleTaskIdProp = Symbol('idleTaskId');
-interface IdleTask extends VoidFunction {
+const idleTaskPromiseExecutorProp = Symbol('idleTaskPromiseExecutor');
+interface IdleTask extends IdleTaskFunction {
   readonly [idleTaskIdProp]: number;
+  readonly [idleTaskPromiseExecutorProp]: any;
 }
 
 let tasks: IdleTask[] = [];
@@ -48,6 +50,8 @@ const createTimeRemainingDidTimeout = (
   return () => didTimeout && Date.now() - start < 50;
 };
 
+const idleTaskResultMap = new Map<number, Promise<any>>();
+
 const runIdleTasks = (deadline: IdleDeadline): void => {
   const timeRemainingDidTimeout = createTimeRemainingDidTimeout(
     deadline.didTimeout
@@ -57,9 +61,14 @@ const runIdleTasks = (deadline: IdleDeadline): void => {
     tasks.length > 0
   ) {
     const task = tasks.shift() as IdleTask;
+    const [resolve, reject] = task[idleTaskPromiseExecutorProp];
     if (taskGlobalOptions.debug) {
       const start = Date.now();
-      task();
+      try {
+        resolve(task());
+      } catch (e) {
+        reject(e);
+      }
       const executionTime = Date.now() - start;
       const logArgs = [
         `%cidle-task`,
@@ -70,7 +79,11 @@ const runIdleTasks = (deadline: IdleDeadline): void => {
       ];
       console[executionTime > 50 ? 'warn' : 'info'](...logArgs);
     } else {
-      task();
+      try {
+        resolve(task());
+      } catch (e) {
+        reject(e);
+      }
     }
   }
   if (tasks.length > 0) {
@@ -96,6 +109,14 @@ export const setIdleTask = (
   const idleTask = Object.defineProperty(task, idleTaskIdProp, {
     value: idleTaskId,
   }) as IdleTask;
+  idleTaskResultMap.set(
+    idleTaskId,
+    new Promise((resolve, reject) => {
+      Object.defineProperty(task, idleTaskPromiseExecutorProp, {
+        value: [resolve, reject],
+      });
+    })
+  );
   options.priority === 'low' ? tasks.push(idleTask) : tasks.unshift(idleTask);
   if (requestIdleCallbackId) {
     return idleTaskId;
@@ -107,13 +128,18 @@ export const setIdleTask = (
 };
 
 export const cancelIdleTask = (id: number): void => {
+  idleTaskResultMap.delete(id);
   tasks = tasks.filter(task => task[idleTaskIdProp] !== id);
 };
 
 export const cancelAllIdleTasks = (): void => {
   tasks.length = 0;
+  idleTaskResultMap.clear();
   requestIdleCallbackId && cancelIdleCallback(requestIdleCallbackId);
 };
 
 export const isRunIdleTask = (id: number): boolean =>
   tasks.findIndex(task => task[idleTaskIdProp] === id) === -1;
+
+export const waitForIdleTask = async (id: number): Promise<any> =>
+  idleTaskResultMap.get(id);
