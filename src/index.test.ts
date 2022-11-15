@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-import { configureIdleTask, setIdleTask } from './index';
-
 describe('idle-task', () => {
   let idleTaskModule: typeof import('./index') | null = null;
   const requestIdleCallbackImpl =
@@ -35,8 +33,8 @@ describe('idle-task', () => {
     (mockFunction?: jest.Mock, time = 0) =>
     () => {
       if (mockFunction) {
-        mockFunction();
         jest.advanceTimersByTime(time);
+        return mockFunction();
       }
     };
 
@@ -44,18 +42,24 @@ describe('idle-task', () => {
     jest.advanceTimersByTime(1);
   };
 
-  beforeEach(() => {
+  beforeAll(() => {
     jest.useFakeTimers();
+  });
+
+  beforeEach(() => {
     import('./index').then(module => {
       idleTaskModule = module;
     });
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
   });
 
   afterEach(() => {
     jest.clearAllMocks();
     jest.clearAllTimers();
     jest.resetModules();
-    jest.useRealTimers();
     idleTaskModule = null;
   });
 
@@ -249,7 +253,7 @@ describe('idle-task', () => {
       beforeEach(() => {
         mockInfo = jest.spyOn(console, 'info');
         mockWarn = jest.spyOn(console, 'warn');
-        configureIdleTask({ debug: true });
+        idleTaskModule!.configureIdleTask({ debug: true });
       });
 
       afterEach(() => {
@@ -262,7 +266,7 @@ describe('idle-task', () => {
 
         beforeEach(() => {
           // eslint-disable-next-line @typescript-eslint/no-empty-function
-          taskId = setIdleTask(() => {});
+          taskId = idleTaskModule!.setIdleTask(() => {});
           runRequestIdleCallback();
         });
 
@@ -279,7 +283,7 @@ describe('idle-task', () => {
         beforeEach(() => {
           // eslint-disable-next-line @typescript-eslint/no-empty-function
           const test = () => {};
-          taskId = setIdleTask(test);
+          taskId = idleTaskModule!.setIdleTask(test);
           runRequestIdleCallback();
         });
 
@@ -292,7 +296,7 @@ describe('idle-task', () => {
 
       describe('task took over 50 ms', () => {
         beforeEach(() => {
-          setIdleTask(createTask(mockFirstTask, 51));
+          idleTaskModule!.setIdleTask(createTask(mockFirstTask, 51));
           runRequestIdleCallback();
         });
 
@@ -311,7 +315,7 @@ describe('idle-task', () => {
 
       describe('task took less than 50 ms', () => {
         beforeEach(() => {
-          setIdleTask(createTask(mockFirstTask, 50));
+          idleTaskModule!.setIdleTask(createTask(mockFirstTask, 50));
           runRequestIdleCallback();
         });
 
@@ -331,9 +335,11 @@ describe('idle-task', () => {
   });
 
   describe('cancelIdleTask', () => {
+    let taskId: number;
+
     describe('existed task', () => {
-      beforeEach(() => {
-        const taskId = idleTaskModule!.setIdleTask(createTask(mockFirstTask));
+      beforeEach(async () => {
+        taskId = idleTaskModule!.setIdleTask(createTask(mockFirstTask));
         idleTaskModule!.setIdleTask(createTask(mockSecondTask));
         idleTaskModule!.setIdleTask(createTask(mockThirdTask));
         idleTaskModule!.cancelIdleTask(taskId);
@@ -351,11 +357,17 @@ describe('idle-task', () => {
       it('third task is called', () => {
         expect(mockThirdTask.mock.calls.length).toBe(1);
       });
+
+      it('first task result is cleared', () => {
+        expect(
+          idleTaskModule!.waitForIdleTask(taskId)
+        ).resolves.toBeUndefined();
+      });
     });
 
     describe('not existed task', () => {
       beforeEach(() => {
-        const taskId = idleTaskModule!.setIdleTask(createTask(mockFirstTask));
+        taskId = idleTaskModule!.setIdleTask(createTask(mockFirstTask));
         runRequestIdleCallback();
         idleTaskModule!.setIdleTask(createTask(mockSecondTask));
         idleTaskModule!.setIdleTask(createTask(mockThirdTask));
@@ -373,15 +385,25 @@ describe('idle-task', () => {
       it('third task is not called', () => {
         expect(mockThirdTask.mock.calls.length).toBe(0);
       });
+
+      it('first task result is cleared', () => {
+        expect(
+          idleTaskModule!.waitForIdleTask(taskId)
+        ).resolves.toBeUndefined();
+      });
     });
   });
 
   describe('cancelAllIdleTasks', () => {
+    let firstTaskId: number;
+    let secondTaskId: number;
+    let thirdTaskId: number;
+
     describe('existed requestIdleCallback id', () => {
       beforeEach(() => {
-        idleTaskModule!.setIdleTask(createTask(mockFirstTask));
-        idleTaskModule!.setIdleTask(createTask(mockSecondTask));
-        idleTaskModule!.setIdleTask(createTask(mockThirdTask));
+        firstTaskId = idleTaskModule!.setIdleTask(createTask(mockFirstTask));
+        secondTaskId = idleTaskModule!.setIdleTask(createTask(mockSecondTask));
+        thirdTaskId = idleTaskModule!.setIdleTask(createTask(mockThirdTask));
         idleTaskModule!.cancelAllIdleTasks();
       });
 
@@ -400,13 +422,31 @@ describe('idle-task', () => {
       it('cancelIdleCallback is called', () => {
         expect(mockCancelIdleCallback.mock.calls.length).toBe(1);
       });
+
+      it('first task result is cleared', () => {
+        expect(
+          idleTaskModule!.waitForIdleTask(firstTaskId)
+        ).resolves.toBeUndefined();
+      });
+
+      it('second task result is cleared', () => {
+        expect(
+          idleTaskModule!.waitForIdleTask(secondTaskId)
+        ).resolves.toBeUndefined();
+      });
+
+      it('third task result is cleared', () => {
+        expect(
+          idleTaskModule!.waitForIdleTask(thirdTaskId)
+        ).resolves.toBeUndefined();
+      });
     });
 
     describe('not existed requestIdleCallback id', () => {
       beforeEach(() => {
-        idleTaskModule!.setIdleTask(createTask(mockFirstTask));
-        idleTaskModule!.setIdleTask(createTask(mockSecondTask));
-        idleTaskModule!.setIdleTask(createTask(mockThirdTask));
+        firstTaskId = idleTaskModule!.setIdleTask(createTask(mockFirstTask));
+        secondTaskId = idleTaskModule!.setIdleTask(createTask(mockSecondTask));
+        thirdTaskId = idleTaskModule!.setIdleTask(createTask(mockThirdTask));
         runRequestIdleCallback();
         idleTaskModule!.cancelAllIdleTasks();
       });
@@ -425,6 +465,24 @@ describe('idle-task', () => {
 
       it('cancelIdleCallback is not called', () => {
         expect(mockCancelIdleCallback.mock.calls.length).toBe(0);
+      });
+
+      it('first task result is cleared', () => {
+        expect(
+          idleTaskModule!.waitForIdleTask(firstTaskId)
+        ).resolves.toBeUndefined();
+      });
+
+      it('second task result is cleared', () => {
+        expect(
+          idleTaskModule!.waitForIdleTask(secondTaskId)
+        ).resolves.toBeUndefined();
+      });
+
+      it('third task result is cleared', () => {
+        expect(
+          idleTaskModule!.waitForIdleTask(thirdTaskId)
+        ).resolves.toBeUndefined();
       });
     });
   });
@@ -452,6 +510,70 @@ describe('idle-task', () => {
 
       it('to be false', () => {
         expect(result).toBe(false);
+      });
+    });
+  });
+
+  describe('waitForIdleTask', () => {
+    let firstTaskId: number;
+    let secondTaskId: number;
+    let thirdTaskId: number;
+
+    describe('tasks are success', () => {
+      beforeEach(() => {
+        firstTaskId = idleTaskModule!.setIdleTask(() => 'firstTask');
+        secondTaskId = idleTaskModule!.setIdleTask(
+          () => new Promise(r => r(2))
+        );
+        thirdTaskId = idleTaskModule!.setIdleTask(() =>
+          Promise.resolve('thirdTask')
+        );
+        runRequestIdleCallback();
+      });
+
+      it('return first task result', async () => {
+        await expect(
+          idleTaskModule!.waitForIdleTask(firstTaskId)
+        ).resolves.toBe('firstTask');
+      });
+
+      it('return second task result', async () => {
+        await expect(
+          idleTaskModule!.waitForIdleTask(secondTaskId)
+        ).resolves.toBe(2);
+      });
+
+      it('return third task result', async () => {
+        await expect(
+          idleTaskModule!.waitForIdleTask(thirdTaskId)
+        ).resolves.toBe('thirdTask');
+      });
+    });
+
+    describe('tasks are failure', () => {
+      beforeEach(() => {
+        firstTaskId = idleTaskModule!.setIdleTask(() => {
+          throw new Error('firstTask');
+        });
+        secondTaskId = idleTaskModule!.setIdleTask(() =>
+          Promise.reject('secondTask')
+        );
+        thirdTaskId = idleTaskModule!.setIdleTask(() =>
+          Promise.reject(new Error('thirdTask'))
+        );
+        runRequestIdleCallback();
+      });
+
+      it('all tasks throw errors', async () => {
+        await expect(
+          idleTaskModule!.waitForIdleTask(firstTaskId)
+        ).rejects.toThrow('firstTask');
+        await expect(
+          idleTaskModule!.waitForIdleTask(secondTaskId)
+        ).rejects.toBe('secondTask');
+        await expect(
+          idleTaskModule!.waitForIdleTask(thirdTaskId)
+        ).rejects.toThrow('thirdTask');
       });
     });
   });
