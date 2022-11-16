@@ -162,7 +162,7 @@ export const waitForIdleTask = async (
   options: WaitForIdleTaskOptions = defaultWaitForIdleTaskOptions
 ): Promise<any> => {
   const result = idleTaskResultMap.get(id);
-  if (!options.cache) {
+  if (options.cache === false) {
     idleTaskResultMap.delete(id);
   }
   const { timeout } = options;
