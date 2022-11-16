@@ -20,6 +20,21 @@ const sendAnalyticsData = () =>
 setIdleTask(sendAnalyticsData);
 ```
 
+If you want to get the result of a task, please use `waitForIdleTask` .
+
+```typescript
+const checkAccessTokenWhenIdle = (accessToken: string): Promise<any> => {
+    const fetchCheckAccessToken = async (): Promise<any> => {
+        const response = await fetch(`https://yourdomain/api/check?accessToken=${accessToken}`);
+        return response.json();
+    };
+    const taskId = setIdleTask(fetchCheckAccessToken);
+    return waitForIdleTask(taskId);
+}
+
+const { isSuccess } = await checkAccessTokenWhenIdle('1234');
+```
+
 ## API
 
 ### `setIdleTask`
@@ -32,7 +47,7 @@ const options = {
 const taskId = setIdleTask(sendAnalyticsData, options);
 ```
 
-`idle-task` has FIFO queue.
+`idle-task` has a FIFO(First-In-First-Out) queue.
 
 `setIdleTask` enqueues a task which will be executed during a browser's idle periods.
 
@@ -41,7 +56,7 @@ When the browser is idle, `idle-task` will dequeue a task and run it.
 You can run a task preferentially using `priority: 'high'` (default is `false`) option.
 `setIdleTask` adds it to the head of the queue.
 
-`setIdleTask` returns task id which is necessary for `cancelIdleTask` and `isRunIdleTask` .
+`setIdleTask` returns task id which is necessary for `cancelIdleTask` , `isRunIdleTask` and `waitForIdleTask`.
 
 I recommend less than **50 ms** to execute a task because of [RAIL model](https://web.dev/i18n/en/rail/) .
 If you want to know how long did it take to finish a task, please use [debug mode](#debug-boolean) .
@@ -51,25 +66,20 @@ If you want to know how long did it take to finish a task, please use [debug mod
 ```javascript
 const generateRandomNumber = () => Math.floor( Math.random() * 100 );
 const taskId = setIdleTask(generateRandomNumber);
-const randomNumber = await waitForIdleTask(taskId);
+const randomNumber = await waitForIdleTask(taskId, {
+    cache: false
+});
 ```
 
 You can get the result of the task by using `waitForIdleTask` .
 
-This example is to get `number`, but you can get `Promise` like `fetch` .
+`waitForIdleTask` can also be set options as below.
 
-```typescript
-const checkAccessTokenWhenIdle = (accessToken: string): Promise<any> => {
-    const fetchCheckAccessToken = async (): Promise<any> => {
-        const response = await fetch(`https://yourdomain/api/check?accessToken=${accessToken}`);
-        return response.json();
-    };
-    const taskId = setIdleTask(fetchCheckAccessToken);
-    return waitForIdleTask(taskId);
-}
+#### cache?: boolean
 
-const { isOk } = await checkAccessTokenWhenIdle();
-```
+**`idle-task` caches the results of tasks** .
+
+If you get the result of a task only once, please set `{ cache: false }` ( default is `true` ). 
 
 ### `cancelIdleTask`
 
@@ -116,7 +126,7 @@ You can set properties as below.
 
 #### interval?: number
 
-`idle-task` checks tasks which was registered by `setIdleTask` **during a browser's idle periods, so they will not always be executed** . 
+`idle-task` checks tasks which was registered by `setIdleTask` during a browser's idle periods, so **they will not always be executed** . 
 
 Please set `interval` if you want to guarantee to run tasks as much as possible.
 
