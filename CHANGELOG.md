@@ -1,3 +1,10 @@
+# [2.2.0](https://github.com/hiroki0525/idle-task/compare/v2.1.0...v2.2.0) (2022-11-16)
+
+
+### Features
+
+* add `WaitForIdleTaskOptions.cache` ([1dbfae2](https://github.com/hiroki0525/idle-task/commit/1dbfae264ac38078a6dfb23e18b53ee298332afa))
+
 # [2.1.0](https://github.com/hiroki0525/idle-task/compare/v2.0.0...v2.1.0) (2022-11-15)
 
 
