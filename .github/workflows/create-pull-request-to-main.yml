@@ -1,9 +1,10 @@
-name: Create Pull Request to Master
+name: Create Pull Request to Main
 
 on:
   push:
     branches:
-      - 'develop'
+      - '*'
+      - '!main'
 
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -22,4 +23,4 @@ jobs:
       - name: Create Pull Request
         if: steps.check_pr.outputs.COUNT == 0
         run: |
-          gh pr create -B master -t 'Develop' -b '' -r hiroki0525
+          gh pr create -a ${{ github.actor }} -B develop -t 'Please Change Title' -d -b 'Please Change Body' -r hiroki0525
