@@ -141,5 +141,21 @@ export const cancelAllIdleTasks = (): void => {
 export const isRunIdleTask = (id: number): boolean =>
   tasks.findIndex(task => task[idleTaskIdProp] === id) === -1;
 
-export const waitForIdleTask = async (id: number): Promise<any> =>
-  idleTaskResultMap.get(id);
+export interface WaitForIdleTaskOptions {
+  readonly cache?: boolean;
+}
+
+const defaultWaitForIdleTaskOptions: WaitForIdleTaskOptions = {
+  cache: true,
+};
+
+export const waitForIdleTask = async (
+  id: number,
+  options: WaitForIdleTaskOptions = defaultWaitForIdleTaskOptions
+): Promise<any> => {
+  const result = idleTaskResultMap.get(id);
+  if (!options.cache) {
+    idleTaskResultMap.delete(id);
+  }
+  return result;
+};
