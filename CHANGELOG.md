@@ -1,3 +1,15 @@
+# [2.3.0](https://github.com/hiroki0525/idle-task/compare/v2.2.0...v2.3.0) (2022-11-16)
+
+
+### Bug Fixes
+
+* enable cache when not set cache option ([26b3e20](https://github.com/hiroki0525/idle-task/commit/26b3e20428a93885f8dfd4554f4a254045acd8f7))
+
+
+### Features
+
+* add `WaitForIdleTaskOptions.timeout` ([18d2ca4](https://github.com/hiroki0525/idle-task/commit/18d2ca48a3c0735333e8c4f57fe1d0d8f46c6d08))
+
 # [2.2.0](https://github.com/hiroki0525/idle-task/compare/v2.1.0...v2.2.0) (2022-11-16)
 
 
