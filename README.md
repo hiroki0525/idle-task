@@ -77,9 +77,52 @@ You can get the result of the task by using `waitForIdleTask` .
 
 #### cache?: boolean
 
-**`idle-task` caches the results of tasks** .
+**`idle-task` caches the results of tasks by default** .
 
-If you get the result of a task only once, please set `{ cache: false }` ( default is `true` ). 
+```javascript
+const generateRandomNumber = () => Math.floor( Math.random() * 100 );
+const taskId = setIdleTask(generateRandomNumber);
+const firstRandomNumber = await waitForIdleTask(taskId);
+// this result from cache
+const secondRandomNumber = await waitForIdleTask(taskId);
+// same objects
+console.log(Object.is(firstRandomNumber, secondRandomNumber));
+// => true
+```
+
+If you get the result of a task only once, please set `{ cache: false }` .
+This will improve memory in JavaScript.
+
+```javascript
+const generateRandomNumber = () => Math.floor( Math.random() * 100 );
+const taskId = setIdleTask(generateRandomNumber);
+// delete cache
+const firstRandomNumber = await waitForIdleTask(taskId, { cache: false });
+// this is undefined
+const secondRandomNumber = await waitForIdleTask(taskId);
+// not same objects
+console.log(Object.is(firstRandomNumber, secondRandomNumber));
+// => false
+```
+
+#### timeout?: number
+
+`waitForIdleTask` maybe wait for the task eternally because it will be finished when the browser is idle.
+`timeout` option can prevent it.
+
+```javascript
+const generateRandomNumber = () => Math.floor( Math.random() * 100 );
+const taskId = setIdleTask(generateRandomNumber);
+try {
+    const firstRandomNumber = await waitForIdleTask(taskId, { timeout: 1000 });
+} catch (e) {
+    if (e instanceof WaitForIdleTaskTimeoutError) {
+        console.error('this is timeout error')
+    }
+}
+```
+
+In this case, `waitForIdleTask` will throw `WaitForIdleTaskTimeoutError` if the task can't be finished within 1000 ms.
 
 ### `cancelIdleTask`
 

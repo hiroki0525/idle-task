@@ -143,19 +143,41 @@ export const isRunIdleTask = (id: number): boolean =>
 
 export interface WaitForIdleTaskOptions {
   readonly cache?: boolean;
+  readonly timeout?: number;
 }
 
 const defaultWaitForIdleTaskOptions: WaitForIdleTaskOptions = {
   cache: true,
 };
 
+export class WaitForIdleTaskTimeoutError extends Error {
+  constructor() {
+    super('waitForIdleTask timeout.');
+    this.name = 'WaitForIdleTaskTimeoutError';
+  }
+}
+
 export const waitForIdleTask = async (
   id: number,
   options: WaitForIdleTaskOptions = defaultWaitForIdleTaskOptions
 ): Promise<any> => {
   const result = idleTaskResultMap.get(id);
-  if (!options.cache) {
+  if (options.cache === false) {
     idleTaskResultMap.delete(id);
   }
-  return result;
+  const { timeout } = options;
+  if (timeout === undefined) {
+    return result;
+  }
+  let isTimeout = false;
+  const timeoutPromise = new Promise(resolve => {
+    setTimeout(() => {
+      resolve((isTimeout = true));
+    }, timeout);
+  });
+  const racedResult = await Promise.race([result, timeoutPromise]);
+  if (isTimeout) {
+    throw new WaitForIdleTaskTimeoutError();
+  }
+  return racedResult;
 };
