@@ -1,3 +1,15 @@
+# [2.4.0](https://github.com/hiroki0525/idle-task/compare/v2.3.0...v2.4.0) (2022-11-17)
+
+
+### Bug Fixes
+
+* incorrect type of `setIdleTask` parameter ([b7d368c](https://github.com/hiroki0525/idle-task/commit/b7d368cec96165efa78c8dc04c0219b1fa9f4d3c))
+
+
+### Features
+
+* add `SetIdleTaskOptions.cache` ([b929c8a](https://github.com/hiroki0525/idle-task/commit/b929c8a6ac7017a70f5c5c4a30dea4c311e13fbf))
+
 # [2.3.0](https://github.com/hiroki0525/idle-task/compare/v2.2.0...v2.3.0) (2022-11-16)
 
 
