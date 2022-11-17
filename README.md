@@ -46,24 +46,52 @@ const { isSuccess } = await checkAccessTokenWhenIdle('1234');
 ```javascript
 const sendAnalyticsData = () => console.log("send analytics data");
 const options = {
-    priority: 'high'
+    priority: 'high',
+    cache: false
 };
 const taskId = setIdleTask(sendAnalyticsData, options);
 ```
 
 `idle-task` has a FIFO(First-In-First-Out) queue.
 
-`setIdleTask` enqueues a task which will be executed during a browser's idle periods.
-
-When the browser is idle, `idle-task` will dequeue a task and run it.
-
-You can run a task preferentially using `priority: 'high'` (default is `false`) option.
-`setIdleTask` adds it to the head of the queue.
+`setIdleTask` enqueues a task which `idle-task` will dequeue and run when the browser is idle.
 
 `setIdleTask` returns task id which is necessary for `cancelIdleTask` , `isRunIdleTask` and `waitForIdleTask`.
 
 I recommend less than **50 ms** to execute a task because of [RAIL model](https://web.dev/i18n/en/rail/) .
 If you want to know how long did it take to finish a task, please use [debug mode](#debug-boolean) .
+
+`setIdleTask` can also be set options as below.
+
+#### priority?: 'low' | 'high'
+
+You can run a task preferentially using `priority: 'high'` (default is `false`) option.
+`setIdleTask` adds it to the head of the queue.
+
+#### cache?: boolean
+
+This option is to improve performance.
+
+**`idle-task` caches the results of tasks by default** .
+
+I recommend to set `false` if you don't need the result of idle task.
+
+`waitForIdleTask` will return `undefined` when `cache` is `false` .
+
+```typescript
+import {waitForIdleTask} from "./index";
+
+const sendAnalyticsData = (): void => {
+    console.log("send analytics data")
+};
+// Recommend: sendAnalyticsData result is not needed
+setIdleTask(sendAnalyticsData, {cache: false});
+
+const generateRandomNumber = () => Math.floor(Math.random() * 100);
+const taskId = setIdleTask(generateRandomNumber, {cache: false});
+// result is undefined
+const result = await waitForIdleTask(taskId);
+```
 
 ### `waitForIdleTask`
 
@@ -94,7 +122,7 @@ console.log(Object.is(firstRandomNumber, secondRandomNumber));
 // => true
 ```
 
-If you get the result of a task only once, please set `{ cache: false }` .
+If you get the result of a task **only once**, please set `{ cache: false }` .
 This will improve memory in JavaScript.
 
 ```javascript
