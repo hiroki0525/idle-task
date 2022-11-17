@@ -24,7 +24,9 @@ const idleTaskIdProp = Symbol('idleTaskId');
 const idleTaskPromiseExecutorProp = Symbol('idleTaskPromiseExecutor');
 interface IdleTask extends IdleTaskFunction {
   readonly [idleTaskIdProp]: number;
-  readonly [idleTaskPromiseExecutorProp]: any;
+  readonly [idleTaskPromiseExecutorProp]?: Parameters<
+    ConstructorParameters<typeof Promise>[0]
+  >;
 }
 
 let tasks: IdleTask[] = [];
@@ -61,14 +63,20 @@ const runIdleTasks = (deadline: IdleDeadline): void => {
     tasks.length > 0
   ) {
     const task = tasks.shift() as IdleTask;
-    const [resolve, reject] = task[idleTaskPromiseExecutorProp];
+    const promiseExecutor = task[idleTaskPromiseExecutorProp];
+    const executeTask = () => {
+      if (!promiseExecutor) {
+        return task();
+      }
+      try {
+        promiseExecutor[0](task());
+      } catch (e) {
+        promiseExecutor[1](e);
+      }
+    };
     if (taskGlobalOptions.debug) {
       const start = Date.now();
-      try {
-        resolve(task());
-      } catch (e) {
-        reject(e);
-      }
+      executeTask();
       const executionTime = Date.now() - start;
       const logArgs = [
         `%cidle-task`,
@@ -79,11 +87,7 @@ const runIdleTasks = (deadline: IdleDeadline): void => {
       ];
       console[executionTime > 50 ? 'warn' : 'info'](...logArgs);
     } else {
-      try {
-        resolve(task());
-      } catch (e) {
-        reject(e);
-      }
+      executeTask();
     }
   }
   if (tasks.length > 0) {
@@ -96,28 +100,34 @@ const runIdleTasks = (deadline: IdleDeadline): void => {
 };
 
 export interface SetIdleTaskOptions {
-  readonly priority: 'low' | 'high';
+  readonly priority?: 'low' | 'high';
+  readonly cache?: boolean;
 }
 let id = 0;
-const defaultSetIdleTaskOptions: SetIdleTaskOptions = { priority: 'low' };
+const defaultSetIdleTaskOptions: SetIdleTaskOptions = {
+  priority: 'low',
+  cache: true,
+};
 
 export const setIdleTask = (
-  task: VoidFunction,
+  task: IdleTaskFunction,
   options: SetIdleTaskOptions = defaultSetIdleTaskOptions
 ): number => {
   const idleTaskId = ++id;
   const idleTask = Object.defineProperty(task, idleTaskIdProp, {
     value: idleTaskId,
   }) as IdleTask;
-  idleTaskResultMap.set(
-    idleTaskId,
-    new Promise((resolve, reject) => {
-      Object.defineProperty(task, idleTaskPromiseExecutorProp, {
-        value: [resolve, reject],
-      });
-    })
-  );
-  options.priority === 'low' ? tasks.push(idleTask) : tasks.unshift(idleTask);
+  if (options.cache !== false) {
+    idleTaskResultMap.set(
+      idleTaskId,
+      new Promise((resolve, reject) => {
+        Object.defineProperty(task, idleTaskPromiseExecutorProp, {
+          value: [resolve, reject],
+        });
+      })
+    );
+  }
+  options.priority === 'high' ? tasks.unshift(idleTask) : tasks.push(idleTask);
   if (requestIdleCallbackId) {
     return idleTaskId;
   }
