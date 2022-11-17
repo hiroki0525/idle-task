@@ -102,7 +102,7 @@ let id = 0;
 const defaultSetIdleTaskOptions: SetIdleTaskOptions = { priority: 'low' };
 
 export const setIdleTask = (
-  task: VoidFunction,
+  task: IdleTaskFunction,
   options: SetIdleTaskOptions = defaultSetIdleTaskOptions
 ): number => {
   const idleTaskId = ++id;
