@@ -191,3 +191,18 @@ export const waitForIdleTask = async (
   }
   return racedResult;
 };
+
+export type GetResultFromIdleTaskOptions = Pick<
+  SetIdleTaskOptions,
+  'priority'
+> &
+  Pick<WaitForIdleTaskOptions, 'timeout'>;
+
+export const getResultFromIdleTask = (
+  task: IdleTaskFunction,
+  options?: GetResultFromIdleTaskOptions
+): ReturnType<typeof waitForIdleTask> =>
+  waitForIdleTask(setIdleTask(task, { priority: options?.priority }), {
+    cache: false,
+    timeout: options?.timeout,
+  });
