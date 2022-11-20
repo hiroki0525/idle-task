@@ -1,3 +1,10 @@
+# [2.5.0](https://github.com/hiroki0525/idle-task/compare/v2.4.0...v2.5.0) (2022-11-20)
+
+
+### Features
+
+* add `getResultFromIdleTask` ([7c56627](https://github.com/hiroki0525/idle-task/commit/7c5662752b9cc9d9c2793b3be262245a87fa2bdb))
+
 # [2.4.0](https://github.com/hiroki0525/idle-task/compare/v2.3.0...v2.4.0) (2022-11-17)
 
 
