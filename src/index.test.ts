@@ -1,5 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
+import {
+  getResultFromIdleTask,
+  SetIdleTaskOptions,
+  WaitForIdleTaskOptions,
+} from './index';
+
 describe('idle-task', () => {
   let idleTaskModule: typeof import('./index') | null = null;
   const requestIdleCallbackImpl =
@@ -766,6 +772,49 @@ describe('idle-task', () => {
             new idleTaskModule!.WaitForIdleTaskTimeoutError()
           );
         });
+      });
+    });
+  });
+
+  describe('getResultFromIdleTask', () => {
+    let mockSetIdleTask: jest.SpyInstance;
+    let mockWaitForIdleTask: jest.SpyInstance;
+    const setIdleTaskOptions: SetIdleTaskOptions = { priority: 'high' };
+    const waitForIdleTaskOptions: WaitForIdleTaskOptions = { timeout: 3000 };
+    let getResultFromIdleTaskPromise: ReturnType<typeof getResultFromIdleTask>;
+
+    beforeEach(async () => {
+      mockSetIdleTask = jest.spyOn(idleTaskModule as any, 'setIdleTask');
+      mockWaitForIdleTask = jest.spyOn(
+        idleTaskModule as any,
+        'waitForIdleTask'
+      );
+      getResultFromIdleTaskPromise = idleTaskModule!.getResultFromIdleTask(
+        () => 'test',
+        {
+          ...setIdleTaskOptions,
+          ...waitForIdleTaskOptions,
+        }
+      );
+      runRequestIdleCallback();
+      await getResultFromIdleTaskPromise;
+    });
+
+    afterEach(() => {
+      mockSetIdleTask.mockReset();
+      mockWaitForIdleTask.mockReset();
+    });
+
+    it('setIdleTask calls with options', async () => {
+      expect(mockSetIdleTask.mock.calls[0][1]).toStrictEqual(
+        setIdleTaskOptions
+      );
+    });
+
+    it('waitForIdleTask calls with options', () => {
+      expect(mockWaitForIdleTask.mock.calls[0][1]).toStrictEqual({
+        ...waitForIdleTaskOptions,
+        cache: false,
       });
     });
   });

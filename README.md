@@ -1,5 +1,7 @@
 # idle-task
 
+![idle-task](https://user-images.githubusercontent.com/40714517/202905619-b2319b98-d81a-4cc2-9eac-c88702daf45b.png)
+
 [![npm version](https://badge.fury.io/js/idle-task.svg)](https://badge.fury.io/js/idle-task)
 [![Test](https://github.com/hiroki0525/idle-task/actions/workflows/test.yml/badge.svg)](https://github.com/hiroki0525/idle-task/actions/workflows/test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -155,6 +157,24 @@ try {
 ```
 
 In this case, `waitForIdleTask` will throw `WaitForIdleTaskTimeoutError` if the task can't be finished within 1000 ms.
+
+### `getResultFromIdleTask`
+
+```javascript
+const generateRandomNumber = () => Math.floor( Math.random() * 100 );
+const randomNumber = await getResultFromIdleTask(generateRandomNumber, {
+    priority: 'high',
+    timeout: 3000,
+});
+
+// same
+const taskId = setIdleTask(generateRandomNumber, { priority: 'high' });
+const randomNumber = await waitForIdleTask(taskId, { timeout: 3000, cache: false });
+```
+
+You can get the result by using `getResultFromIdleTask` if you don't need the task id.
+
+`getResultFromIdleTask` can also be set options which is `SetIdleTaskOptions.priority` and  `WaitForIdleTaskOptions.timeout` .
 
 ### `cancelIdleTask`
 
