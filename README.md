@@ -1,9 +1,6 @@
-
-<div style="display: flex; align-items: center; justify-content: center">
-![idle-task](https://user-images.githubusercontent.com/40714517/202905619-b2319b98-d81a-4cc2-9eac-c88702daf45b.png)
-</div>
-
 # idle-task
+
+![idle-task](https://user-images.githubusercontent.com/40714517/202905619-b2319b98-d81a-4cc2-9eac-c88702daf45b.png)
 
 [![npm version](https://badge.fury.io/js/idle-task.svg)](https://badge.fury.io/js/idle-task)
 [![Test](https://github.com/hiroki0525/idle-task/actions/workflows/test.yml/badge.svg)](https://github.com/hiroki0525/idle-task/actions/workflows/test.yml)
