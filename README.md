@@ -8,6 +8,32 @@
 
 Improve your website performance by executing JavaScript during a browser's idle periods.
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [Install](#install)
+- [Usage](#usage)
+- [API](#api)
+  - [`setIdleTask`](#setidletask)
+    - [`priority?: 'low' | 'high'`](#priority-low--high)
+    - [`cache?: boolean`](#cache-boolean)
+  - [`waitForIdleTask`](#waitforidletask)
+    - [`cache?: boolean`](#cache-boolean-1)
+    - [`timeout?: number`](#timeout-number)
+  - [`getResultFromIdleTask`](#getresultfromidletask)
+  - [`cancelIdleTask`](#cancelidletask)
+  - [`cancelAllIdleTasks`](#cancelallidletasks)
+  - [`isRunIdleTask`](#isrunidletask)
+  - [`configureIdleTask`](#configureidletask)
+    - [`interval?: number`](#interval-number)
+    - [`debug?: boolean`](#debug-boolean)
+- [Recipe](#recipe)
+  - [Vanilla JS](#vanilla-js)
+- [License](#license)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Install
 
 ```shell
@@ -65,12 +91,12 @@ If you want to know how long did it take to finish a task, please use [debug mod
 
 `setIdleTask` can also be set options as below.
 
-#### priority?: 'low' | 'high'
+#### `priority?: 'low' | 'high'`
 
 You can run a task preferentially using `priority: 'high'` (default is `false`) option.
 `setIdleTask` adds it to the head of the queue.
 
-#### cache?: boolean
+#### `cache?: boolean`
 
 This option is to improve performance.
 
@@ -81,7 +107,7 @@ I recommend to set `false` if you don't need the result of idle task.
 `waitForIdleTask` will return `undefined` when `cache` is `false` .
 
 ```typescript
-import {waitForIdleTask} from "./index";
+import {waitForIdleTask} from "idle-task";
 
 const sendAnalyticsData = (): void => {
     console.log("send analytics data")
@@ -109,7 +135,7 @@ You can get the result of the task by using `waitForIdleTask` .
 
 `waitForIdleTask` can also be set options as below.
 
-#### cache?: boolean
+#### `cache?: boolean`
 
 **`idle-task` caches the results of tasks by default** .
 
@@ -139,7 +165,7 @@ console.log(Object.is(firstRandomNumber, secondRandomNumber));
 // => false
 ```
 
-#### timeout?: number
+#### `timeout?: number`
 
 `waitForIdleTask` maybe wait for the task eternally because it will be finished when the browser is idle.
 `timeout` option can prevent it.
@@ -219,7 +245,7 @@ configureIdleTask({
 `configureIdleTask` configures `idle-task` .
 You can set properties as below.
 
-#### interval?: number
+#### `interval?: number`
 
 `idle-task` checks tasks which was registered by `setIdleTask` during a browser's idle periods, so **they will not always be executed** . 
 
@@ -227,13 +253,27 @@ Please set `interval` if you want to guarantee to run tasks as much as possible.
 
 Even if the browser is not idle, `idle-task` checks tasks every 1000 ms when `interval` is `1000` and **will execute tasks without negative impact on performance**.
 
-#### debug?: boolean
+#### `debug?: boolean`
 
 If `debug` is `true`, you can know how long did it take to finish the task via the web console.
 
 I recommend less than **50 ms** to execute a task because of [RAIL model](https://web.dev/i18n/en/rail/) .
 
 The default is `process.env.NODE_ENV === 'development'` .
+
+## Recipe
+
+### Vanilla JS
+
+```javascript
+import { getResultFromIdleTask, setIdleTask } from 'idle-task';
+
+const button = document.getElementById('button');
+button.addEventListener('click', async () => {
+    const { default: sendAnalyticsData } = await getResultFromIdleTask(() => import('./sendAnalyticsData'));
+    setIdleTask(sendAnalyticsData, { cache: false });
+})
+```
 
 ## License
 

@@ -774,6 +774,70 @@ describe('idle-task', () => {
         });
       });
     });
+
+    describe('not call cancelIdleTask', () => {
+      beforeEach(() => {
+        firstTaskId = idleTaskModule!.setIdleTask(createTask(mockFirstTask));
+        runRequestIdleCallback();
+      });
+
+      it('return task result', async () => {
+        await expect(
+          idleTaskModule!.waitForIdleTask(firstTaskId)
+        ).resolves.toBe('mockFirstTask');
+      });
+    });
+
+    describe('call cancelIdleTask', () => {
+      describe('task is executed', () => {
+        beforeEach(() => {
+          firstTaskId = idleTaskModule!.setIdleTask(createTask(mockFirstTask));
+          runRequestIdleCallback();
+          idleTaskModule!.cancelIdleTask(firstTaskId);
+        });
+
+        it('return undefined', async () => {
+          await expect(
+            idleTaskModule!.waitForIdleTask(firstTaskId)
+          ).resolves.toBeUndefined();
+        });
+      });
+
+      describe('task is not executed', () => {
+        let resultPromise: Promise<any>;
+
+        describe('call setIdleTask which cache is true', () => {
+          beforeEach(() => {
+            firstTaskId = idleTaskModule!.setIdleTask(
+              createTask(mockFirstTask)
+            );
+            resultPromise = idleTaskModule!.waitForIdleTask(firstTaskId);
+            idleTaskModule!.cancelIdleTask(firstTaskId);
+            runRequestIdleCallback();
+          });
+
+          it('return undefined', async () => {
+            await expect(resultPromise).resolves.toBeUndefined();
+          });
+        });
+
+        describe('call setIdleTask which cache is true', () => {
+          beforeEach(() => {
+            firstTaskId = idleTaskModule!.setIdleTask(
+              createTask(mockFirstTask),
+              { cache: false }
+            );
+            resultPromise = idleTaskModule!.waitForIdleTask(firstTaskId);
+            idleTaskModule!.cancelIdleTask(firstTaskId);
+            runRequestIdleCallback();
+          });
+
+          it('return undefined', async () => {
+            await expect(resultPromise).resolves.toBeUndefined();
+          });
+        });
+      });
+    });
   });
 
   describe('getResultFromIdleTask', () => {
