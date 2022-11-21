@@ -138,6 +138,11 @@ export const setIdleTask = (
 };
 
 export const cancelIdleTask = (id: number): void => {
+  const task = tasks.find(task => task[idleTaskIdProp] === id);
+  if (task) {
+    const promiseExecutor = task[idleTaskPromiseExecutorProp];
+    promiseExecutor && promiseExecutor[0](undefined);
+  }
   idleTaskResultMap.delete(id);
   tasks = tasks.filter(task => task[idleTaskIdProp] !== id);
 };
