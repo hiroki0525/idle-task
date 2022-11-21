@@ -1,28 +1,3 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**
-
-- [idle-task](#idle-task)
-  - [Install](#install)
-  - [Usage](#usage)
-  - [API](#api)
-    - [`setIdleTask`](#setidletask)
-      - [priority?: 'low' | 'high'](#priority-low--high)
-      - [cache?: boolean](#cache-boolean)
-    - [`waitForIdleTask`](#waitforidletask)
-      - [cache?: boolean](#cache-boolean-1)
-      - [timeout?: number](#timeout-number)
-    - [`getResultFromIdleTask`](#getresultfromidletask)
-    - [`cancelIdleTask`](#cancelidletask)
-    - [`cancelAllIdleTasks`](#cancelallidletasks)
-    - [`isRunIdleTask`](#isrunidletask)
-    - [`configureIdleTask`](#configureidletask)
-      - [interval?: number](#interval-number)
-      - [debug?: boolean](#debug-boolean)
-  - [License](#license)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 # idle-task
 
 ![idle-task](https://user-images.githubusercontent.com/40714517/202905619-b2319b98-d81a-4cc2-9eac-c88702daf45b.png)
@@ -32,6 +7,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Improve your website performance by executing JavaScript during a browser's idle periods.
+
+<!-- START doctoc -->
+<!-- END doctoc -->
 
 ## Install
 
