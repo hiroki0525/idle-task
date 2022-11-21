@@ -34,13 +34,62 @@ Improve your website performance by executing JavaScript during a browser's idle
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+## What is difference between `idle-task` and `requestIdleCallback`
+
+Why you should use `idle-task` instead of `requestIdleCallback` ?
+
+### Manage tasks priority
+
+```javascript
+import { setIdleTask } from 'idle-task';
+setIdleTask(yourLowPrioryFunction, { prioriy: 'low' });
+setIdleTask(yourHighPrioryFunction, { prioriy: 'high' });
+```
+
+### Promise based APIs
+
+```javascript
+import { getResultFromIdleTask } from 'idle-task';
+// get result asynchronously
+const result = await getResultFromIdleTask(yourFunction);
+```
+
+### Cache
+
+```javascript
+import { setIdleTask, waitForIdleTask } from 'idle-task';
+const taskId = setIdleTask(yourFunction);
+const result1 = await waitForIdleTask(taskId);
+// from cache
+const result2 = await waitForIdleTask(taskId);
+```
+
+### Optimize executing tasks
+
+```javascript
+import { setIdleTask } from 'idle-task';
+setIdleTask(longTask);
+// these functions will be executed during next browser's idle time.
+setIdleTask(shortTask);
+setIdleTask(shortTask);
+```
+
+### Analyze tasks execution time
+
+```javascript
+import { setIdleTask, configureIdleTask } from 'idle-task';
+configureIdleTask({ debug: true })
+// output the execution time to the web console.
+setIdleTask(yourFunction1);
+```
+
 ## Install
 
 ```shell
 npm i idle-task
 ```
 
-## Usage
+## Quick Start
 
 The simplest way is to use `setIdleTask` .
 
@@ -61,7 +110,7 @@ const checkAccessTokenWhenIdle = (accessToken: string): Promise<any> => {
         return response.json();
     };
     const taskId = setIdleTask(fetchCheckAccessToken);
-    return waitForIdleTask(taskId);
+    return waitForIdleTask(taskId, { cache: false });
 }
 
 const { isSuccess } = await checkAccessTokenWhenIdle('1234');
@@ -238,7 +287,8 @@ You can know whether the task is executed or not by using `isRunIdleTask` .
 
 ```javascript
 configureIdleTask({
-  interval: 1000 // ms
+  interval: 1000, // ms
+  debug: false,
 });
 ```
 
@@ -261,18 +311,64 @@ I recommend less than **50 ms** to execute a task because of [RAIL model](https:
 
 The default is `process.env.NODE_ENV === 'development'` .
 
-## Recipe
+## Recipes
 
 ### Vanilla JS
 
 ```javascript
-import { getResultFromIdleTask, setIdleTask } from 'idle-task';
+import { setIdleTask } from 'idle-task';
+
+// this module is loaded during a browser's idle periods because it is not important for UI.
+const taskId = setIdleTask(() => import('./sendAnalyticsData'))
 
 const button = document.getElementById('button');
 button.addEventListener('click', async () => {
-    const { default: sendAnalyticsData } = await getResultFromIdleTask(() => import('./sendAnalyticsData'));
+    const { default: sendAnalyticsData } = await waitForIdleTask(taskId);
+    // Send analytics data to server when the browser is idle.
     setIdleTask(sendAnalyticsData, { cache: false });
 })
+```
+
+### React
+
+```jsx
+import {useState, useEffect} from 'react';
+import {setIdleTask} from 'idle-task';
+import {cancelIdleTask, waitForIdleTask} from "./index";
+
+const fetchNewsList = async () => {
+  const response = await fetch('https://yourdomain/api/news');
+  return response.json();
+}
+
+// this is not important UI for the website main content like e-commerce sites.
+export default function WebsiteNewsList() {
+  const [newsList, setNewsList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // fetch news list when the browser is idle and cache it.
+    const taskId = setIdleTask(fetchNewsList)
+    waitForIdleTask(taskId)
+        .then(setNewsList)
+        .finally(() => setIsLoading(false));
+    return () => {
+        // stop to fetch news list and remove the cache when the component re-render.
+        cancelIdleTask(taskId)
+    };
+  }, [])
+  
+  if (isLoading) {
+      return <div>Loading...</div>
+  }
+  return newsList.map(news => (
+      <div id={news.id}>
+        {news.publiedDate}
+        {news.title}
+        {news.description}
+      </div>
+  ))
+}
 ```
 
 ## License
