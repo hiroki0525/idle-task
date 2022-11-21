@@ -137,17 +137,20 @@ export const setIdleTask = (
   return idleTaskId;
 };
 
+const resolveTaskResultWhenCancel = (task: IdleTask): void => {
+  const promiseExecutor = task[idleTaskPromiseExecutorProp];
+  promiseExecutor && promiseExecutor[0](undefined);
+};
+
 export const cancelIdleTask = (id: number): void => {
   const task = tasks.find(task => task[idleTaskIdProp] === id);
-  if (task) {
-    const promiseExecutor = task[idleTaskPromiseExecutorProp];
-    promiseExecutor && promiseExecutor[0](undefined);
-  }
+  task && resolveTaskResultWhenCancel(task);
   idleTaskResultMap.delete(id);
   tasks = tasks.filter(task => task[idleTaskIdProp] !== id);
 };
 
 export const cancelAllIdleTasks = (): void => {
+  tasks.forEach(resolveTaskResultWhenCancel);
   tasks.length = 0;
   idleTaskResultMap.clear();
   requestIdleCallbackId && cancelIdleCallback(requestIdleCallbackId);
