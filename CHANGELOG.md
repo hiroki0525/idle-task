@@ -1,3 +1,10 @@
+## [2.5.2](https://github.com/hiroki0525/idle-task/compare/v2.5.1...v2.5.2) (2022-11-21)
+
+
+### Bug Fixes
+
+* cancel task during executing `waitForIdleTask` with `cancelAllIdleTasks` ([608cb02](https://github.com/hiroki0525/idle-task/commit/608cb02f0bd38d7c776981d230ce816768c54506))
+
 ## [2.5.1](https://github.com/hiroki0525/idle-task/compare/v2.5.0...v2.5.1) (2022-11-21)
 
 
