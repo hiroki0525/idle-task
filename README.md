@@ -84,7 +84,7 @@ I recommend to set `false` if you don't need the result of idle task.
 `waitForIdleTask` will return `undefined` when `cache` is `false` .
 
 ```typescript
-import {waitForIdleTask} from "./index";
+import {waitForIdleTask} from "idle-task";
 
 const sendAnalyticsData = (): void => {
     console.log("send analytics data")
