@@ -8,8 +8,29 @@
 
 Improve your website performance by executing JavaScript during a browser's idle periods.
 
-<!-- START doctoc -->
-<!-- END doctoc -->
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [Install](#install)
+- [Usage](#usage)
+- [API](#api)
+  - [`setIdleTask`](#setidletask)
+    - [priority?: 'low' | 'high'](#priority-low--high)
+    - [cache?: boolean](#cache-boolean)
+  - [`waitForIdleTask`](#waitforidletask)
+    - [cache?: boolean](#cache-boolean-1)
+    - [timeout?: number](#timeout-number)
+  - [`getResultFromIdleTask`](#getresultfromidletask)
+  - [`cancelIdleTask`](#cancelidletask)
+  - [`cancelAllIdleTasks`](#cancelallidletasks)
+  - [`isRunIdleTask`](#isrunidletask)
+  - [`configureIdleTask`](#configureidletask)
+    - [interval?: number](#interval-number)
+    - [debug?: boolean](#debug-boolean)
+- [License](#license)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Install
 
