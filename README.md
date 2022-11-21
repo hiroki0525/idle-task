@@ -238,6 +238,20 @@ I recommend less than **50 ms** to execute a task because of [RAIL model](https:
 
 The default is `process.env.NODE_ENV === 'development'` .
 
+## Recipe
+
+### Vanilla JS
+
+```javascript
+import { getResultFromIdleTask, setIdleTask } from 'idle-task';
+
+const button = document.getElementById('button');
+button.addEventListener('click', async () => {
+    const { default: sendAnalyticsData } = await getResultFromIdleTask(() => import('./sendAnalyticsData'));
+    setIdleTask(sendAnalyticsData, { cache: false });
+})
+```
+
 ## License
 
 Released under the MIT license.
