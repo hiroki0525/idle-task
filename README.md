@@ -12,8 +12,14 @@ Improve your website performance by executing JavaScript during a browser's idle
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**
 
+- [What is difference between `idle-task` and `requestIdleCallback`](#what-is-difference-between-idle-task-and-requestidlecallback)
+  - [Manage tasks priority](#manage-tasks-priority)
+  - [Promise based APIs](#promise-based-apis)
+  - [Cache](#cache)
+  - [Optimize executing tasks](#optimize-executing-tasks)
+  - [Analyze tasks execution time](#analyze-tasks-execution-time)
 - [Install](#install)
-- [Usage](#usage)
+- [Quick Start](#quick-start)
 - [API](#api)
   - [`setIdleTask`](#setidletask)
     - [`priority?: 'low' | 'high'`](#priority-low--high)
@@ -28,8 +34,9 @@ Improve your website performance by executing JavaScript during a browser's idle
   - [`configureIdleTask`](#configureidletask)
     - [`interval?: number`](#interval-number)
     - [`debug?: boolean`](#debug-boolean)
-- [Recipe](#recipe)
+- [Recipes](#recipes)
   - [Vanilla JS](#vanilla-js)
+  - [React](#react)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
