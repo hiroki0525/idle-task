@@ -3,7 +3,7 @@ name: Check size
 on:
   pull_request:
     branches:
-      - develop
+      - *
 
 jobs:
   check-size:

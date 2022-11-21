@@ -775,7 +775,7 @@ describe('idle-task', () => {
       });
     });
 
-    describe('not call cancelIdleTask', () => {
+    describe('not call cancelIdleTask or cancelAllIdleTasks', () => {
       beforeEach(() => {
         firstTaskId = idleTaskModule!.setIdleTask(createTask(mockFirstTask));
         runRequestIdleCallback();
@@ -788,52 +788,127 @@ describe('idle-task', () => {
       });
     });
 
-    describe('call cancelIdleTask', () => {
-      describe('task is executed', () => {
-        beforeEach(() => {
-          firstTaskId = idleTaskModule!.setIdleTask(createTask(mockFirstTask));
-          runRequestIdleCallback();
-          idleTaskModule!.cancelIdleTask(firstTaskId);
-        });
-
-        it('return undefined', async () => {
-          await expect(
-            idleTaskModule!.waitForIdleTask(firstTaskId)
-          ).resolves.toBeUndefined();
-        });
-      });
-
-      describe('task is not executed', () => {
-        let resultPromise: Promise<any>;
-
-        describe('call setIdleTask which cache is true', () => {
+    describe('call cancelIdleTask or cancelAllIdleTasks', () => {
+      describe('call cancelIdleTask', () => {
+        describe('task is executed', () => {
           beforeEach(() => {
             firstTaskId = idleTaskModule!.setIdleTask(
               createTask(mockFirstTask)
             );
-            resultPromise = idleTaskModule!.waitForIdleTask(firstTaskId);
-            idleTaskModule!.cancelIdleTask(firstTaskId);
             runRequestIdleCallback();
+            idleTaskModule!.cancelIdleTask(firstTaskId);
           });
 
           it('return undefined', async () => {
-            await expect(resultPromise).resolves.toBeUndefined();
+            await expect(
+              idleTaskModule!.waitForIdleTask(firstTaskId)
+            ).resolves.toBeUndefined();
           });
         });
 
-        describe('call setIdleTask which cache is true', () => {
+        describe('task is not executed', () => {
+          let resultPromise: Promise<any>;
+
+          describe('call setIdleTask which cache is true', () => {
+            beforeEach(() => {
+              firstTaskId = idleTaskModule!.setIdleTask(
+                createTask(mockFirstTask)
+              );
+              resultPromise = idleTaskModule!.waitForIdleTask(firstTaskId);
+              idleTaskModule!.cancelIdleTask(firstTaskId);
+              runRequestIdleCallback();
+            });
+
+            it('return undefined', async () => {
+              await expect(resultPromise).resolves.toBeUndefined();
+            });
+          });
+
+          describe('call setIdleTask which cache is true', () => {
+            beforeEach(() => {
+              firstTaskId = idleTaskModule!.setIdleTask(
+                createTask(mockFirstTask),
+                { cache: false }
+              );
+              resultPromise = idleTaskModule!.waitForIdleTask(firstTaskId);
+              idleTaskModule!.cancelIdleTask(firstTaskId);
+              runRequestIdleCallback();
+            });
+
+            it('return undefined', async () => {
+              await expect(resultPromise).resolves.toBeUndefined();
+            });
+          });
+        });
+      });
+
+      describe('call cancelAllIdleTasks', () => {
+        describe('task is executed', () => {
           beforeEach(() => {
             firstTaskId = idleTaskModule!.setIdleTask(
-              createTask(mockFirstTask),
-              { cache: false }
+              createTask(mockFirstTask)
             );
-            resultPromise = idleTaskModule!.waitForIdleTask(firstTaskId);
-            idleTaskModule!.cancelIdleTask(firstTaskId);
+            secondTaskId = idleTaskModule!.setIdleTask(
+              createTask(mockSecondTask)
+            );
+            thirdTaskId = idleTaskModule!.setIdleTask(
+              createTask(mockThirdTask)
+            );
+            runRequestIdleCallback();
+            idleTaskModule!.cancelAllIdleTasks();
+          });
+
+          it('first task returns undefined', async () => {
+            await expect(
+              idleTaskModule!.waitForIdleTask(firstTaskId)
+            ).resolves.toBeUndefined();
+          });
+
+          it('second task returns undefined', async () => {
+            await expect(
+              idleTaskModule!.waitForIdleTask(secondTaskId)
+            ).resolves.toBeUndefined();
+          });
+
+          it('third task returns undefined', async () => {
+            await expect(
+              idleTaskModule!.waitForIdleTask(thirdTaskId)
+            ).resolves.toBeUndefined();
+          });
+        });
+
+        describe('task is not executed', () => {
+          let firstResultPromise: Promise<any>;
+          let secondResultPromise: Promise<any>;
+          let thirdResultPromise: Promise<any>;
+
+          beforeEach(() => {
+            firstTaskId = idleTaskModule!.setIdleTask(
+              createTask(mockFirstTask)
+            );
+            secondTaskId = idleTaskModule!.setIdleTask(
+              createTask(mockSecondTask)
+            );
+            thirdTaskId = idleTaskModule!.setIdleTask(
+              createTask(mockThirdTask)
+            );
+            firstResultPromise = idleTaskModule!.waitForIdleTask(firstTaskId);
+            secondResultPromise = idleTaskModule!.waitForIdleTask(secondTaskId);
+            thirdResultPromise = idleTaskModule!.waitForIdleTask(thirdTaskId);
+            idleTaskModule!.cancelAllIdleTasks();
             runRequestIdleCallback();
           });
 
-          it('return undefined', async () => {
-            await expect(resultPromise).resolves.toBeUndefined();
+          it('first task return undefined', async () => {
+            await expect(firstResultPromise).resolves.toBeUndefined();
+          });
+
+          it('second task return undefined', async () => {
+            await expect(secondResultPromise).resolves.toBeUndefined();
+          });
+
+          it('third task return undefined', async () => {
+            await expect(thirdResultPromise).resolves.toBeUndefined();
           });
         });
       });
