@@ -68,12 +68,12 @@ If you want to know how long did it take to finish a task, please use [debug mod
 
 `setIdleTask` can also be set options as below.
 
-#### priority?: 'low' | 'high'
+#### `priority?: 'low' | 'high'`
 
 You can run a task preferentially using `priority: 'high'` (default is `false`) option.
 `setIdleTask` adds it to the head of the queue.
 
-#### cache?: boolean
+#### `cache?: boolean`
 
 This option is to improve performance.
 
@@ -112,7 +112,7 @@ You can get the result of the task by using `waitForIdleTask` .
 
 `waitForIdleTask` can also be set options as below.
 
-#### cache?: boolean
+#### `cache?: boolean`
 
 **`idle-task` caches the results of tasks by default** .
 
@@ -142,7 +142,7 @@ console.log(Object.is(firstRandomNumber, secondRandomNumber));
 // => false
 ```
 
-#### timeout?: number
+#### `timeout?: number`
 
 `waitForIdleTask` maybe wait for the task eternally because it will be finished when the browser is idle.
 `timeout` option can prevent it.
@@ -222,7 +222,7 @@ configureIdleTask({
 `configureIdleTask` configures `idle-task` .
 You can set properties as below.
 
-#### interval?: number
+#### `interval?: number`
 
 `idle-task` checks tasks which was registered by `setIdleTask` during a browser's idle periods, so **they will not always be executed** . 
 
@@ -230,7 +230,7 @@ Please set `interval` if you want to guarantee to run tasks as much as possible.
 
 Even if the browser is not idle, `idle-task` checks tasks every 1000 ms when `interval` is `1000` and **will execute tasks without negative impact on performance**.
 
-#### debug?: boolean
+#### `debug?: boolean`
 
 If `debug` is `true`, you can know how long did it take to finish the task via the web console.
 
