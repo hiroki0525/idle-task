@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 import {
+  ConfigureOptions,
   getResultFromIdleTask,
   SetIdleTaskOptions,
   WaitForIdleTaskOptions,
@@ -70,6 +71,19 @@ describe('idle-task', () => {
   });
 
   describe('configureIdleTask', () => {
+    let mockConfigureIdleTask: jest.SpyInstance;
+
+    beforeEach(() => {
+      mockConfigureIdleTask = jest.spyOn(
+        idleTaskModule as any,
+        'configureIdleTask'
+      );
+    });
+
+    afterEach(() => {
+      mockConfigureIdleTask.mockReset();
+    });
+
     describe('not called configure', () => {
       beforeEach(() => {
         idleTaskModule!.setIdleTask(createTask());
@@ -81,21 +95,33 @@ describe('idle-task', () => {
           timeout: undefined,
         });
       });
+
+      it('not called configureIdleTask', () => {
+        expect(mockConfigureIdleTask).not.toHaveBeenCalled();
+      });
     });
 
     describe('called configure', () => {
-      const expectedTimeout = 1000;
+      const expected: ConfigureOptions = {
+        interval: 1000,
+        debug: false,
+        timeout: 3000,
+      };
 
       beforeEach(() => {
-        idleTaskModule!.configureIdleTask({ interval: expectedTimeout });
+        idleTaskModule!.configureIdleTask(expected);
         idleTaskModule!.setIdleTask(createTask());
         runRequestIdleCallback();
       });
 
       it('requestIdleCallback called with option', () => {
         expect(mockRequestIdleCallback.mock.calls[0][1]).toStrictEqual({
-          timeout: expectedTimeout,
+          timeout: expected.interval,
         });
+      });
+
+      it('called configureIdleTask with options', () => {
+        expect(mockConfigureIdleTask).toHaveBeenCalledWith(expected);
       });
     });
   });
@@ -741,36 +767,109 @@ describe('idle-task', () => {
       let result: Promise<any>;
 
       describe('not timeout', () => {
-        beforeEach(async () => {
-          firstTaskId = idleTaskModule!.setIdleTask(
-            createTask(mockFirstTask, 8)
-          );
-          result = idleTaskModule!.waitForIdleTask(firstTaskId, {
-            timeout: 10,
-          });
-          runRequestIdleCallback();
-        });
+        describe('using configureIdleTask', () => {
+          describe('with WaitForIdleTask.timeout', () => {
+            beforeEach(async () => {
+              idleTaskModule!.configureIdleTask({ timeout: 9 });
+              firstTaskId = idleTaskModule!.setIdleTask(
+                createTask(mockFirstTask, 8)
+              );
+              result = idleTaskModule!.waitForIdleTask(firstTaskId, {
+                timeout: 10,
+              });
+              runRequestIdleCallback();
+            });
 
-        it('return task result', async () => {
-          await expect(result).resolves.toBe('mockFirstTask');
+            it('return task result', async () => {
+              await expect(result).resolves.toBe('mockFirstTask');
+            });
+          });
+          describe('without WaitForIdleTask.timeout', () => {
+            beforeEach(async () => {
+              idleTaskModule!.configureIdleTask({ timeout: 10 });
+              firstTaskId = idleTaskModule!.setIdleTask(
+                createTask(mockFirstTask, 8)
+              );
+              result = idleTaskModule!.waitForIdleTask(firstTaskId);
+              runRequestIdleCallback();
+            });
+
+            it('return task result', async () => {
+              await expect(result).resolves.toBe('mockFirstTask');
+            });
+          });
+        });
+        describe('not using configureIdleTask', () => {
+          beforeEach(async () => {
+            firstTaskId = idleTaskModule!.setIdleTask(
+              createTask(mockFirstTask, 8)
+            );
+            result = idleTaskModule!.waitForIdleTask(firstTaskId, {
+              timeout: 10,
+            });
+            runRequestIdleCallback();
+          });
+
+          it('return task result', async () => {
+            await expect(result).resolves.toBe('mockFirstTask');
+          });
         });
       });
 
       describe('timeout', () => {
-        beforeEach(async () => {
-          firstTaskId = idleTaskModule!.setIdleTask(
-            createTask(mockFirstTask, 9)
-          );
-          result = idleTaskModule!.waitForIdleTask(firstTaskId, {
-            timeout: 10,
+        describe('using configureIdleTask', () => {
+          describe('with WaitForIdleTask.timeout', () => {
+            beforeEach(async () => {
+              idleTaskModule!.configureIdleTask({ timeout: 11 });
+              firstTaskId = idleTaskModule!.setIdleTask(
+                createTask(mockFirstTask, 9)
+              );
+              result = idleTaskModule!.waitForIdleTask(firstTaskId, {
+                timeout: 10,
+              });
+              runRequestIdleCallback();
+            });
+
+            it('throw WaitForIdleTaskTimeoutError', async () => {
+              await expect(result).rejects.toThrow(
+                new idleTaskModule!.WaitForIdleTaskTimeoutError()
+              );
+            });
           });
-          runRequestIdleCallback();
+          describe('without WaitForIdleTask.timeout', () => {
+            beforeEach(async () => {
+              idleTaskModule!.configureIdleTask({ timeout: 10 });
+              firstTaskId = idleTaskModule!.setIdleTask(
+                createTask(mockFirstTask, 9)
+              );
+              result = idleTaskModule!.waitForIdleTask(firstTaskId);
+              runRequestIdleCallback();
+            });
+
+            it('throw WaitForIdleTaskTimeoutError', async () => {
+              await expect(result).rejects.toThrow(
+                new idleTaskModule!.WaitForIdleTaskTimeoutError()
+              );
+            });
+          });
         });
 
-        it('throw WaitForIdleTaskTimeoutError', async () => {
-          await expect(result).rejects.toThrow(
-            new idleTaskModule!.WaitForIdleTaskTimeoutError()
-          );
+        describe('not using configureIdleTask', () => {
+          beforeEach(async () => {
+            firstTaskId = idleTaskModule!.setIdleTask(
+              createTask(mockFirstTask, 9)
+            );
+            result = idleTaskModule!.waitForIdleTask(firstTaskId, {
+              timeout: 10,
+            });
+            runRequestIdleCallback();
+          });
+
+          it('throw WaitForIdleTaskTimeoutError', async () => {
+            await expect(result).rejects.toThrow(
+              new idleTaskModule!.WaitForIdleTaskTimeoutError()
+            );
+          });
         });
       });
     });
