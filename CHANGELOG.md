@@ -1,3 +1,10 @@
+# [2.6.0](https://github.com/hiroki0525/idle-task/compare/v2.5.2...v2.6.0) (2022-11-22)
+
+
+### Features
+
+* add `ConfigureOptions.timeout` ([8ab7b41](https://github.com/hiroki0525/idle-task/commit/8ab7b419a736c50056ff1c15a56c3fdad56d4e92)), closes [/github.com/hiroki0525/idle-task#timeout-number-1](https://github.com//github.com/hiroki0525/idle-task/issues/timeout-number-1)
+
 ## [2.5.2](https://github.com/hiroki0525/idle-task/compare/v2.5.1...v2.5.2) (2022-11-21)
 
 
