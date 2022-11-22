@@ -36,6 +36,7 @@ Improve your website performance by executing JavaScript during a browser's idle
   - [`configureIdleTask`](#configureidletask)
     - [`interval?: number`](#interval-number)
     - [`debug?: boolean`](#debug-boolean)
+    - [`timeout?: number`](#timeout-number-1)
 - [Recipes](#recipes)
   - [Vanilla JS](#vanilla-js)
   - [React](#react)
