@@ -90,8 +90,7 @@
     "rules": {
       "footer-max-length": [
         0,
-        "always",
-        "Infinity"
+        "always"
       ]
     }
   }
