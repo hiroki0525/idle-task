@@ -3,8 +3,10 @@
 ![idle-task](https://user-images.githubusercontent.com/40714517/202905619-b2319b98-d81a-4cc2-9eac-c88702daf45b.png)
 
 [![npm version](https://badge.fury.io/js/idle-task.svg)](https://badge.fury.io/js/idle-task)
+![npm bundle size](https://img.shields.io/bundlephobia/minzip/idle-task)
 [![Test](https://github.com/hiroki0525/idle-task/actions/workflows/test.yml/badge.svg)](https://github.com/hiroki0525/idle-task/actions/workflows/test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![semantic-release: angular](https://img.shields.io/badge/semantic--release-commitlint_conventional-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
 
 Improve your website performance by executing JavaScript during a browser's idle periods.
 
@@ -296,6 +298,7 @@ You can know whether the task is executed or not by using `isRunIdleTask` .
 configureIdleTask({
   interval: 1000, // ms
   debug: false,
+  timeout: 3000,
 });
 ```
 
@@ -317,6 +320,21 @@ If `debug` is `true`, you can know how long did it take to finish the task via t
 I recommend less than **50 ms** to execute a task because of [RAIL model](https://web.dev/i18n/en/rail/) .
 
 The default is `process.env.NODE_ENV === 'development'` .
+
+#### `timeout?: number`
+
+This option configures `timeout` of `waitForIdleTask` and `getResultFromIdleTask` as **default** setting.
+
+```javascript
+configureIdleTask({ timeout: 3000 });
+
+const taskId = setIdleTask(yourFunction);
+// timeout is 3000
+const result = await waitForIdleTask(taskId);
+
+// timeout is 5000 if you set timeout as option
+const result = await waitForIdleTask(taskId, { timeout: 5000 });
+```
 
 ## Recipes
 

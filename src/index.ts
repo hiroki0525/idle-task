@@ -35,6 +35,7 @@ let requestIdleCallbackId = NaN;
 export type ConfigureOptions = {
   readonly interval?: number;
   readonly debug?: boolean;
+  readonly timeout?: number;
 };
 
 let taskGlobalOptions: ConfigureOptions = {
@@ -183,15 +184,16 @@ export const waitForIdleTask = async (
   if (options.cache === false) {
     idleTaskResultMap.delete(id);
   }
+  const { timeout: globalTimeout } = taskGlobalOptions;
   const { timeout } = options;
-  if (timeout === undefined) {
+  if (timeout === undefined && globalTimeout === undefined) {
     return result;
   }
   let isTimeout = false;
   const timeoutPromise = new Promise(resolve => {
     setTimeout(() => {
       resolve((isTimeout = true));
-    }, timeout);
+    }, timeout ?? globalTimeout);
   });
   const racedResult = await Promise.race([result, timeoutPromise]);
   if (isTimeout) {
