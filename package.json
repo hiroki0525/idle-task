@@ -12,7 +12,8 @@
     "lint": "eslint src/",
     "prettier": "prettier src/",
     "size": "size-limit",
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -81,5 +82,17 @@
     "branches": [
       "main"
     ]
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ],
+    "rules": {
+      "footer-max-length": [
+        0,
+        "always",
+        "Infinity"
+      ]
+    }
   }
 }
