@@ -157,6 +157,7 @@ export const cancelAllIdleTasks = (): void => {
   requestIdleCallbackId && cancelIdleCallback(requestIdleCallbackId);
 };
 
+// deprecated
 export const isRunIdleTask = (id: number): boolean =>
   tasks.findIndex(task => task[idleTaskIdProp] === id) === -1;
 

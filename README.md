@@ -291,6 +291,8 @@ if (isRun) {
 }
 ```
 
+**deprecated** : This function will be replaced alternative one.
+
 You can know whether the task is executed or not by using `isRunIdleTask` .
 
 ### `configureIdleTask`
