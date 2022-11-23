@@ -1,3 +1,10 @@
+# [2.7.0](https://github.com/hiroki0525/idle-task/compare/v2.6.0...v2.7.0) (2022-11-23)
+
+
+### Features
+
+* add `ConfigureOptions.cache` ([8fc577c](https://github.com/hiroki0525/idle-task/commit/8fc577c071803e902ebbff20763012f29dcca6d0)), closes [/github.com/hiroki0525/idle-task#cache-boolean-2](https://github.com//github.com/hiroki0525/idle-task/issues/cache-boolean-2)
+
 # [2.6.0](https://github.com/hiroki0525/idle-task/compare/v2.5.2...v2.6.0) (2022-11-22)
 
 
