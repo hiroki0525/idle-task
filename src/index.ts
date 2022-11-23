@@ -36,10 +36,12 @@ export type ConfigureOptions = {
   readonly interval?: number;
   readonly debug?: boolean;
   readonly timeout?: number;
+  readonly cache?: boolean;
 };
 
 let taskGlobalOptions: ConfigureOptions = {
   debug: process.env.NODE_ENV === 'development',
+  cache: true,
 };
 
 export const configureIdleTask = (options: ConfigureOptions): void => {
@@ -107,7 +109,6 @@ export interface SetIdleTaskOptions {
 let id = 0;
 const defaultSetIdleTaskOptions: SetIdleTaskOptions = {
   priority: 'low',
-  cache: true,
 };
 
 export const setIdleTask = (
@@ -118,7 +119,8 @@ export const setIdleTask = (
   const idleTask = Object.defineProperty(task, idleTaskIdProp, {
     value: idleTaskId,
   }) as IdleTask;
-  if (options.cache !== false) {
+  const isUseCache = options.cache ?? taskGlobalOptions.cache;
+  if (isUseCache !== false) {
     idleTaskResultMap.set(
       idleTaskId,
       new Promise((resolve, reject) => {

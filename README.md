@@ -339,6 +339,23 @@ const result = await waitForIdleTask(taskId);
 const result = await waitForIdleTask(taskId, { timeout: 5000 });
 ```
 
+#### `cache?: false`
+
+This option configures `cache` of `setIdleTask` as **default** setting. Default is `true` .
+You should set `false` if it is make sure not to need all the results of tasks when using `setIdleTask` . 
+
+```javascript
+configureIdleTask({ cache: false });
+
+// cache option is false
+setIdleTask(yourFunction);
+// same
+setIdleTask(yourFunction, { cache: false })
+
+// cache is true if you set cache as option
+setIdleTask(yourFunction, { cache: true });
+```
+
 ## Recipes
 
 ### Vanilla JS

@@ -106,6 +106,7 @@ describe('idle-task', () => {
         interval: 1000,
         debug: false,
         timeout: 3000,
+        cache: false,
       };
 
       beforeEach(() => {
@@ -611,78 +612,325 @@ describe('idle-task', () => {
 
     describe('cache is true', () => {
       let expected: Promise<any>;
+      const result = { result: 'firstTask' };
 
-      describe('set no WaitForIdleTaskOptions', () => {
-        beforeEach(async () => {
-          firstTaskId = idleTaskModule!.setIdleTask(() => 'firstTask');
-          runRequestIdleCallback();
-          expected = await idleTaskModule!.waitForIdleTask(firstTaskId);
-        });
+      describe('cache is only once', () => {
+        describe('set WaitForIdleTaskOptions which cache is false', () => {
+          beforeEach(async () => {
+            firstTaskId = idleTaskModule!.setIdleTask(() => result);
+            runRequestIdleCallback();
+            expected = await idleTaskModule!.waitForIdleTask(firstTaskId, {
+              cache: false,
+            });
+          });
 
-        it('return same Object', async () => {
-          await expect(
-            idleTaskModule!.waitForIdleTask(firstTaskId)
-          ).resolves.toBe(expected);
+          it('return not same Object', async () => {
+            await expect(
+              idleTaskModule!.waitForIdleTask(firstTaskId)
+            ).resolves.not.toBe(expected);
+          });
+
+          it('first result return Object', async () => {
+            expect(expected).toBe(result);
+          });
+
+          it('second result return undefined', async () => {
+            await expect(
+              idleTaskModule!.waitForIdleTask(firstTaskId)
+            ).resolves.toBeUndefined();
+          });
         });
       });
 
-      describe('set WaitForIdleTaskOptions which cache is true', () => {
-        beforeEach(async () => {
-          firstTaskId = idleTaskModule!.setIdleTask(() => 'firstTask');
-          runRequestIdleCallback();
-          expected = await idleTaskModule!.waitForIdleTask(firstTaskId, {
-            cache: true,
+      describe('cache is not only once', () => {
+        describe('set no WaitForIdleTaskOptions', () => {
+          beforeEach(async () => {
+            firstTaskId = idleTaskModule!.setIdleTask(() => result);
+            runRequestIdleCallback();
+            expected = await idleTaskModule!.waitForIdleTask(firstTaskId);
+          });
+
+          it('return same Object', async () => {
+            await expect(
+              idleTaskModule!.waitForIdleTask(firstTaskId)
+            ).resolves.toBe(expected);
+          });
+
+          it('return Object', async () => {
+            await expect(
+              idleTaskModule!.waitForIdleTask(firstTaskId)
+            ).resolves.toBe(result);
           });
         });
 
-        it('return same Object', async () => {
-          await expect(
-            idleTaskModule!.waitForIdleTask(firstTaskId)
-          ).resolves.toBe(expected);
-        });
-      });
-
-      describe('set WaitForIdleTaskOptions which cache is undefined', () => {
-        beforeEach(async () => {
-          firstTaskId = idleTaskModule!.setIdleTask(() => 'firstTask');
-          runRequestIdleCallback();
-          expected = await idleTaskModule!.waitForIdleTask(firstTaskId, {});
-        });
-
-        it('return same Object', async () => {
-          await expect(
-            idleTaskModule!.waitForIdleTask(firstTaskId)
-          ).resolves.toBe(expected);
-        });
-      });
-
-      describe('set no SetIdleTaskOptions which cache is undefined', () => {
-        beforeEach(async () => {
-          firstTaskId = idleTaskModule!.setIdleTask(() => 'firstTask', {});
-          runRequestIdleCallback();
-          expected = await idleTaskModule!.waitForIdleTask(firstTaskId);
-        });
-
-        it('return same Object', async () => {
-          await expect(
-            idleTaskModule!.waitForIdleTask(firstTaskId)
-          ).resolves.toBe(expected);
-        });
-      });
-
-      describe('set no SetIdleTaskOptions which cache is true', () => {
-        beforeEach(async () => {
-          firstTaskId = idleTaskModule!.setIdleTask(() => 'firstTask', {
-            cache: true,
+        describe('set WaitForIdleTaskOptions which cache is true', () => {
+          beforeEach(async () => {
+            firstTaskId = idleTaskModule!.setIdleTask(() => result);
+            runRequestIdleCallback();
+            expected = await idleTaskModule!.waitForIdleTask(firstTaskId, {
+              cache: true,
+            });
           });
-          runRequestIdleCallback();
-          expected = await idleTaskModule!.waitForIdleTask(firstTaskId);
+
+          it('return same Object', async () => {
+            await expect(
+              idleTaskModule!.waitForIdleTask(firstTaskId)
+            ).resolves.toBe(expected);
+          });
+
+          it('return Object', async () => {
+            await expect(
+              idleTaskModule!.waitForIdleTask(firstTaskId)
+            ).resolves.toBe(result);
+          });
         });
 
-        it('return same Object', async () => {
-          await expect(
-            idleTaskModule!.waitForIdleTask(firstTaskId)
-          ).resolves.toBe(expected);
+        describe('set WaitForIdleTaskOptions which cache is undefined', () => {
+          beforeEach(async () => {
+            firstTaskId = idleTaskModule!.setIdleTask(() => result);
+            runRequestIdleCallback();
+            expected = await idleTaskModule!.waitForIdleTask(firstTaskId, {});
+          });
+
+          it('return same Object', async () => {
+            await expect(
+              idleTaskModule!.waitForIdleTask(firstTaskId)
+            ).resolves.toBe(expected);
+          });
+
+          it('return Object', async () => {
+            await expect(
+              idleTaskModule!.waitForIdleTask(firstTaskId)
+            ).resolves.toBe(result);
+          });
+        });
+
+        describe('set no ConfigureOptions', () => {
+          describe('set no SetIdleTaskOptions', () => {
+            beforeEach(async () => {
+              firstTaskId = idleTaskModule!.setIdleTask(() => result);
+              runRequestIdleCallback();
+              expected = await idleTaskModule!.waitForIdleTask(firstTaskId);
+            });
+
+            it('return same Object', async () => {
+              await expect(
+                idleTaskModule!.waitForIdleTask(firstTaskId)
+              ).resolves.toBe(expected);
+            });
+
+            it('return Object', async () => {
+              await expect(
+                idleTaskModule!.waitForIdleTask(firstTaskId)
+              ).resolves.toBe(result);
+            });
+          });
+
+          describe('set SetIdleTaskOptions which cache is undefined', () => {
+            beforeEach(async () => {
+              firstTaskId = idleTaskModule!.setIdleTask(() => result, {});
+              runRequestIdleCallback();
+              expected = await idleTaskModule!.waitForIdleTask(firstTaskId);
+            });
+
+            it('return same Object', async () => {
+              await expect(
+                idleTaskModule!.waitForIdleTask(firstTaskId)
+              ).resolves.toBe(expected);
+            });
+
+            it('return Object', async () => {
+              await expect(
+                idleTaskModule!.waitForIdleTask(firstTaskId)
+              ).resolves.toBe(result);
+            });
+          });
+
+          describe('set SetIdleTaskOptions which cache is true', () => {
+            beforeEach(async () => {
+              firstTaskId = idleTaskModule!.setIdleTask(() => result, {
+                cache: true,
+              });
+              runRequestIdleCallback();
+              expected = await idleTaskModule!.waitForIdleTask(firstTaskId);
+            });
+
+            it('return same Object', async () => {
+              await expect(
+                idleTaskModule!.waitForIdleTask(firstTaskId)
+              ).resolves.toBe(expected);
+            });
+
+            it('return Object', async () => {
+              await expect(
+                idleTaskModule!.waitForIdleTask(firstTaskId)
+              ).resolves.toBe(result);
+            });
+          });
+        });
+
+        describe('set ConfigureOptions which cache is undefined', () => {
+          beforeEach(() => {
+            idleTaskModule!.configureIdleTask({});
+          });
+
+          describe('set no SetIdleTaskOptions', () => {
+            beforeEach(async () => {
+              firstTaskId = idleTaskModule!.setIdleTask(() => result);
+              runRequestIdleCallback();
+              expected = await idleTaskModule!.waitForIdleTask(firstTaskId);
+            });
+
+            it('return same Object', async () => {
+              await expect(
+                idleTaskModule!.waitForIdleTask(firstTaskId)
+              ).resolves.toBe(expected);
+            });
+
+            it('return Object', async () => {
+              await expect(
+                idleTaskModule!.waitForIdleTask(firstTaskId)
+              ).resolves.toBe(result);
+            });
+          });
+
+          describe('set SetIdleTaskOptions which cache is undefined', () => {
+            beforeEach(async () => {
+              firstTaskId = idleTaskModule!.setIdleTask(() => result, {});
+              runRequestIdleCallback();
+              expected = await idleTaskModule!.waitForIdleTask(firstTaskId);
+            });
+
+            it('return same Object', async () => {
+              await expect(
+                idleTaskModule!.waitForIdleTask(firstTaskId)
+              ).resolves.toBe(expected);
+            });
+
+            it('return Object', async () => {
+              await expect(
+                idleTaskModule!.waitForIdleTask(firstTaskId)
+              ).resolves.toBe(result);
+            });
+          });
+
+          describe('set SetIdleTaskOptions which cache is true', () => {
+            beforeEach(async () => {
+              firstTaskId = idleTaskModule!.setIdleTask(() => result, {
+                cache: true,
+              });
+              runRequestIdleCallback();
+              expected = await idleTaskModule!.waitForIdleTask(firstTaskId);
+            });
+
+            it('return same Object', async () => {
+              await expect(
+                idleTaskModule!.waitForIdleTask(firstTaskId)
+              ).resolves.toBe(expected);
+            });
+
+            it('return Object', async () => {
+              await expect(
+                idleTaskModule!.waitForIdleTask(firstTaskId)
+              ).resolves.toBe(result);
+            });
+          });
+        });
+
+        describe('set ConfigureOptions which cache is true', () => {
+          beforeEach(() => {
+            idleTaskModule!.configureIdleTask({ cache: true });
+          });
+
+          describe('set no SetIdleTaskOptions', () => {
+            beforeEach(async () => {
+              firstTaskId = idleTaskModule!.setIdleTask(() => result);
+              runRequestIdleCallback();
+              expected = await idleTaskModule!.waitForIdleTask(firstTaskId);
+            });
+
+            it('return same Object', async () => {
+              await expect(
+                idleTaskModule!.waitForIdleTask(firstTaskId)
+              ).resolves.toBe(expected);
+            });
+
+            it('return Object', async () => {
+              await expect(
+                idleTaskModule!.waitForIdleTask(firstTaskId)
+              ).resolves.toBe(result);
+            });
+          });
+
+          describe('set SetIdleTaskOptions which cache is undefined', () => {
+            beforeEach(async () => {
+              firstTaskId = idleTaskModule!.setIdleTask(() => result, {});
+              runRequestIdleCallback();
+              expected = await idleTaskModule!.waitForIdleTask(firstTaskId);
+            });
+
+            it('return same Object', async () => {
+              await expect(
+                idleTaskModule!.waitForIdleTask(firstTaskId)
+              ).resolves.toBe(expected);
+            });
+
+            it('return Object', async () => {
+              await expect(
+                idleTaskModule!.waitForIdleTask(firstTaskId)
+              ).resolves.toBe(result);
+            });
+          });
+
+          describe('set SetIdleTaskOptions which cache is true', () => {
+            beforeEach(async () => {
+              firstTaskId = idleTaskModule!.setIdleTask(() => result, {
+                cache: true,
+              });
+              runRequestIdleCallback();
+              expected = await idleTaskModule!.waitForIdleTask(firstTaskId);
+            });
+
+            it('return same Object', async () => {
+              await expect(
+                idleTaskModule!.waitForIdleTask(firstTaskId)
+              ).resolves.toBe(expected);
+            });
+
+            it('return Object', async () => {
+              await expect(
+                idleTaskModule!.waitForIdleTask(firstTaskId)
+              ).resolves.toBe(result);
+            });
+          });
+        });
+
+        describe('set ConfigureOptions which cache is false', () => {
+          beforeEach(() => {
+            idleTaskModule!.configureIdleTask({ cache: false });
+          });
+
+          describe('set SetIdleTaskOptions which cache is true', () => {
+            beforeEach(async () => {
+              firstTaskId = idleTaskModule!.setIdleTask(() => result, {
+                cache: true,
+              });
+              runRequestIdleCallback();
+              expected = await idleTaskModule!.waitForIdleTask(firstTaskId);
+            });
+
+            it('return same Object', async () => {
+              await expect(
+                idleTaskModule!.waitForIdleTask(firstTaskId)
+              ).resolves.toBe(expected);
+            });
+
+            it('return Object', async () => {
+              await expect(
+                idleTaskModule!.waitForIdleTask(firstTaskId)
+              ).resolves.toBe(result);
+            });
+          });
         });
       });
     });
@@ -690,47 +938,122 @@ describe('idle-task', () => {
     describe('cache is false', () => {
       let expected: Promise<any>;
 
-      describe('set WaitForIdleTaskOptions which cache is false', () => {
-        beforeEach(async () => {
-          firstTaskId = idleTaskModule!.setIdleTask(() => 'firstTask');
-          runRequestIdleCallback();
-          expected = await idleTaskModule!.waitForIdleTask(firstTaskId, {
-            cache: false,
+      describe('set no ConfigureOptions', () => {
+        describe('set SetIdleTaskOptions which cache is false', () => {
+          beforeEach(async () => {
+            firstTaskId = idleTaskModule!.setIdleTask(() => 'firstTask', {
+              cache: false,
+            });
+            runRequestIdleCallback();
+            expected = await idleTaskModule!.waitForIdleTask(firstTaskId);
+          });
+
+          it('return same Object', async () => {
+            await expect(
+              idleTaskModule!.waitForIdleTask(firstTaskId)
+            ).resolves.toBe(expected);
+          });
+
+          it('return undefined', async () => {
+            await expect(
+              idleTaskModule!.waitForIdleTask(firstTaskId)
+            ).resolves.toBeUndefined();
           });
         });
-
-        it('return not same Object', async () => {
-          await expect(
-            idleTaskModule!.waitForIdleTask(firstTaskId)
-          ).resolves.not.toBe(expected);
+      });
+      describe('set ConfigureOptions which cache is undefined', () => {
+        beforeEach(() => {
+          idleTaskModule!.configureIdleTask({});
         });
 
-        it('return undefined', async () => {
-          await expect(
-            idleTaskModule!.waitForIdleTask(firstTaskId)
-          ).resolves.toBeUndefined();
+        describe('set SetIdleTaskOptions which cache is false', () => {
+          beforeEach(async () => {
+            firstTaskId = idleTaskModule!.setIdleTask(() => 'firstTask', {
+              cache: false,
+            });
+            runRequestIdleCallback();
+            expected = await idleTaskModule!.waitForIdleTask(firstTaskId);
+          });
+
+          it('return same Object', async () => {
+            await expect(
+              idleTaskModule!.waitForIdleTask(firstTaskId)
+            ).resolves.toBe(expected);
+          });
+
+          it('return undefined', async () => {
+            await expect(
+              idleTaskModule!.waitForIdleTask(firstTaskId)
+            ).resolves.toBeUndefined();
+          });
         });
       });
 
-      describe('set SetIdleTaskOptions which cache is false', () => {
-        beforeEach(async () => {
-          firstTaskId = idleTaskModule!.setIdleTask(() => 'firstTask', {
-            cache: false,
+      describe('set ConfigureOptions which cache is false', () => {
+        beforeEach(() => {
+          idleTaskModule!.configureIdleTask({ cache: false });
+        });
+
+        describe('set no SetIdleTaskOptions', () => {
+          beforeEach(async () => {
+            firstTaskId = idleTaskModule!.setIdleTask(() => 'firstTask');
+            runRequestIdleCallback();
+            expected = await idleTaskModule!.waitForIdleTask(firstTaskId);
           });
-          runRequestIdleCallback();
-          expected = await idleTaskModule!.waitForIdleTask(firstTaskId);
+
+          it('return same Object', async () => {
+            await expect(
+              idleTaskModule!.waitForIdleTask(firstTaskId)
+            ).resolves.toBe(expected);
+          });
+
+          it('return undefined', async () => {
+            await expect(
+              idleTaskModule!.waitForIdleTask(firstTaskId)
+            ).resolves.toBeUndefined();
+          });
         });
 
-        it('return same Object', async () => {
-          await expect(
-            idleTaskModule!.waitForIdleTask(firstTaskId)
-          ).resolves.toBe(expected);
+        describe('set SetIdleTaskOptions which cache is undefined', () => {
+          beforeEach(async () => {
+            firstTaskId = idleTaskModule!.setIdleTask(() => 'firstTask', {});
+            runRequestIdleCallback();
+            expected = await idleTaskModule!.waitForIdleTask(firstTaskId);
+          });
+
+          it('return same Object', async () => {
+            await expect(
+              idleTaskModule!.waitForIdleTask(firstTaskId)
+            ).resolves.toBe(expected);
+          });
+
+          it('return undefined', async () => {
+            await expect(
+              idleTaskModule!.waitForIdleTask(firstTaskId)
+            ).resolves.toBeUndefined();
+          });
         });
 
-        it('return undefined', async () => {
-          await expect(
-            idleTaskModule!.waitForIdleTask(firstTaskId)
-          ).resolves.toBeUndefined();
+        describe('set SetIdleTaskOptions which cache is false', () => {
+          beforeEach(async () => {
+            firstTaskId = idleTaskModule!.setIdleTask(() => 'firstTask', {
+              cache: false,
+            });
+            runRequestIdleCallback();
+            expected = await idleTaskModule!.waitForIdleTask(firstTaskId);
+          });
+
+          it('return same Object', async () => {
+            await expect(
+              idleTaskModule!.waitForIdleTask(firstTaskId)
+            ).resolves.toBe(expected);
+          });
+
+          it('return undefined', async () => {
+            await expect(
+              idleTaskModule!.waitForIdleTask(firstTaskId)
+            ).resolves.toBeUndefined();
+          });
         });
       });
     });
