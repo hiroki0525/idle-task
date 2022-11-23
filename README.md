@@ -57,7 +57,7 @@ setIdleTask(yourLowPrioryFunction, { prioriy: 'low' });
 setIdleTask(yourHighPrioryFunction, { prioriy: 'high' });
 ```
 
-### Promise based APIs
+### Get result by using Promise based API
 
 ```javascript
 import { getResultFromIdleTask } from 'idle-task';
