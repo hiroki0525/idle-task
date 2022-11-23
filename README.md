@@ -16,7 +16,7 @@ Improve your website performance by executing JavaScript during a browser's idle
 
 - [What is difference between `idle-task` and `requestIdleCallback`](#what-is-difference-between-idle-task-and-requestidlecallback)
   - [Manage tasks priority](#manage-tasks-priority)
-  - [Promise based APIs](#promise-based-apis)
+  - [Get result by using Promise based API](#get-result-by-using-promise-based-api)
   - [Cache](#cache)
   - [Optimize executing tasks](#optimize-executing-tasks)
   - [Analyze tasks execution time](#analyze-tasks-execution-time)
