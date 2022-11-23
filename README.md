@@ -37,6 +37,7 @@ Improve your website performance by executing JavaScript during a browser's idle
     - [`interval?: number`](#interval-number)
     - [`debug?: boolean`](#debug-boolean)
     - [`timeout?: number`](#timeout-number-1)
+    - [`cache?: false`](#cache-false)
 - [Recipes](#recipes)
   - [Vanilla JS](#vanilla-js)
   - [React](#react)
