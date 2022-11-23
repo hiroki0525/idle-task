@@ -37,6 +37,7 @@ Improve your website performance by executing JavaScript during a browser's idle
     - [`interval?: number`](#interval-number)
     - [`debug?: boolean`](#debug-boolean)
     - [`timeout?: number`](#timeout-number-1)
+    - [`cache?: false`](#cache-false)
 - [Recipes](#recipes)
   - [Vanilla JS](#vanilla-js)
   - [React](#react)
@@ -291,6 +292,8 @@ if (isRun) {
 }
 ```
 
+**deprecated** : This function will be replaced alternative one.
+
 You can know whether the task is executed or not by using `isRunIdleTask` .
 
 ### `configureIdleTask`
@@ -335,6 +338,23 @@ const result = await waitForIdleTask(taskId);
 
 // timeout is 5000 if you set timeout as option
 const result = await waitForIdleTask(taskId, { timeout: 5000 });
+```
+
+#### `cache?: false`
+
+This option configures `cache` of `setIdleTask` as **default** setting. Default is `true` .
+You should set `false` if it is make sure not to need all the results of tasks when using `setIdleTask` . 
+
+```javascript
+configureIdleTask({ cache: false });
+
+// cache option is false
+setIdleTask(yourFunction);
+// same
+setIdleTask(yourFunction, { cache: false })
+
+// cache is true if you set cache as option
+setIdleTask(yourFunction, { cache: true });
 ```
 
 ## Recipes
