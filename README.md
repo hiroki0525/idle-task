@@ -114,17 +114,11 @@ setIdleTask(sendAnalyticsData);
 
 If you want to get the result of a task, please use `waitForIdleTask` .
 
-```typescript
-const checkAccessTokenWhenIdle = (accessToken: string): Promise<any> => {
-    const fetchCheckAccessToken = async (): Promise<any> => {
-        const response = await fetch(`https://yourdomain/api/check?accessToken=${accessToken}`);
-        return response.json();
-    };
-    const taskId = setIdleTask(fetchCheckAccessToken);
-    return waitForIdleTask(taskId, { cache: false });
-}
+```javascript
+import { setIdleTask, waitForIdleTask } from 'idle-task';
 
-const { isSuccess } = await checkAccessTokenWhenIdle('1234');
+const taskId = setIdleTask(yourFunction);
+const result = await waitForIdleTask(taskId);
 ```
 
 ## API
@@ -373,6 +367,22 @@ button.addEventListener('click', async () => {
     // Send analytics data to server when the browser is idle.
     setIdleTask(sendAnalyticsData, { cache: false });
 })
+```
+
+```typescript
+import { getResultFromIdleTask } from 'idle-task';
+
+const checkAccessTokenWhenIdle = (accessToken: string): Promise<any> => {
+    const fetchCheckAccessToken = async (): Promise<any> => {
+        const response = await fetch(`https://yourdomain/api/check?accessToken=${accessToken}`);
+        // Promise callback will execute immediately after fetching completely even if the browser is busy.
+        // One of the solutions is to run it when next browser's idle time.
+        return getResultFromIdleTask(() => response.json());
+    };
+    return getResultFromIdleTask(fetchCheckAccessToken);
+}
+
+const { isSuccess } = await checkAccessTokenWhenIdle('1234');
 ```
 
 ### React
