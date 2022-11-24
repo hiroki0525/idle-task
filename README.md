@@ -45,9 +45,11 @@ Improve your website performance by executing JavaScript during a browser's idle
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## What is difference between `idle-task` and `requestIdleCallback`
+## Features
 
-Why you should use `idle-task` instead of `requestIdleCallback` ?
+`idle-task` wraps [requestIdleCallback](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback) .
+
+The features are as follows.
 
 ### Manage tasks priority
 
