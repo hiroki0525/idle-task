@@ -1,3 +1,10 @@
+## [2.7.2](https://github.com/hiroki0525/idle-task/compare/v2.7.1...v2.7.2) (2022-11-24)
+
+
+### Bug Fixes
+
+* check for `cancelIdleCallback` being defined ([0a19c57](https://github.com/hiroki0525/idle-task/commit/0a19c5778a02bc9f5219c5a29e93a8b3c76f222b))
+
 ## [2.7.1](https://github.com/hiroki0525/idle-task/compare/v2.7.0...v2.7.1) (2022-11-24)
 
 
