@@ -12,7 +12,7 @@ if (typeof self !== 'undefined') {
       }, 1);
     };
   }
-  if (!self.requestIdleCallback) {
+  if (!self.cancelIdleCallback) {
     self.cancelIdleCallback = id => {
       clearTimeout(id);
     };
