@@ -21,9 +21,11 @@ if (typeof self !== 'undefined') {
 
 export type IdleTaskFunction = () => any;
 const idleTaskIdProp = Symbol('idleTaskId');
+const idleTaskNameProp = Symbol('idleTaskId');
 const idleTaskPromiseExecutorProp = Symbol('idleTaskPromiseExecutor');
 interface IdleTask extends IdleTaskFunction {
   readonly [idleTaskIdProp]: number;
+  readonly [idleTaskNameProp]: string;
   readonly [idleTaskPromiseExecutorProp]?: Parameters<
     ConstructorParameters<typeof Promise>[0]
   >;
@@ -84,7 +86,7 @@ const runIdleTasks = (deadline: IdleDeadline): void => {
       const logArgs = [
         `%cidle-task`,
         `background: #717171; color: white; padding: 2px 3px; border-radius: 2px; font-size: 0.8em;`,
-        `${task.name || 'anonymous'}(${
+        `${task[idleTaskNameProp] || 'anonymous'}(${
           task[idleTaskIdProp]
         }) took ${executionTime} ms`,
       ];
@@ -116,15 +118,20 @@ export const setIdleTask = (
   options: SetIdleTaskOptions = defaultSetIdleTaskOptions
 ): number => {
   const idleTaskId = ++id;
-  const idleTask = Object.defineProperty(task, idleTaskIdProp, {
-    value: idleTaskId,
+  const idleTask = Object.defineProperties(() => task(), {
+    [idleTaskIdProp]: {
+      value: idleTaskId,
+    },
+    [idleTaskNameProp]: {
+      value: task.name,
+    },
   }) as IdleTask;
   const isUseCache = options.cache ?? taskGlobalOptions.cache;
   if (isUseCache !== false) {
     idleTaskResultMap.set(
       idleTaskId,
       new Promise((resolve, reject) => {
-        Object.defineProperty(task, idleTaskPromiseExecutorProp, {
+        Object.defineProperty(idleTask, idleTaskPromiseExecutorProp, {
           value: [resolve, reject],
         });
       })
