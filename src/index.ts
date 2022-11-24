@@ -21,7 +21,7 @@ if (typeof self !== 'undefined') {
 
 export type IdleTaskFunction = () => any;
 const idleTaskIdProp = Symbol('idleTaskId');
-const idleTaskNameProp = Symbol('idleTaskId');
+const idleTaskNameProp = Symbol('idleTaskName');
 const idleTaskPromiseExecutorProp = Symbol('idleTaskPromiseExecutor');
 interface IdleTask extends IdleTaskFunction {
   readonly [idleTaskIdProp]: number;
