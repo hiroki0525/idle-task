@@ -1,3 +1,10 @@
+## [2.7.1](https://github.com/hiroki0525/idle-task/compare/v2.7.0...v2.7.1) (2022-11-24)
+
+
+### Bug Fixes
+
+* avoid to define properties on same function ([57e8b55](https://github.com/hiroki0525/idle-task/commit/57e8b55fc72b4c63f5794c3b271e5c60111f9f60))
+
 # [2.7.0](https://github.com/hiroki0525/idle-task/compare/v2.6.0...v2.7.0) (2022-11-23)
 
 
