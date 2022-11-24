@@ -53,8 +53,8 @@ Why you should use `idle-task` instead of `requestIdleCallback` ?
 
 ```javascript
 import { setIdleTask } from 'idle-task';
-setIdleTask(yourLowPrioryFunction, { prioriy: 'low' });
-setIdleTask(yourHighPrioryFunction, { prioriy: 'high' });
+setIdleTask(yourLowPrioryFunction, { priority: 'low' });
+setIdleTask(yourHighPrioryFunction, { priority: 'high' });
 ```
 
 ### Get result by using Promise based API
