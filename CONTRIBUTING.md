@@ -26,6 +26,8 @@ Please follow [conventional commits](https://github.com/conventional-changelog/c
 
 Commit message is important to release because of using [semantic-release](https://github.com/semantic-release/semantic-release) .
 
+You should enable [husky](https://github.com/typicode/husky) which be configured in this project .
+
 ## Release
 
 `idle-task` will be published NPM if your branch merge into main by using [semantic-release](https://github.com/semantic-release/semantic-release) .
