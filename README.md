@@ -41,6 +41,7 @@ Improve your website performance by executing JavaScript during a browser's idle
 - [Recipes](#recipes)
   - [Vanilla JS](#vanilla-js)
   - [React](#react)
+- [Contributing](#contributing)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
