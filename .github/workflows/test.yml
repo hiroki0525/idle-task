@@ -21,8 +21,6 @@ jobs:
         run: npm ci
       - name: Lint Commit Messages
         uses: wagoid/commitlint-github-action@v5
-        with:
-          configFile: 'package.json'
       - name: Test
         run: |
           npm run test && npm run lint && npm run prettier
