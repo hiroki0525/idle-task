@@ -1,23 +1,24 @@
-if (typeof self !== 'undefined') {
-  if (!self.requestIdleCallback) {
-    self.requestIdleCallback = (cb: IdleRequestCallback): number => {
-      const start = Date.now();
-      return self.setTimeout(function () {
-        cb({
-          didTimeout: false,
-          timeRemaining: function () {
-            return Math.max(0, 50 - (Date.now() - start));
-          },
-        });
-      }, 1);
-    };
-  }
-  if (!self.cancelIdleCallback) {
-    self.cancelIdleCallback = id => {
-      clearTimeout(id);
-    };
-  }
-}
+const rIC =
+  typeof requestIdleCallback !== 'undefined'
+    ? requestIdleCallback
+    : (cb: IdleRequestCallback): number => {
+        const start = Date.now();
+        return self.setTimeout(function () {
+          cb({
+            didTimeout: false,
+            timeRemaining: function () {
+              return Math.max(0, 50 - (Date.now() - start));
+            },
+          });
+        }, 1);
+      };
+
+const cIC =
+  typeof cancelIdleCallback !== 'undefined'
+    ? cancelIdleCallback
+    : (id: number): void => {
+        self.clearTimeout(id);
+      };
 
 export type IdleTaskFunction = () => any;
 const idleTaskIdProp = Symbol('idleTaskId');
@@ -69,9 +70,10 @@ const runIdleTasks = (deadline: IdleDeadline): void => {
   ) {
     const task = tasks.shift() as IdleTask;
     const promiseExecutor = task[idleTaskPromiseExecutorProp];
-    const executeTask = () => {
+    const executeTask = (): void => {
       if (!promiseExecutor) {
-        return task();
+        task();
+        return;
       }
       try {
         promiseExecutor[0](task());
@@ -96,7 +98,7 @@ const runIdleTasks = (deadline: IdleDeadline): void => {
     }
   }
   if (tasks.length > 0) {
-    requestIdleCallbackId = requestIdleCallback(runIdleTasks, {
+    requestIdleCallbackId = rIC(runIdleTasks, {
       timeout: taskGlobalOptions.interval,
     });
     return;
@@ -141,7 +143,7 @@ export const setIdleTask = (
   if (requestIdleCallbackId) {
     return idleTaskId;
   }
-  requestIdleCallbackId = requestIdleCallback(runIdleTasks, {
+  requestIdleCallbackId = rIC(runIdleTasks, {
     timeout: taskGlobalOptions.interval,
   });
   return idleTaskId;
@@ -163,7 +165,7 @@ export const cancelAllIdleTasks = (): void => {
   tasks.forEach(resolveTaskResultWhenCancel);
   tasks.length = 0;
   idleTaskResultMap.clear();
-  requestIdleCallbackId && cancelIdleCallback(requestIdleCallbackId);
+  requestIdleCallbackId && cIC(requestIdleCallbackId);
 };
 
 // deprecated

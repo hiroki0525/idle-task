@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-import {
+import type {
   ConfigureOptions,
-  getResultFromIdleTask,
   SetIdleTaskOptions,
   WaitForIdleTaskOptions,
 } from './index';
@@ -26,11 +25,10 @@ describe('idle-task', () => {
   const mockRequestIdleCallback = jest
     .fn()
     .mockImplementation(requestIdleCallbackImpl());
-  window.requestIdleCallback = mockRequestIdleCallback;
+
   const mockCancelIdleCallback = jest
     .fn()
     .mockImplementation(id => window.clearTimeout(id));
-  window.cancelIdleCallback = mockCancelIdleCallback;
 
   const mockFirstTask = jest.fn().mockImplementation(() => 'mockFirstTask');
   const mockSecondTask = jest.fn().mockImplementation(() => 'mockSecondTask');
@@ -49,14 +47,18 @@ describe('idle-task', () => {
     jest.advanceTimersByTime(1);
   };
 
+  const reloadModule = async () => {
+    idleTaskModule = await import('./index');
+  };
+
   beforeAll(() => {
     jest.useFakeTimers();
   });
 
-  beforeEach(() => {
-    import('./index').then(module => {
-      idleTaskModule = module;
-    });
+  beforeEach(async () => {
+    window.requestIdleCallback = mockRequestIdleCallback;
+    window.cancelIdleCallback = mockCancelIdleCallback;
+    await reloadModule();
   });
 
   afterAll(() => {
@@ -67,7 +69,6 @@ describe('idle-task', () => {
     jest.clearAllMocks();
     jest.clearAllTimers();
     jest.resetModules();
-    idleTaskModule = null;
   });
 
   describe('configureIdleTask', () => {
@@ -219,16 +220,14 @@ describe('idle-task', () => {
           .fn()
           .mockImplementation(requestIdleCallbackImpl(true));
 
-        beforeEach(() => {
+        beforeEach(async () => {
+          jest.resetModules();
           window.requestIdleCallback = mockRequestIdleCallbackDidTimeout;
-        });
-
-        afterEach(() => {
-          window.requestIdleCallback = mockRequestIdleCallback;
+          await reloadModule();
         });
 
         describe('executed time is less than 50ms', () => {
-          beforeEach(() => {
+          beforeEach(async () => {
             idleTaskModule!.setIdleTask(createTask(mockFirstTask, 25));
             idleTaskModule!.setIdleTask(createTask(mockSecondTask, 24));
             idleTaskModule!.setIdleTask(createTask(mockThirdTask, 1));
@@ -1342,7 +1341,7 @@ describe('idle-task', () => {
     let mockWaitForIdleTask: jest.SpyInstance;
     const setIdleTaskOptions: SetIdleTaskOptions = { priority: 'high' };
     const waitForIdleTaskOptions: WaitForIdleTaskOptions = { timeout: 3000 };
-    let getResultFromIdleTaskPromise: ReturnType<typeof getResultFromIdleTask>;
+    let getResultFromIdleTaskPromise: Promise<any>;
 
     beforeEach(async () => {
       mockSetIdleTask = jest.spyOn(idleTaskModule as any, 'setIdleTask');
