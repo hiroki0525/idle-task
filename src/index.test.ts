@@ -328,7 +328,7 @@ describe('idle-task', () => {
 
       describe('task took over 50 ms', () => {
         beforeEach(() => {
-          idleTaskModule!.setIdleTask(createTask(mockFirstTask, 51));
+          idleTaskModule!.setIdleTask(createTask(mockFirstTask, 50.001));
           runRequestIdleCallback();
         });
 
@@ -340,14 +340,14 @@ describe('idle-task', () => {
           expect(console.info).not.toHaveBeenCalled();
         });
 
-        it('include 51 ms', () => {
-          expect((console.warn as any).mock.calls[0][2]).toMatch('51 ms');
+        it('include 50.01 ms', () => {
+          expect((console.warn as any).mock.calls[0][2]).toMatch('50.01 ms');
         });
       });
 
       describe('task took less than 50 ms', () => {
         beforeEach(() => {
-          idleTaskModule!.setIdleTask(createTask(mockFirstTask, 50));
+          idleTaskModule!.setIdleTask(createTask(mockFirstTask, 49.999));
           runRequestIdleCallback();
         });
 
@@ -359,7 +359,7 @@ describe('idle-task', () => {
           expect(console.info).toHaveBeenCalled();
         });
 
-        it('include 51 ms', () => {
+        it('include 50 ms', () => {
           expect((console.info as any).mock.calls[0][2]).toMatch('50 ms');
         });
       });

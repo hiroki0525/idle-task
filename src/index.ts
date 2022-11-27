@@ -43,7 +43,7 @@ export type ConfigureOptions = {
 };
 
 let taskGlobalOptions: ConfigureOptions = {
-  debug: process.env.NODE_ENV === 'development',
+  debug: false,
   cache: true,
 };
 
@@ -82,17 +82,16 @@ const runIdleTasks = (deadline: IdleDeadline): void => {
       }
     };
     if (taskGlobalOptions.debug) {
-      const start = Date.now();
+      const start = performance.now();
       executeTask();
-      const executionTime = Date.now() - start;
-      const logArgs = [
+      const executionTime = Math.ceil((performance.now() - start) * 100) / 100;
+      console[executionTime > 50 ? 'warn' : 'info'](
         `%cidle-task`,
         `background: #717171; color: white; padding: 2px 3px; border-radius: 2px; font-size: 0.8em;`,
         `${task[idleTaskNameProp] || 'anonymous'}(${
           task[idleTaskIdProp]
-        }) took ${executionTime} ms`,
-      ];
-      console[executionTime > 50 ? 'warn' : 'info'](...logArgs);
+        }) took ${executionTime} ms`
+      );
     } else {
       executeTask();
     }
