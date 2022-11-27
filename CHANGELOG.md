@@ -1,3 +1,15 @@
+# [2.8.0](https://github.com/hiroki0525/idle-task/compare/v2.7.3...v2.8.0) (2022-11-27)
+
+
+### Bug Fixes
+
+* `debug` is `false` as default ([a852bb6](https://github.com/hiroki0525/idle-task/commit/a852bb6bdd92696203e928b5956af4cf80c9960c))
+
+
+### Features
+
+* measure execution time of tasks more correctly ([dcc93c4](https://github.com/hiroki0525/idle-task/commit/dcc93c4c56a561294a246092c821e657230d1002))
+
 ## [2.7.3](https://github.com/hiroki0525/idle-task/compare/v2.7.2...v2.7.3) (2022-11-26)
 
 
