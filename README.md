@@ -298,7 +298,7 @@ You can know whether the task is executed or not by using `isRunIdleTask` .
 ```javascript
 configureIdleTask({
   interval: 1000, // ms
-  debug: false,
+  debug: process.env.NODE_ENV === 'development',
   timeout: 3000,
 });
 ```
@@ -320,7 +320,7 @@ If `debug` is `true`, you can know how long did it take to finish the task via t
 
 I recommend less than **50 ms** to execute a task because of [RAIL model](https://web.dev/i18n/en/rail/) .
 
-The default is `process.env.NODE_ENV === 'development'` .
+The default is `false` .
 
 #### `timeout?: number`
 

@@ -43,7 +43,7 @@ export type ConfigureOptions = {
 };
 
 let taskGlobalOptions: ConfigureOptions = {
-  debug: process.env.NODE_ENV === 'development',
+  debug: false,
   cache: true,
 };
 
