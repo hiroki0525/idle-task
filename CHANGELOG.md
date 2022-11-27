@@ -1,3 +1,10 @@
+# [2.9.0](https://github.com/hiroki0525/idle-task/compare/v2.8.0...v2.9.0) (2022-11-27)
+
+
+### Features
+
+* add support for server ([8ceb3ea](https://github.com/hiroki0525/idle-task/commit/8ceb3ea101a9ed8e3995d91ebf3e8e96f0da7bf3))
+
 # [2.8.0](https://github.com/hiroki0525/idle-task/compare/v2.7.3...v2.8.0) (2022-11-27)
 
 
