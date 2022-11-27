@@ -12,12 +12,11 @@ describe('idle-task', () => {
     (didTimeout = false) =>
     (cb: IdleRequestCallback, _options?: IdleRequestOptions): number => {
       const start = Date.now();
-      return window.setTimeout(function () {
+      return window.setTimeout(() => {
         cb({
           didTimeout,
-          timeRemaining: function () {
-            return didTimeout ? 0 : Math.max(0, 50 - (Date.now() - start));
-          },
+          timeRemaining: () =>
+            didTimeout ? 0 : Math.max(0, 50 - (Date.now() - start)),
         });
       }, 1);
     };

@@ -3,12 +3,10 @@ const rIC =
     ? requestIdleCallback
     : (cb: IdleRequestCallback): number => {
         const start = Date.now();
-        return self.setTimeout(function () {
+        return self.setTimeout(() => {
           cb({
             didTimeout: false,
-            timeRemaining: function () {
-              return Math.max(0, 50 - (Date.now() - start));
-            },
+            timeRemaining: () => Math.max(0, 50 - (Date.now() - start)),
           });
         }, 1);
       };
