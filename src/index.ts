@@ -1,24 +1,18 @@
 const rIC =
   typeof requestIdleCallback !== 'undefined'
     ? requestIdleCallback
-    : (cb: IdleRequestCallback): number => {
+    : (cb: IdleRequestCallback): ReturnType<typeof setTimeout> => {
         const start = Date.now();
-        return self.setTimeout(function () {
+        return setTimeout(() => {
           cb({
             didTimeout: false,
-            timeRemaining: function () {
-              return Math.max(0, 50 - (Date.now() - start));
-            },
+            timeRemaining: () => Math.max(0, 50 - (Date.now() - start)),
           });
         }, 1);
       };
 
 const cIC =
-  typeof cancelIdleCallback !== 'undefined'
-    ? cancelIdleCallback
-    : (id: number): void => {
-        self.clearTimeout(id);
-      };
+  typeof cancelIdleCallback !== 'undefined' ? cancelIdleCallback : clearTimeout;
 
 export type IdleTaskFunction = () => any;
 const idleTaskIdProp = Symbol('idleTaskId');
@@ -33,7 +27,7 @@ interface IdleTask extends IdleTaskFunction {
 }
 
 let tasks: IdleTask[] = [];
-let requestIdleCallbackId = NaN;
+let requestIdleCallbackId: ReturnType<typeof rIC>;
 
 export type ConfigureOptions = {
   readonly interval?: number;
@@ -164,7 +158,7 @@ export const cancelAllIdleTasks = (): void => {
   tasks.forEach(resolveTaskResultWhenCancel);
   tasks.length = 0;
   idleTaskResultMap.clear();
-  requestIdleCallbackId && cIC(requestIdleCallbackId);
+  requestIdleCallbackId && cIC(requestIdleCallbackId as any); // TypeScript Error because requestIdleCallbackId is number | NodeJS.Timeout.
 };
 
 // deprecated

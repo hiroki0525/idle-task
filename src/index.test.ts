@@ -10,14 +10,16 @@ describe('idle-task', () => {
   let idleTaskModule: typeof import('./index') | null = null;
   const requestIdleCallbackImpl =
     (didTimeout = false) =>
-    (cb: IdleRequestCallback, _options?: IdleRequestOptions): number => {
+    (
+      cb: IdleRequestCallback,
+      _options?: IdleRequestOptions
+    ): ReturnType<typeof setTimeout> => {
       const start = Date.now();
-      return window.setTimeout(function () {
+      return setTimeout(() => {
         cb({
           didTimeout,
-          timeRemaining: function () {
-            return didTimeout ? 0 : Math.max(0, 50 - (Date.now() - start));
-          },
+          timeRemaining: () =>
+            didTimeout ? 0 : Math.max(0, 50 - (Date.now() - start)),
         });
       }, 1);
     };
@@ -26,9 +28,7 @@ describe('idle-task', () => {
     .fn()
     .mockImplementation(requestIdleCallbackImpl());
 
-  const mockCancelIdleCallback = jest
-    .fn()
-    .mockImplementation(id => window.clearTimeout(id));
+  const mockCancelIdleCallback = jest.fn().mockImplementation(clearTimeout);
 
   const mockFirstTask = jest.fn().mockImplementation(() => 'mockFirstTask');
   const mockSecondTask = jest.fn().mockImplementation(() => 'mockSecondTask');
@@ -56,8 +56,8 @@ describe('idle-task', () => {
   });
 
   beforeEach(async () => {
-    window.requestIdleCallback = mockRequestIdleCallback;
-    window.cancelIdleCallback = mockCancelIdleCallback;
+    global.requestIdleCallback = mockRequestIdleCallback;
+    global.cancelIdleCallback = mockCancelIdleCallback;
     await reloadModule();
   });
 
@@ -222,7 +222,7 @@ describe('idle-task', () => {
 
         beforeEach(async () => {
           jest.resetModules();
-          window.requestIdleCallback = mockRequestIdleCallbackDidTimeout;
+          global.requestIdleCallback = mockRequestIdleCallbackDidTimeout;
           await reloadModule();
         });
 
