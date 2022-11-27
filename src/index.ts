@@ -85,14 +85,13 @@ const runIdleTasks = (deadline: IdleDeadline): void => {
       const start = Date.now();
       executeTask();
       const executionTime = Date.now() - start;
-      const logArgs = [
+      console[executionTime > 50 ? 'warn' : 'info'](
         `%cidle-task`,
         `background: #717171; color: white; padding: 2px 3px; border-radius: 2px; font-size: 0.8em;`,
         `${task[idleTaskNameProp] || 'anonymous'}(${
           task[idleTaskIdProp]
-        }) took ${executionTime} ms`,
-      ];
-      console[executionTime > 50 ? 'warn' : 'info'](...logArgs);
+        }) took ${executionTime} ms`
+      );
     } else {
       executeTask();
     }
