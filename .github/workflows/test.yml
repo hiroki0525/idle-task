@@ -25,6 +25,6 @@ jobs:
         uses: wagoid/commitlint-github-action@v5
       - name: Test
         run: |
-          npm run test && npm run lint && npm run prettier
+          npm run test && npm run test:server && npm run lint && npm run prettier
       - name: Build
         run: npm run build

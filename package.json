@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "test": "jest",
+    "test:server": "jest --env=node",
     "lint": "eslint src/",
     "prettier": "prettier src/",
     "size": "size-limit",
