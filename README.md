@@ -430,6 +430,37 @@ export default function WebsiteNewsList() {
 }
 ```
 
+#### React.lazy
+
+```jsx
+import {useState, useEffect, lazy, Suspense} from 'react';
+import {setIdleTask, waitForIdleTask, forceRunIdleTask} from 'idle-task';
+
+const taskId = setIdleTask(() => import('~/components/Modal'))
+const Modal = lazy(() => waitForIdleTask(taskId));
+
+export default function WebsiteNewsList() {
+  const [isClicked, setIsClicked] = useState(false);
+  const onClick = () => setIsClicked(true);
+
+  useEffect(() => {
+    if (isClicked) {
+      // Import Modal immediately whether importing it was completed during the browser's idle periods or not.
+      forceRunIdleTask(taskId);
+    }
+  }, [isClicked])
+
+  return (
+      <>
+        <button type='button' onClick={onClick} />
+        <Suspense>
+          {isClicked && <Modal />}
+        </Suspense>
+      </>
+  )
+}
+```
+
 ## Contributing
 
 Please see [CONTRIBUTING.md](https://github.com/hiroki0525/idle-task/blob/main/CONTRIBUTING.md) .
