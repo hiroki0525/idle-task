@@ -1,3 +1,10 @@
+# [2.10.0](https://github.com/hiroki0525/idle-task/compare/v2.9.0...v2.10.0) (2022-11-28)
+
+
+### Features
+
+* add `forceRunIdleTask` ([01e9b79](https://github.com/hiroki0525/idle-task/commit/01e9b79ba6851f91a8097df2368ccf18a880b84b))
+
 # [2.9.0](https://github.com/hiroki0525/idle-task/compare/v2.8.0...v2.9.0) (2022-11-27)
 
 

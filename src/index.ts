@@ -54,6 +54,19 @@ const createTimeRemainingDidTimeout = (
 
 const idleTaskResultMap = new Map<number, Promise<any>>();
 
+const executeTask = (task: IdleTask): void => {
+  const promiseExecutor = task[idleTaskPromiseExecutorProp];
+  if (!promiseExecutor) {
+    task();
+    return;
+  }
+  try {
+    promiseExecutor[0](task());
+  } catch (e) {
+    promiseExecutor[1](e);
+  }
+};
+
 const runIdleTasks = (deadline: IdleDeadline): void => {
   const timeRemainingDidTimeout = createTimeRemainingDidTimeout(
     deadline.didTimeout
@@ -63,21 +76,9 @@ const runIdleTasks = (deadline: IdleDeadline): void => {
     tasks.length > 0
   ) {
     const task = tasks.shift() as IdleTask;
-    const promiseExecutor = task[idleTaskPromiseExecutorProp];
-    const executeTask = (): void => {
-      if (!promiseExecutor) {
-        task();
-        return;
-      }
-      try {
-        promiseExecutor[0](task());
-      } catch (e) {
-        promiseExecutor[1](e);
-      }
-    };
     if (taskGlobalOptions.debug) {
       const start = performance.now();
-      executeTask();
+      executeTask(task);
       const executionTime = Math.ceil((performance.now() - start) * 100) / 100;
       console[executionTime > 50 ? 'warn' : 'info'](
         `%cidle-task`,
@@ -87,7 +88,7 @@ const runIdleTasks = (deadline: IdleDeadline): void => {
         }) took ${executionTime} ms`
       );
     } else {
-      executeTask();
+      executeTask(task);
     }
   }
   if (tasks.length > 0) {
@@ -181,14 +182,19 @@ export class WaitForIdleTaskTimeoutError extends Error {
   }
 }
 
+const getResultFromCache = (id: number, isDeleteCache = false) => {
+  const result = idleTaskResultMap.get(id);
+  if (isDeleteCache) {
+    idleTaskResultMap.delete(id);
+  }
+  return result;
+};
+
 export const waitForIdleTask = async (
   id: number,
   options: WaitForIdleTaskOptions = defaultWaitForIdleTaskOptions
 ): Promise<any> => {
-  const result = idleTaskResultMap.get(id);
-  if (options.cache === false) {
-    idleTaskResultMap.delete(id);
-  }
+  const result = getResultFromCache(id, options.cache === false);
   const { timeout: globalTimeout } = taskGlobalOptions;
   const { timeout } = options;
   if (timeout === undefined && globalTimeout === undefined) {
@@ -221,3 +227,21 @@ export const getResultFromIdleTask = (
     cache: false,
     timeout: options?.timeout,
   });
+
+type ForceRunIdleTaskOptions = Pick<WaitForIdleTaskOptions, 'cache'>;
+
+const defaultForceRunIdleTaskOptions = defaultWaitForIdleTaskOptions;
+
+export const forceRunIdleTask = async (
+  id: number,
+  options: ForceRunIdleTaskOptions = defaultForceRunIdleTaskOptions
+): Promise<any> => {
+  if (isRunIdleTask(id)) {
+    return getResultFromCache(id, options.cache === false);
+  }
+  const task = tasks.find(task => task[idleTaskIdProp] === id) as IdleTask;
+  executeTask(task);
+  const result = getResultFromCache(id, options.cache === false);
+  tasks = tasks.filter(task => task[idleTaskIdProp] !== id);
+  return result;
+};
