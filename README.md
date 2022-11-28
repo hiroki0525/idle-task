@@ -259,6 +259,24 @@ You can get the result by using `getResultFromIdleTask` if you don't need the ta
 
 `getResultFromIdleTask` can also be set options which is `SetIdleTaskOptions.priority` and  `WaitForIdleTaskOptions.timeout` .
 
+### `forceRunIdleTask`
+
+```javascript
+const generateRandomNumber = () => Math.floor( Math.random() * 100 );
+const taskId = setIdleTask(generateRandomNumber);
+const randomNumber = await forceRunIdleTask(taskId, {
+    cache: false,
+});
+```
+
+You can get the result immediately whether the task was executed during a browser's idle periods or not.
+
+`forceRunIdleTask` can also be set options as below.
+
+#### `cache?: false`
+
+This is the same as [`WaitForIdleTaskOptions.cache`](https://github.com/hiroki0525/idle-task#cache-boolean-1) .
+
 ### `cancelIdleTask`
 
 ```javascript
@@ -358,6 +376,8 @@ setIdleTask(yourFunction, { cache: true });
 
 ### Vanilla JS
 
+#### dynamic import
+
 ```javascript
 import { setIdleTask } from 'idle-task';
 
@@ -366,11 +386,15 @@ const taskId = setIdleTask(() => import('./sendAnalyticsData'))
 
 const button = document.getElementById('button');
 button.addEventListener('click', async () => {
+    // You should use waitForIdleTask if the module is not important.
+    // On the other hand, I recommend to use forceRunIdleTask if the module is important. 
     const { default: sendAnalyticsData } = await waitForIdleTask(taskId);
     // Send analytics data to server when the browser is idle.
     setIdleTask(sendAnalyticsData, { cache: false });
 })
 ```
+
+#### fetch external resources
 
 ```typescript
 import { getResultFromIdleTask } from 'idle-task';
@@ -390,10 +414,11 @@ const { isSuccess } = await checkAccessTokenWhenIdle('1234');
 
 ### React
 
+#### fetch external resources
+
 ```jsx
 import {useState, useEffect} from 'react';
-import {setIdleTask} from 'idle-task';
-import {cancelIdleTask, waitForIdleTask} from "./index";
+import {setIdleTask, cancelIdleTask, waitForIdleTask} from 'idle-task';
 
 const fetchNewsList = async () => {
   const response = await fetch('https://yourdomain/api/news');
