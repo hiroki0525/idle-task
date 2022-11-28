@@ -46,6 +46,7 @@ Improve your website performance by executing JavaScript during a browser's idle
     - [fetch external resources](#fetch-external-resources)
   - [React](#react)
     - [fetch external resources](#fetch-external-resources-1)
+    - [React.lazy](#reactlazy)
 - [Contributing](#contributing)
 - [License](#license)
 
