@@ -293,76 +293,86 @@ describe('idle-task', () => {
         mockWarn!.mockReset();
       });
 
-      describe('anonymous function', () => {
-        let taskId: number;
-
-        beforeEach(() => {
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
-          taskId = idleTaskModule!.setIdleTask(() => {});
-          runRequestIdleCallback();
-        });
-
-        it('include anonymous', () => {
-          expect((console.info as any).mock.calls[0][2]).toMatch(
-            `anonymous(${taskId})`
-          );
-        });
-      });
-
-      describe('named function', () => {
-        let taskId: number;
-
-        beforeEach(() => {
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
-          const test = () => {};
-          taskId = idleTaskModule!.setIdleTask(test);
-          runRequestIdleCallback();
-        });
-
-        it('include function name and task id', () => {
-          expect((console.info as any).mock.calls[0][2]).toMatch(
-            `test(${taskId})`
-          );
-        });
-      });
-
-      describe('task took over 50 ms', () => {
-        beforeEach(() => {
-          idleTaskModule!.setIdleTask(createTask(mockFirstTask, 50.001));
-          runRequestIdleCallback();
-        });
-
-        it('called warn', () => {
-          expect(console.warn).toHaveBeenCalled();
-        });
-
+      // server context
+      if (typeof self === 'undefined') {
         it('not called info', () => {
           expect(console.info).not.toHaveBeenCalled();
         });
-
-        it('include 50.01 ms', () => {
-          expect((console.warn as any).mock.calls[0][2]).toMatch('50.01 ms');
-        });
-      });
-
-      describe('task took less than 50 ms', () => {
-        beforeEach(() => {
-          idleTaskModule!.setIdleTask(createTask(mockFirstTask, 49.999));
-          runRequestIdleCallback();
-        });
-
         it('not called warn', () => {
           expect(console.warn).not.toHaveBeenCalled();
         });
+      } else {
+        describe('anonymous function', () => {
+          let taskId: number;
 
-        it('called info', () => {
-          expect(console.info).toHaveBeenCalled();
+          beforeEach(() => {
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            taskId = idleTaskModule!.setIdleTask(() => {});
+            runRequestIdleCallback();
+          });
+
+          it('include anonymous', () => {
+            expect((console.info as any).mock.calls[0][2]).toMatch(
+              `anonymous(${taskId})`
+            );
+          });
         });
 
-        it('include 50 ms', () => {
-          expect((console.info as any).mock.calls[0][2]).toMatch('50 ms');
+        describe('named function', () => {
+          let taskId: number;
+
+          beforeEach(() => {
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            const test = () => {};
+            taskId = idleTaskModule!.setIdleTask(test);
+            runRequestIdleCallback();
+          });
+
+          it('include function name and task id', () => {
+            expect((console.info as any).mock.calls[0][2]).toMatch(
+              `test(${taskId})`
+            );
+          });
         });
-      });
+
+        describe('task took over 50 ms', () => {
+          beforeEach(() => {
+            idleTaskModule!.setIdleTask(createTask(mockFirstTask, 50.001));
+            runRequestIdleCallback();
+          });
+
+          it('called warn', () => {
+            expect(console.warn).toHaveBeenCalled();
+          });
+
+          it('not called info', () => {
+            expect(console.info).not.toHaveBeenCalled();
+          });
+
+          it('include 50.01 ms', () => {
+            expect((console.warn as any).mock.calls[0][2]).toMatch('50.01 ms');
+          });
+        });
+
+        describe('task took less than 50 ms', () => {
+          beforeEach(() => {
+            idleTaskModule!.setIdleTask(createTask(mockFirstTask, 49.999));
+            runRequestIdleCallback();
+          });
+
+          it('not called warn', () => {
+            expect(console.warn).not.toHaveBeenCalled();
+          });
+
+          it('called info', () => {
+            expect(console.info).toHaveBeenCalled();
+          });
+
+          it('include 50 ms', () => {
+            expect((console.info as any).mock.calls[0][2]).toMatch('50 ms');
+          });
+        });
+      }
     });
   });
 
