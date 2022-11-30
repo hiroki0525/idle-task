@@ -76,7 +76,7 @@ const runIdleTasks = (deadline: IdleDeadline): void => {
     tasks.length > 0
   ) {
     const task = tasks.shift() as IdleTask;
-    if (taskGlobalOptions.debug) {
+    if (taskGlobalOptions.debug && typeof self !== 'undefined') {
       const start = performance.now();
       executeTask(task);
       const executionTime = Math.ceil((performance.now() - start) * 100) / 100;

@@ -468,7 +468,8 @@ import {useState, useEffect, lazy, Suspense} from 'react';
 import {setIdleTask, waitForIdleTask, forceRunIdleTask} from 'idle-task';
 
 const taskId = setIdleTask(() => import('~/components/Modal'))
-const Modal = lazy(() => waitForIdleTask(taskId));
+const taskPromise = waitForIdleTask(taskId)
+const Modal = lazy(() => taskPromise);
 
 export default function WebsiteNewsList() {
   const [isClicked, setIsClicked] = useState(false);
