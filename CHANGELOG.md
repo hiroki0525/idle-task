@@ -1,3 +1,10 @@
+## [2.10.1](https://github.com/hiroki0525/idle-task/compare/v2.10.0...v2.10.1) (2022-11-30)
+
+
+### Bug Fixes
+
+* avoid to log on the server  because it is unnecessary ([f8295b1](https://github.com/hiroki0525/idle-task/commit/f8295b199a4840081fda174b242cb910566b14cf))
+
 # [2.10.0](https://github.com/hiroki0525/idle-task/compare/v2.9.0...v2.10.0) (2022-11-28)
 
 
