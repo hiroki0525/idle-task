@@ -12,7 +12,9 @@ I recommend to create an issue.
 
 ## Docs
 
-Tha table of contents will be changed by [toc-generator](https://github.com/technote-space/toc-generator) if you change README.md .  
+I'm not familiar with English, so I especially thank you for documents' corrections.
+
+Tha table of contents will be changed by [toc-generator](https://github.com/technote-space/toc-generator) if you change headings of README.md .  
 
 ## Testing
 
