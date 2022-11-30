@@ -8,11 +8,12 @@
     "dist"
   ],
   "scripts": {
-    "test": "jest",
+    "test": "run-s test:*",
+    "test:browser": "jest",
     "test:server": "jest --env=node",
-    "lint": "eslint src/",
-    "prettier": "prettier src/",
-    "size": "size-limit",
+    "test:lint": "eslint src/",
+    "test:prettier": "prettier src/",
+    "test:size": "size-limit",
     "build": "rollup -c",
     "prepare": "husky install"
   },
@@ -53,6 +54,7 @@
     "husky": "8.0.1",
     "jest": "29.2.1",
     "jest-environment-jsdom": "^29.3.0",
+    "npm-run-all": "^4.1.5",
     "prettier": "2.7.1",
     "rollup": "3.2.3",
     "semantic-release": "19.0.5",
