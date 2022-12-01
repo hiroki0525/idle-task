@@ -166,13 +166,17 @@ export const cancelAllIdleTasks = (): void => {
 export const isRunIdleTask = (id: number): boolean =>
   tasks.findIndex(task => task[idleTaskIdProp] === id) === -1;
 
+export type IdleTaskTimeoutStrategy = 'error' | 'forceRun';
+
 export interface WaitForIdleTaskOptions {
   readonly cache?: boolean;
   readonly timeout?: number;
+  readonly timeoutStrategy?: IdleTaskTimeoutStrategy;
 }
 
 const defaultWaitForIdleTaskOptions: WaitForIdleTaskOptions = {
   cache: true,
+  timeoutStrategy: 'error',
 };
 
 export class WaitForIdleTaskTimeoutError extends Error {
@@ -192,11 +196,14 @@ const getResultFromCache = (id: number, isDeleteCache = false) => {
 
 export const waitForIdleTask = async (
   id: number,
-  options: WaitForIdleTaskOptions = defaultWaitForIdleTaskOptions
+  options?: WaitForIdleTaskOptions
 ): Promise<any> => {
-  const result = getResultFromCache(id, options.cache === false);
+  const waitForIdleTaskOptions = options
+    ? { ...defaultWaitForIdleTaskOptions, ...options }
+    : defaultWaitForIdleTaskOptions;
+  const result = getResultFromCache(id, waitForIdleTaskOptions.cache === false);
   const { timeout: globalTimeout } = taskGlobalOptions;
-  const { timeout } = options;
+  const { timeout } = waitForIdleTaskOptions;
   if (timeout === undefined && globalTimeout === undefined) {
     return result;
   }
@@ -208,7 +215,11 @@ export const waitForIdleTask = async (
   });
   const racedResult = await Promise.race([result, timeoutPromise]);
   if (isTimeout) {
-    throw new WaitForIdleTaskTimeoutError();
+    if (waitForIdleTaskOptions.timeoutStrategy === 'forceRun') {
+      return forceRunIdleTask(id);
+    } else {
+      throw new WaitForIdleTaskTimeoutError();
+    }
   }
   return racedResult;
 };

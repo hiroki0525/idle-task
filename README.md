@@ -245,7 +245,21 @@ try {
 }
 ```
 
-In this case, `waitForIdleTask` will throw `WaitForIdleTaskTimeoutError` if the task can't be finished within 1000 ms.
+In this case, `waitForIdleTask` will throw `WaitForIdleTaskTimeoutError` as default if the task can't be finished within 1000 ms.
+
+#### `timeoutStrategy?: 'error' | ’forceRun'`
+
+```javascript
+const generateRandomNumber = () => Math.floor( Math.random() * 100 );
+const taskId = setIdleTask(generateRandomNumber);
+const firstRandomNumber = await waitForIdleTask(taskId, { timeout: 1000, timeoutStrategy: 'forceRun' });
+```
+
+You can choose the movement when the idle task is timeout.
+
+`waitForIdleTask` throws an error as default if the task can't be finished within the time which you set.
+
+If you set `forceRun`, `idle-task` executes the task even if having not yet run it after the time has come.
 
 ### `getResultFromIdleTask`
 
