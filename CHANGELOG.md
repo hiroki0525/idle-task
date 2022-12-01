@@ -1,3 +1,10 @@
+# [2.11.0](https://github.com/hiroki0525/idle-task/compare/v2.10.1...v2.11.0) (2022-12-01)
+
+
+### Features
+
+* add `WaitForIdleTaskOptions.timeoutStrategy` ([e2f3925](https://github.com/hiroki0525/idle-task/commit/e2f3925ebc185d58f6e8aa7f3dd20ca104c722ad))
+
 ## [2.10.1](https://github.com/hiroki0525/idle-task/compare/v2.10.0...v2.10.1) (2022-11-30)
 
 
