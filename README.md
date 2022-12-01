@@ -29,6 +29,7 @@ Improve your website performance by executing JavaScript during a browser's idle
   - [`waitForIdleTask`](#waitforidletask)
     - [`cache?: boolean`](#cache-boolean-1)
     - [`timeout?: number`](#timeout-number)
+    - [`timeoutStrategy?: 'error' | ’forceRun'`](#timeoutstrategy-error--forcerun)
   - [`getResultFromIdleTask`](#getresultfromidletask)
   - [`forceRunIdleTask`](#forcerunidletask)
     - [`cache?: false`](#cache-false)
