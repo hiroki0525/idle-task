@@ -8,7 +8,7 @@
     "dist"
   ],
   "scripts": {
-    "test": "run-s test:*",
+    "test": "run-p test:*",
     "test:browser": "jest",
     "test:server": "jest --env=node",
     "test:lint": "eslint src/",
