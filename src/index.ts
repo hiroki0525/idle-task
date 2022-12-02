@@ -236,7 +236,7 @@ export type GetResultFromIdleTaskOptions = Pick<
   SetIdleTaskOptions,
   'priority'
 > &
-  Pick<WaitForIdleTaskOptions, 'timeout'>;
+  Pick<WaitForIdleTaskOptions, 'timeout' | 'timeoutStrategy'>;
 
 export const getResultFromIdleTask = (
   task: IdleTaskFunction,
@@ -245,6 +245,7 @@ export const getResultFromIdleTask = (
   waitForIdleTask(setIdleTask(task, { priority: options?.priority }), {
     cache: false,
     timeout: options?.timeout,
+    timeoutStrategy: options?.timeoutStrategy,
   });
 
 type ForceRunIdleTaskOptions = Pick<WaitForIdleTaskOptions, 'cache'>;
