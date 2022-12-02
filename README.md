@@ -40,6 +40,7 @@ Improve your website performance by executing JavaScript during a browser's idle
     - [`interval?: number`](#interval-number)
     - [`debug?: boolean`](#debug-boolean)
     - [`timeout?: number`](#timeout-number-1)
+    - [`timeoutStrategy?: 'error' | ’forceRun'`](#timeoutstrategy-error--forcerun-1)
     - [`cache?: false`](#cache-false-1)
 - [Recipes](#recipes)
   - [Vanilla JS](#vanilla-js)
