@@ -376,6 +376,25 @@ const result = await waitForIdleTask(taskId);
 const result = await waitForIdleTask(taskId, { timeout: 5000 });
 ```
 
+#### `timeoutStrategy?: 'error' | ’forceRun'`
+
+This option configures `timeoutStrategy` of `waitForIdleTask` and `getResultFromIdleTask` as **default** setting.
+
+```javascript
+configureIdleTask({ timeout: 3000, timeoutStrategy: 'forceRun' });
+
+const taskId = setIdleTask(yourFunction);
+// run task in 3000 ms regardless of whether the task has already been executed or not.
+const result = await waitForIdleTask(taskId);
+
+// timeoutStrategy is 'error' if you set timeoutStrategy as option
+try {
+  const result = await waitForIdleTask(taskId, { timeoutStrategy: 'error' });  
+} catch {
+  console.error('timeout!')
+}
+```
+
 #### `cache?: false`
 
 This option configures `cache` of `setIdleTask` as **default** setting. Default is `true` .
