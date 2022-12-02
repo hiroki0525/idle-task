@@ -1151,7 +1151,7 @@ describe('idle-task', () => {
       describe('timeout', () => {
         describe('using configureIdleTask', () => {
           describe('with WaitForIdleTask.timeout', () => {
-            beforeEach(async () => {
+            beforeEach(() => {
               idleTaskModule!.configureIdleTask({ timeout: 11 });
               firstTaskId = idleTaskModule!.setIdleTask(
                 createTask(mockFirstTask, 9)
@@ -1169,7 +1169,7 @@ describe('idle-task', () => {
             });
           });
           describe('without WaitForIdleTask.timeout', () => {
-            beforeEach(async () => {
+            beforeEach(() => {
               idleTaskModule!.configureIdleTask({ timeout: 10 });
               firstTaskId = idleTaskModule!.setIdleTask(
                 createTask(mockFirstTask, 9)
@@ -1184,14 +1184,127 @@ describe('idle-task', () => {
               );
             });
           });
-        });
 
-        describe('not using configureIdleTask', () => {
-          describe('WaitForIdleTaskOptions.timeoutStrategy is not set', () => {
-            beforeEach(async () => {
+          describe('ConfigureOptions.timeoutStrategy is undefined', () => {
+            beforeEach(() => {
+              idleTaskModule!.configureIdleTask({
+                timeout: 10,
+              });
               firstTaskId = idleTaskModule!.setIdleTask(
                 createTask(mockFirstTask, 9)
               );
+            });
+
+            describe('without WaitForIdleTaskOptions', () => {
+              beforeEach(() => {
+                result = idleTaskModule!.waitForIdleTask(firstTaskId);
+                runRequestIdleCallback();
+              });
+
+              it('throw WaitForIdleTaskTimeoutError', async () => {
+                await expect(result).rejects.toThrow(
+                  new idleTaskModule!.WaitForIdleTaskTimeoutError()
+                );
+              });
+            });
+            describe('with WaitForIdleTaskOptions.timeoutStrategy which is forceRun', () => {
+              beforeEach(() => {
+                result = idleTaskModule!.waitForIdleTask(firstTaskId, {
+                  timeoutStrategy: 'forceRun',
+                });
+                runRequestIdleCallback();
+              });
+
+              it('return result', async () => {
+                await expect(result).resolves.toBe('mockFirstTask');
+              });
+            });
+          });
+
+          describe('ConfigureOptions.timeoutStrategy is error', () => {
+            beforeEach(() => {
+              idleTaskModule!.configureIdleTask({
+                timeout: 10,
+                timeoutStrategy: 'error',
+              });
+              firstTaskId = idleTaskModule!.setIdleTask(
+                createTask(mockFirstTask, 9)
+              );
+            });
+
+            describe('without WaitForIdleTaskOptions', () => {
+              beforeEach(() => {
+                result = idleTaskModule!.waitForIdleTask(firstTaskId);
+                runRequestIdleCallback();
+              });
+
+              it('throw WaitForIdleTaskTimeoutError', async () => {
+                await expect(result).rejects.toThrow(
+                  new idleTaskModule!.WaitForIdleTaskTimeoutError()
+                );
+              });
+            });
+            describe('with WaitForIdleTaskOptions.timeoutStrategy which is forceRun', () => {
+              beforeEach(() => {
+                result = idleTaskModule!.waitForIdleTask(firstTaskId, {
+                  timeoutStrategy: 'forceRun',
+                });
+                runRequestIdleCallback();
+              });
+
+              it('return result', async () => {
+                await expect(result).resolves.toBe('mockFirstTask');
+              });
+            });
+          });
+
+          describe('ConfigureOptions.timeoutStrategy is forceRun', () => {
+            beforeEach(() => {
+              idleTaskModule!.configureIdleTask({
+                timeout: 10,
+                timeoutStrategy: 'forceRun',
+              });
+              firstTaskId = idleTaskModule!.setIdleTask(
+                createTask(mockFirstTask, 9)
+              );
+            });
+
+            describe('without WaitForIdleTaskOptions', () => {
+              beforeEach(() => {
+                result = idleTaskModule!.waitForIdleTask(firstTaskId);
+                runRequestIdleCallback();
+              });
+
+              it('return result', async () => {
+                await expect(result).resolves.toBe('mockFirstTask');
+              });
+            });
+            describe('with WaitForIdleTaskOptions.timeoutStrategy which is error', () => {
+              beforeEach(() => {
+                result = idleTaskModule!.waitForIdleTask(firstTaskId, {
+                  timeoutStrategy: 'error',
+                });
+                runRequestIdleCallback();
+              });
+
+              it('throw WaitForIdleTaskTimeoutError', async () => {
+                await expect(result).rejects.toThrow(
+                  new idleTaskModule!.WaitForIdleTaskTimeoutError()
+                );
+              });
+            });
+          });
+        });
+
+        describe('not using configureIdleTask', () => {
+          beforeEach(() => {
+            firstTaskId = idleTaskModule!.setIdleTask(
+              createTask(mockFirstTask, 9)
+            );
+          });
+
+          describe('WaitForIdleTaskOptions.timeoutStrategy is not set', () => {
+            beforeEach(() => {
               result = idleTaskModule!.waitForIdleTask(firstTaskId, {
                 timeout: 10,
               });
@@ -1206,10 +1319,7 @@ describe('idle-task', () => {
           });
 
           describe('WaitForIdleTaskOptions.timeoutStrategy is error', () => {
-            beforeEach(async () => {
-              firstTaskId = idleTaskModule!.setIdleTask(
-                createTask(mockFirstTask, 9)
-              );
+            beforeEach(() => {
               result = idleTaskModule!.waitForIdleTask(firstTaskId, {
                 timeout: 10,
                 timeoutStrategy: 'error',
@@ -1226,9 +1336,6 @@ describe('idle-task', () => {
 
           describe('WaitForIdleTaskOptions.timeoutStrategy is forceRun', () => {
             beforeEach(async () => {
-              firstTaskId = idleTaskModule!.setIdleTask(
-                createTask(mockFirstTask, 9)
-              );
               result = idleTaskModule!.waitForIdleTask(firstTaskId, {
                 timeout: 10,
                 timeoutStrategy: 'forceRun',

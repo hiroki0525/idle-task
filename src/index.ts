@@ -34,11 +34,13 @@ export type ConfigureOptions = {
   readonly debug?: boolean;
   readonly timeout?: number;
   readonly cache?: boolean;
+  readonly timeoutStrategy?: IdleTaskTimeoutStrategy;
 };
 
 let taskGlobalOptions: ConfigureOptions = {
   debug: false,
   cache: true,
+  timeoutStrategy: 'error',
 };
 
 export const configureIdleTask = (options: ConfigureOptions): void => {
@@ -198,11 +200,17 @@ export const waitForIdleTask = async (
   id: number,
   options?: WaitForIdleTaskOptions
 ): Promise<any> => {
+  const { timeout: globalTimeout, timeoutStrategy: globalTimeoutStrategy } =
+    taskGlobalOptions;
+  const mergedDefaultOptions = {
+    ...defaultWaitForIdleTaskOptions,
+    timeout: globalTimeout,
+    timeoutStrategy: globalTimeoutStrategy,
+  };
   const waitForIdleTaskOptions = options
-    ? { ...defaultWaitForIdleTaskOptions, ...options }
-    : defaultWaitForIdleTaskOptions;
+    ? { ...mergedDefaultOptions, ...options }
+    : mergedDefaultOptions;
   const result = getResultFromCache(id, waitForIdleTaskOptions.cache === false);
-  const { timeout: globalTimeout } = taskGlobalOptions;
   const { timeout } = waitForIdleTaskOptions;
   if (timeout === undefined && globalTimeout === undefined) {
     return result;
