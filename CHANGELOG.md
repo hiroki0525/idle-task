@@ -1,3 +1,10 @@
+# [2.12.0](https://github.com/hiroki0525/idle-task/compare/v2.11.0...v2.12.0) (2022-12-02)
+
+
+### Features
+
+* add `ConfigureOptions.timeoutStrategy` ([7e32a24](https://github.com/hiroki0525/idle-task/commit/7e32a24773dae5571303815b5a4a3a9d4d3e79d7)), closes [/github.com/hiroki0525/idle-task#timeoutstrategy-error--forcerun-1](https://github.com//github.com/hiroki0525/idle-task/issues/timeoutstrategy-error--forcerun-1)
+
 # [2.11.0](https://github.com/hiroki0525/idle-task/compare/v2.10.1...v2.11.0) (2022-12-01)
 
 
