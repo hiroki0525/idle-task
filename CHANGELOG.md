@@ -1,3 +1,15 @@
+# [2.13.0](https://github.com/hiroki0525/idle-task/compare/v2.12.0...v2.13.0) (2022-12-03)
+
+
+### Bug Fixes
+
+* export `ForceRunIdleTaskOptions` type ([61e5801](https://github.com/hiroki0525/idle-task/commit/61e58016855e9bdf0e99fa5b0469094dca6d7b43))
+
+
+### Features
+
+* add `GetResultFromIdleTaskOptions.timeoutStrategy` ([bb54945](https://github.com/hiroki0525/idle-task/commit/bb54945300b5a1469ddecd254c00bf834f2a1a74))
+
 # [2.12.0](https://github.com/hiroki0525/idle-task/compare/v2.11.0...v2.12.0) (2022-12-02)
 
 
