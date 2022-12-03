@@ -29,13 +29,36 @@ interface IdleTask extends IdleTaskFunction {
 let tasks: IdleTask[] = [];
 let requestIdleCallbackId: ReturnType<typeof rIC>;
 
+export interface SetIdleTaskOptions {
+  readonly priority?: 'low' | 'high';
+  readonly cache?: boolean;
+}
+
+export interface WaitForIdleTaskOptions {
+  readonly cache?: boolean;
+  readonly timeout?: number;
+  readonly timeoutStrategy?: IdleTaskTimeoutStrategy;
+}
+
+type ConfigurableSetIdleTaskOptions = Pick<WaitForIdleTaskOptions, 'cache'>;
+type ConfigurableWaitForIdleTaskOptions = Pick<
+  WaitForIdleTaskOptions,
+  'timeout' | 'timeoutStrategy'
+>;
+
+type ForceRunIdleTaskOptions = Pick<WaitForIdleTaskOptions, 'cache'>;
+
+export type GetResultFromIdleTaskOptions = Pick<
+  SetIdleTaskOptions,
+  'priority'
+> &
+  ConfigurableWaitForIdleTaskOptions;
+
 export type ConfigureOptions = {
   readonly interval?: number;
   readonly debug?: boolean;
-  readonly timeout?: number;
-  readonly cache?: boolean;
-  readonly timeoutStrategy?: IdleTaskTimeoutStrategy;
-};
+} & ConfigurableSetIdleTaskOptions &
+  ConfigurableWaitForIdleTaskOptions;
 
 let taskGlobalOptions: ConfigureOptions = {
   debug: false,
@@ -102,10 +125,6 @@ const runIdleTasks = (deadline: IdleDeadline): void => {
   requestIdleCallbackId = NaN;
 };
 
-export interface SetIdleTaskOptions {
-  readonly priority?: 'low' | 'high';
-  readonly cache?: boolean;
-}
 let id = 0;
 const defaultSetIdleTaskOptions: SetIdleTaskOptions = {
   priority: 'low',
@@ -170,12 +189,6 @@ export const isRunIdleTask = (id: number): boolean =>
 
 export type IdleTaskTimeoutStrategy = 'error' | 'forceRun';
 
-export interface WaitForIdleTaskOptions {
-  readonly cache?: boolean;
-  readonly timeout?: number;
-  readonly timeoutStrategy?: IdleTaskTimeoutStrategy;
-}
-
 const defaultWaitForIdleTaskOptions: WaitForIdleTaskOptions = {
   cache: true,
   timeoutStrategy: 'error',
@@ -232,12 +245,6 @@ export const waitForIdleTask = async (
   return racedResult;
 };
 
-export type GetResultFromIdleTaskOptions = Pick<
-  SetIdleTaskOptions,
-  'priority'
-> &
-  Pick<WaitForIdleTaskOptions, 'timeout' | 'timeoutStrategy'>;
-
 export const getResultFromIdleTask = (
   task: IdleTaskFunction,
   options?: GetResultFromIdleTaskOptions
@@ -247,8 +254,6 @@ export const getResultFromIdleTask = (
     timeout: options?.timeout,
     timeoutStrategy: options?.timeoutStrategy,
   });
-
-type ForceRunIdleTaskOptions = Pick<WaitForIdleTaskOptions, 'cache'>;
 
 const defaultForceRunIdleTaskOptions = defaultWaitForIdleTaskOptions;
 
