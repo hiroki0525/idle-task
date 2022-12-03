@@ -46,7 +46,7 @@ type ConfigurableWaitForIdleTaskOptions = Pick<
   'timeout' | 'timeoutStrategy'
 >;
 
-type ForceRunIdleTaskOptions = Pick<WaitForIdleTaskOptions, 'cache'>;
+export type ForceRunIdleTaskOptions = Pick<WaitForIdleTaskOptions, 'cache'>;
 
 export type GetResultFromIdleTaskOptions = Pick<
   SetIdleTaskOptions,
