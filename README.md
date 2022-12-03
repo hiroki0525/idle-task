@@ -270,11 +270,12 @@ const generateRandomNumber = () => Math.floor( Math.random() * 100 );
 const randomNumber = await getResultFromIdleTask(generateRandomNumber, {
     priority: 'high',
     timeout: 3000,
+    timeoutStrategy: 'forceRun'
 });
 
 // same
 const taskId = setIdleTask(generateRandomNumber, { priority: 'high' });
-const randomNumber = await waitForIdleTask(taskId, { timeout: 3000, cache: false });
+const randomNumber = await waitForIdleTask(taskId, { timeout: 3000, cache: false, timeoutStrategy: 'forceRun' });
 ```
 
 You can get the result by using `getResultFromIdleTask` if you don't need the task id.

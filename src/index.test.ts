@@ -1495,7 +1495,10 @@ describe('idle-task', () => {
     let mockSetIdleTask: jest.SpyInstance;
     let mockWaitForIdleTask: jest.SpyInstance;
     const setIdleTaskOptions: SetIdleTaskOptions = { priority: 'high' };
-    const waitForIdleTaskOptions: WaitForIdleTaskOptions = { timeout: 3000 };
+    const waitForIdleTaskOptions: WaitForIdleTaskOptions = {
+      timeout: 3000,
+      timeoutStrategy: 'forceRun',
+    };
     let getResultFromIdleTaskPromise: Promise<any>;
 
     beforeEach(async () => {
