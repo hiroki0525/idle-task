@@ -380,7 +380,7 @@ describe('idle-task', () => {
     let taskId: number;
 
     describe('existed task', () => {
-      beforeEach(async () => {
+      beforeEach(() => {
         taskId = idleTaskModule!.setIdleTask(createTask(mockFirstTask));
         idleTaskModule!.setIdleTask(createTask(mockSecondTask));
         idleTaskModule!.setIdleTask(createTask(mockThirdTask));
@@ -639,7 +639,7 @@ describe('idle-task', () => {
             ).resolves.not.toBe(expected);
           });
 
-          it('first result return Object', async () => {
+          it('first result return Object', () => {
             expect(expected).toBe(result);
           });
 
@@ -1523,7 +1523,7 @@ describe('idle-task', () => {
       mockWaitForIdleTask.mockReset();
     });
 
-    it('setIdleTask calls with options', async () => {
+    it('setIdleTask calls with options', () => {
       expect(mockSetIdleTask.mock.calls[0][1]).toStrictEqual(
         setIdleTaskOptions
       );
@@ -1542,7 +1542,7 @@ describe('idle-task', () => {
     let result: Promise<any>;
     let secondResult: Promise<any>;
 
-    beforeEach(async () => {
+    beforeEach(() => {
       taskId = idleTaskModule!.setIdleTask(createTask(mockFirstTask));
     });
 
