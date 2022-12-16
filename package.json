@@ -44,6 +44,7 @@
     "@types/node": "18.11.2",
     "@typescript-eslint/eslint-plugin": "5.41.0",
     "@typescript-eslint/parser": "5.41.0",
+    "bundlemon": "^2.0.0",
     "eslint": "8.26.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-import": "2.26.0",
@@ -70,6 +71,15 @@
     ],
     "branches": [
       "main"
+    ]
+  },
+  "bundlemon": {
+    "baseDir": "./dist",
+    "reportOutput": ["github"],
+    "files": [
+      {
+        "path": "index.js"
+      }
     ]
   }
 }
