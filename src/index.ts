@@ -1,272 +1,32 @@
-const rIC =
-  typeof requestIdleCallback !== 'undefined'
-    ? requestIdleCallback
-    : (cb: IdleRequestCallback): ReturnType<typeof setTimeout> => {
-        const start = Date.now();
-        return setTimeout(() => {
-          cb({
-            didTimeout: false,
-            timeRemaining: () => Math.max(0, 50 - (Date.now() - start)),
-          });
-        }, 1);
-      };
-
-const cIC =
-  typeof cancelIdleCallback !== 'undefined' ? cancelIdleCallback : clearTimeout;
-
-export type IdleTaskFunction = () => any;
-const idleTaskIdProp = Symbol('idleTaskId');
-const idleTaskNameProp = Symbol('idleTaskName');
-const idleTaskPromiseExecutorProp = Symbol('idleTaskPromiseExecutor');
-interface IdleTask extends IdleTaskFunction {
-  readonly [idleTaskIdProp]: number;
-  readonly [idleTaskNameProp]: string;
-  readonly [idleTaskPromiseExecutorProp]?: Parameters<
-    ConstructorParameters<typeof Promise>[0]
-  >;
-}
-
-let tasks: IdleTask[] = [];
-let requestIdleCallbackId: ReturnType<typeof rIC>;
-
-export interface SetIdleTaskOptions {
-  readonly priority?: 'low' | 'high';
-  readonly cache?: boolean;
-}
-
-export interface WaitForIdleTaskOptions {
-  readonly cache?: boolean;
-  readonly timeout?: number;
-  readonly timeoutStrategy?: IdleTaskTimeoutStrategy;
-}
-
-type ConfigurableSetIdleTaskOptions = Pick<WaitForIdleTaskOptions, 'cache'>;
-type ConfigurableWaitForIdleTaskOptions = Pick<
+import cancelAllIdleTasks from './api/cancelAllIdleTasks';
+import cancelIdleTask from './api/cancelIdleTask';
+import configureIdleTask, { ConfigureOptions } from './api/configureIdleTask';
+import forceRunIdleTask, {
+  ForceRunIdleTaskOptions,
+} from './api/forceRunIdleTask';
+import getResultFromIdleTask, {
+  GetResultFromIdleTaskOptions,
+} from './api/getResultFromIdleTask';
+import isRunIdleTask from './api/isRunIdleTask';
+import waitForIdleTask, {
   WaitForIdleTaskOptions,
-  'timeout' | 'timeoutStrategy'
->;
+  WaitForIdleTaskTimeoutError,
+} from './api/waitForIdleTask';
+import setIdleTask, { SetIdleTaskOptions } from './api/setIdleTask';
 
-export type ForceRunIdleTaskOptions = Pick<WaitForIdleTaskOptions, 'cache'>;
-
-export type GetResultFromIdleTaskOptions = Pick<
+export {
+  cancelAllIdleTasks,
+  cancelIdleTask,
+  configureIdleTask,
+  ConfigureOptions,
+  forceRunIdleTask,
+  ForceRunIdleTaskOptions,
+  getResultFromIdleTask,
+  GetResultFromIdleTaskOptions,
+  isRunIdleTask,
+  waitForIdleTask,
+  WaitForIdleTaskTimeoutError,
+  WaitForIdleTaskOptions,
+  setIdleTask,
   SetIdleTaskOptions,
-  'priority'
-> &
-  ConfigurableWaitForIdleTaskOptions;
-
-export type ConfigureOptions = {
-  readonly interval?: number;
-  readonly debug?: boolean;
-} & ConfigurableSetIdleTaskOptions &
-  ConfigurableWaitForIdleTaskOptions;
-
-let taskGlobalOptions: ConfigureOptions = {
-  debug: false,
-  cache: true,
-  timeoutStrategy: 'error',
-};
-
-export const configureIdleTask = (options: ConfigureOptions): void => {
-  taskGlobalOptions = options;
-};
-
-const createTimeRemainingDidTimeout = (
-  didTimeout: boolean
-): (() => boolean) => {
-  const start = Date.now();
-  return () => didTimeout && Date.now() - start < 50;
-};
-
-const idleTaskResultMap = new Map<number, Promise<any>>();
-
-const executeTask = (task: IdleTask): void => {
-  const promiseExecutor = task[idleTaskPromiseExecutorProp];
-  if (!promiseExecutor) {
-    task();
-    return;
-  }
-  try {
-    promiseExecutor[0](task());
-  } catch (e) {
-    promiseExecutor[1](e);
-  }
-};
-
-const runIdleTasks = (deadline: IdleDeadline): void => {
-  const timeRemainingDidTimeout = createTimeRemainingDidTimeout(
-    deadline.didTimeout
-  );
-  while (
-    (deadline.timeRemaining() > 0 || timeRemainingDidTimeout()) &&
-    tasks.length > 0
-  ) {
-    const task = tasks.shift() as IdleTask;
-    if (taskGlobalOptions.debug && typeof self !== 'undefined') {
-      const start = performance.now();
-      executeTask(task);
-      const executionTime = Math.ceil((performance.now() - start) * 100) / 100;
-      console[executionTime > 50 ? 'warn' : 'info'](
-        `%cidle-task`,
-        `background: #717171; color: white; padding: 2px 3px; border-radius: 2px; font-size: 0.8em;`,
-        `${task[idleTaskNameProp] || 'anonymous'}(${
-          task[idleTaskIdProp]
-        }) took ${executionTime} ms`
-      );
-    } else {
-      executeTask(task);
-    }
-  }
-  if (tasks.length > 0) {
-    requestIdleCallbackId = rIC(runIdleTasks, {
-      timeout: taskGlobalOptions.interval,
-    });
-    return;
-  }
-  requestIdleCallbackId = NaN;
-};
-
-let id = 0;
-const defaultSetIdleTaskOptions: SetIdleTaskOptions = {
-  priority: 'low',
-};
-
-export const setIdleTask = (
-  task: IdleTaskFunction,
-  options: SetIdleTaskOptions = defaultSetIdleTaskOptions
-): number => {
-  const idleTaskId = ++id;
-  const idleTask = Object.defineProperties(() => task(), {
-    [idleTaskIdProp]: {
-      value: idleTaskId,
-    },
-    [idleTaskNameProp]: {
-      value: task.name,
-    },
-  }) as IdleTask;
-  const isUseCache = options.cache ?? taskGlobalOptions.cache;
-  if (isUseCache !== false) {
-    idleTaskResultMap.set(
-      idleTaskId,
-      new Promise((resolve, reject) => {
-        Object.defineProperty(idleTask, idleTaskPromiseExecutorProp, {
-          value: [resolve, reject],
-        });
-      })
-    );
-  }
-  options.priority === 'high' ? tasks.unshift(idleTask) : tasks.push(idleTask);
-  if (requestIdleCallbackId) {
-    return idleTaskId;
-  }
-  requestIdleCallbackId = rIC(runIdleTasks, {
-    timeout: taskGlobalOptions.interval,
-  });
-  return idleTaskId;
-};
-
-const resolveTaskResultWhenCancel = (task: IdleTask): void => {
-  const promiseExecutor = task[idleTaskPromiseExecutorProp];
-  promiseExecutor && promiseExecutor[0](undefined);
-};
-
-export const cancelIdleTask = (id: number): void => {
-  const task = tasks.find(task => task[idleTaskIdProp] === id);
-  task && resolveTaskResultWhenCancel(task);
-  idleTaskResultMap.delete(id);
-  tasks = tasks.filter(task => task[idleTaskIdProp] !== id);
-};
-
-export const cancelAllIdleTasks = (): void => {
-  tasks.forEach(resolveTaskResultWhenCancel);
-  tasks.length = 0;
-  idleTaskResultMap.clear();
-  requestIdleCallbackId && cIC(requestIdleCallbackId as any); // TypeScript Error because requestIdleCallbackId is number | NodeJS.Timeout.
-};
-
-// deprecated
-export const isRunIdleTask = (id: number): boolean =>
-  tasks.findIndex(task => task[idleTaskIdProp] === id) === -1;
-
-export type IdleTaskTimeoutStrategy = 'error' | 'forceRun';
-
-const defaultWaitForIdleTaskOptions: WaitForIdleTaskOptions = {
-  cache: true,
-  timeoutStrategy: 'error',
-};
-
-export class WaitForIdleTaskTimeoutError extends Error {
-  constructor() {
-    super('waitForIdleTask timeout.');
-    this.name = 'WaitForIdleTaskTimeoutError';
-  }
-}
-
-const getResultFromCache = (id: number, isDeleteCache = false) => {
-  const result = idleTaskResultMap.get(id);
-  if (isDeleteCache) {
-    idleTaskResultMap.delete(id);
-  }
-  return result;
-};
-
-export const waitForIdleTask = async (
-  id: number,
-  options?: WaitForIdleTaskOptions
-): Promise<any> => {
-  const { timeout: globalTimeout, timeoutStrategy: globalTimeoutStrategy } =
-    taskGlobalOptions;
-  const mergedDefaultOptions = {
-    ...defaultWaitForIdleTaskOptions,
-    timeout: globalTimeout,
-    timeoutStrategy: globalTimeoutStrategy,
-  };
-  const waitForIdleTaskOptions = options
-    ? { ...mergedDefaultOptions, ...options }
-    : mergedDefaultOptions;
-  const result = getResultFromCache(id, waitForIdleTaskOptions.cache === false);
-  const { timeout } = waitForIdleTaskOptions;
-  if (timeout === undefined && globalTimeout === undefined) {
-    return result;
-  }
-  let isTimeout = false;
-  const timeoutPromise = new Promise(resolve => {
-    setTimeout(() => {
-      resolve((isTimeout = true));
-    }, timeout ?? globalTimeout);
-  });
-  const racedResult = await Promise.race([result, timeoutPromise]);
-  if (isTimeout) {
-    if (waitForIdleTaskOptions.timeoutStrategy === 'forceRun') {
-      return forceRunIdleTask(id);
-    } else {
-      throw new WaitForIdleTaskTimeoutError();
-    }
-  }
-  return racedResult;
-};
-
-export const getResultFromIdleTask = (
-  task: IdleTaskFunction,
-  options?: GetResultFromIdleTaskOptions
-): ReturnType<typeof waitForIdleTask> =>
-  waitForIdleTask(setIdleTask(task, { priority: options?.priority }), {
-    cache: false,
-    timeout: options?.timeout,
-    timeoutStrategy: options?.timeoutStrategy,
-  });
-
-const defaultForceRunIdleTaskOptions = defaultWaitForIdleTaskOptions;
-
-export const forceRunIdleTask = async (
-  id: number,
-  options: ForceRunIdleTaskOptions = defaultForceRunIdleTaskOptions
-): Promise<any> => {
-  if (isRunIdleTask(id)) {
-    return getResultFromCache(id, options.cache === false);
-  }
-  const task = tasks.find(task => task[idleTaskIdProp] === id) as IdleTask;
-  executeTask(task);
-  const result = getResultFromCache(id, options.cache === false);
-  tasks = tasks.filter(task => task[idleTaskIdProp] !== id);
-  return result;
 };
