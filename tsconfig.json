@@ -7,7 +7,6 @@
     "moduleResolution": "node",
     "strict": true,
     "declaration": true,
-    "declarationMap": true,
     "esModuleInterop": true,
     "lib": [
       "ESNext",
