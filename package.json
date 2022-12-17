@@ -13,6 +13,7 @@
     "test:server": "jest --env=node",
     "test:lint": "eslint src/",
     "test:prettier": "prettier src/",
+    "prebuild": "rm -rf dist/",
     "build": "rollup -c",
     "prepare": "husky install"
   },
