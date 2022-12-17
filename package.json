@@ -75,7 +75,9 @@
   },
   "bundlemon": {
     "baseDir": "./dist",
-    "reportOutput": ["github"],
+    "reportOutput": [
+      "github"
+    ],
     "files": [
       {
         "path": "index.js"
