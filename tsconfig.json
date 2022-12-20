@@ -11,10 +11,10 @@
     "lib": [
       "ESNext",
       "DOM"
-    ],
+    ]
   },
   "include": ["src/**/*"],
   "exclude": [
-    "src/**/*.test.ts",
+    "src/**/*.test.ts"
   ]
 }

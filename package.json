@@ -84,6 +84,9 @@
     "files": [
       {
         "path": "index.js"
+      },
+      {
+        "path": "umd/index.js"
       }
     ]
   }
