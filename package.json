@@ -2,7 +2,18 @@
   "name": "idle-task",
   "version": "2.14.0",
   "description": "Improve your website performance by executing JavaScript during a browser's idle periods🚀",
-  "main": "dist/index.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/es/index.js",
+  "exports": {
+    "development": {
+      "require": "./dist/cjs/index.development.js",
+      "default": "./dist/es/index.development.js"
+    },
+    "production": {
+      "require": "./dist/cjs/index.js",
+      "default": "./dist/es/index.js"
+    }
+  },
   "types": "dist/index.d.ts",
   "files": [
     "dist"
@@ -15,7 +26,7 @@
     "test:prettier": "prettier src/",
     "prebuild": "rm -rf dist/",
     "build": "rollup -c",
-    "postbuild": "find dist | grep '\\.d\\.ts\\|api$' | grep -v 'index\\.d\\.ts$' | xargs rm -rf",
+    "postbuild": "find dist | grep '\\.d\\.ts\\|api$' | grep -v '^dist/index\\.d\\.ts$' | xargs rm -rf",
     "prepare": "husky install"
   },
   "repository": {
@@ -83,10 +94,13 @@
     ],
     "files": [
       {
-        "path": "index.js"
+        "path": "cjs/index.js"
       },
       {
         "path": "umd/index.js"
+      },
+      {
+        "path": "es/index.js"
       }
     ]
   }
