@@ -1,6 +1,6 @@
 {
   "name": "idle-task",
-  "version": "2.14.0",
+  "version": "2.15.0",
   "description": "Improve your website performance by executing JavaScript during a browser's idle periods🚀",
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",

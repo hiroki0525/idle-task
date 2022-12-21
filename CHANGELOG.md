@@ -1,3 +1,13 @@
+# [2.15.0](https://github.com/hiroki0525/idle-task/compare/v2.14.0...v2.15.0) (2022-12-21)
+
+
+### Features
+
+* add `"sideEffects": false` to enable tree-shaking ([1dcd30e](https://github.com/hiroki0525/idle-task/commit/1dcd30e4ff0fc7b1a4d1d75b07fc3618fee9a62a))
+* support ESM and development packages ([97ac608](https://github.com/hiroki0525/idle-task/commit/97ac608e7469beb0e44f62bb5a248d698108d6a9))
+* transpile ES2017 ([23499f5](https://github.com/hiroki0525/idle-task/commit/23499f5d0d0a7039dd03836e473e2de0a316a6cf))
+* umd target is es5 ([21e64a1](https://github.com/hiroki0525/idle-task/commit/21e64a13ae2a75d9f43542e33c7e955ec4d663e5))
+
 # [2.14.0](https://github.com/hiroki0525/idle-task/compare/v2.13.0...v2.14.0) (2022-12-17)
 
 
