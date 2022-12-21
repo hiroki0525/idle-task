@@ -539,6 +539,12 @@ export default function WebsiteNewsList() {
 
 Please see [CONTRIBUTING.md](https://github.com/hiroki0525/idle-task/blob/main/CONTRIBUTING.md) .
 
+Thank you for contributing!!
+
+[@joeinnes](https://github.com/joeinnes)
+[@m5r](https://github.com/m5r)
+[@yuchi](https://github.com/yuchi)
+
 ## License
 
 Released under the MIT license.
