@@ -35,7 +35,7 @@ Improve your website performance by executing JavaScript during a browser's idle
     - [`cache?: false`](#cache-false)
   - [`cancelIdleTask`](#cancelidletask)
   - [`cancelAllIdleTasks`](#cancelallidletasks)
-  - [`isRunIdleTask`](#isrunidletask)
+  - [`getIdleTaskStatus`](#getidletaskstatus)
   - [`configureIdleTask`](#configureidletask)
     - [`interval?: number`](#interval-number)
     - [`debug?: boolean`](#debug-boolean)
@@ -155,7 +155,7 @@ const taskId = setIdleTask(sendAnalyticsData, options);
 
 `setIdleTask` enqueues a task which `idle-task` will dequeue and run when the browser is idle.
 
-`setIdleTask` returns task id which is necessary for `cancelIdleTask` , `isRunIdleTask` and `waitForIdleTask`.
+`setIdleTask` returns task id which is necessary for `cancelIdleTask` , `getIdleTaskStatus` and `waitForIdleTask`.
 
 I recommend less than **50 ms** to execute a task because of [RAIL model](https://web.dev/i18n/en/rail/) .
 If you want to know how long did it take to finish a task, please use [debug mode](#debug-boolean) .
@@ -326,19 +326,29 @@ cancelAllIdleTasks();
 
 You can stop to run all tasks by using `cancelAllIdleTasks` if they are not executed.
 
-### `isRunIdleTask`
+### `getIdleTaskStatus`
 
 ```javascript
 const taskId = setIdleTask(() => console.log("task"));
-const isRun = isRunIdleTask(taskId);
-if (isRun) {
-  console.log("the task was completed");
+const idleTaskStatus = getIdleTaskStatus(taskId);
+// execute immediately if the task has not been executed yet.
+if (idleTaskStatus === 'ready') {
+  forceRunIdleTask(taskId)
 }
 ```
 
-**deprecated** : This function will be replaced alternative one.
+You can know the task status by using `getIdleTaskStatus` .
 
-You can know whether the task is executed or not by using `isRunIdleTask` .
+`getIdleTaskStatus` returns string as following.
+
+- `ready`
+  - The task has not been executed.
+- `executed`
+  - The task has been executed.
+  - **This doesn't mean that the task has been completed** because JavaScript don't have API which help us to know the promise result like `fullfilled` .
+- `unknown`
+  - `idle-task` doesn't know the task status because its result doesn't exist anywhere.
+  - This case means that the task was canceled by API like `cancelIdleTask` or its result was deleted by setting like `SetIdleTaskOptions.cache = false` .
 
 ### `configureIdleTask`
 
