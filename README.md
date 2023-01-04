@@ -35,7 +35,7 @@ Improve your website performance by executing JavaScript during a browser's idle
     - [`cache?: false`](#cache-false)
   - [`cancelIdleTask`](#cancelidletask)
   - [`cancelAllIdleTasks`](#cancelallidletasks)
-  - [`isRunIdleTask`](#isrunidletask)
+  - [`getIdleTaskStatus`](#getidletaskstatus)
   - [`configureIdleTask`](#configureidletask)
     - [`interval?: number`](#interval-number)
     - [`debug?: boolean`](#debug-boolean)
