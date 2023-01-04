@@ -1,3 +1,15 @@
+# [3.0.0](https://github.com/hiroki0525/idle-task/compare/v2.15.0...v3.0.0) (2023-01-04)
+
+
+### Features
+
+* add `getIdleTaskStatus` instead of `isRunIdleTask` ([c907dce](https://github.com/hiroki0525/idle-task/commit/c907dceca4c598c3783e092586f65d55b19a4426))
+
+
+### BREAKING CHANGES
+
+* `isRunIdleTask` was deleted. Please use `getIdleTaskStatus` if you want to know a task status.
+
 # [2.15.0](https://github.com/hiroki0525/idle-task/compare/v2.14.0...v2.15.0) (2022-12-21)
 
 
