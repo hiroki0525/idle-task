@@ -1,3 +1,10 @@
+# [3.1.0](https://github.com/hiroki0525/idle-task/compare/v3.0.0...v3.1.0) (2023-01-08)
+
+
+### Features
+
+* transpile ES2020 to reduce bundle size for modern browsers ([21cb157](https://github.com/hiroki0525/idle-task/commit/21cb1577c0d28ee5c6571f2a0c6401e7f6ea4b35))
+
 # [3.0.0](https://github.com/hiroki0525/idle-task/compare/v2.15.0...v3.0.0) (2023-01-04)
 
 
