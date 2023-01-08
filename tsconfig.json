@@ -2,7 +2,7 @@
   "compilerOptions": {
     "outDir": "./dist",
     "sourceMap": true,
-    "target": "ES2017",
+    "target": "ES2020",
     "module": "esnext",
     "moduleResolution": "node",
     "strict": true,
