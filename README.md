@@ -3,7 +3,7 @@
 ![idle-task](https://user-images.githubusercontent.com/40714517/202905619-b2319b98-d81a-4cc2-9eac-c88702daf45b.png)
 
 [![npm version](https://badge.fury.io/js/idle-task.svg)](https://badge.fury.io/js/idle-task)
-![npm bundle size](https://img.shields.io/bundlephobia/minzip/idle-task)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/idle-task)](https://bundlephobia.com/package/idle-task)
 [![Test](https://github.com/hiroki0525/idle-task/actions/workflows/test.yml/badge.svg)](https://github.com/hiroki0525/idle-task/actions/workflows/test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![semantic-release: angular](https://img.shields.io/badge/semantic--release-commitlint_conventional-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
