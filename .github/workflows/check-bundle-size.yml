@@ -7,7 +7,7 @@ on:
     types: [synchronize, opened, reopened]
 
 jobs:
-  test:
+  check-bundle-size:
     runs-on: ubuntu-latest
     timeout-minutes: 180
     steps:
