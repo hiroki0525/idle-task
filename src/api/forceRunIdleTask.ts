@@ -4,7 +4,6 @@ import {
   executeTask,
   getResultFromCache,
   IdleTask,
-  idleTaskIdProp,
   idleTaskState as its,
 } from '../internals';
 import getIdleTaskStatus from './getIdleTaskStatus';
@@ -20,10 +19,10 @@ const forceRunIdleTask = async (
   if (getIdleTaskStatus(id) !== 'ready') {
     return getResultFromCache(id, options.cache === false);
   }
-  const task = its.tasks.find(task => task[idleTaskIdProp] === id) as IdleTask;
+  const task = its.tasks.find(task => task.id === id) as IdleTask;
   executeTask(task);
   const result = getResultFromCache(id, options.cache === false);
-  its.tasks = its.tasks.filter(task => task[idleTaskIdProp] !== id);
+  its.tasks = its.tasks.filter(task => task.id !== id);
   return result;
 };
 

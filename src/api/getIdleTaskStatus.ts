@@ -1,13 +1,9 @@
-import {
-  getResultFromCache,
-  idleTaskIdProp,
-  idleTaskState as its,
-} from '../internals';
+import { getResultFromCache, idleTaskState as its } from '../internals';
 
 export type IdleTaskStatus = 'ready' | 'executed' | 'unknown';
 
 const getIdleTaskStatus = (id: number): IdleTaskStatus => {
-  if (its.tasks.some(task => task[idleTaskIdProp] === id)) {
+  if (its.tasks.some(task => task.id === id)) {
     return 'ready';
   }
   // We can't know JavaScript Promise states like fulfilled.
