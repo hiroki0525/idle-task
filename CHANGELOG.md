@@ -1,3 +1,10 @@
+## [3.1.1](https://github.com/hiroki0525/idle-task/compare/v3.1.0...v3.1.1) (2023-01-10)
+
+
+### Bug Fixes
+
+* https://github.com/hiroki0525/idle-task/issues/30 ([63ca46f](https://github.com/hiroki0525/idle-task/commit/63ca46f7d34f43c1b4139917dd4e6c88396a72b2))
+
 # [3.1.0](https://github.com/hiroki0525/idle-task/compare/v3.0.0...v3.1.0) (2023-01-08)
 
 
