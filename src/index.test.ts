@@ -1235,15 +1235,30 @@ describe('idle-task', () => {
               });
             });
             describe('with WaitForIdleTaskOptions.timeoutStrategy which is forceRun', () => {
-              beforeEach(() => {
-                result = idleTaskModule!.waitForIdleTask(firstTaskId, {
-                  timeoutStrategy: 'forceRun',
+              describe('cache is true', () => {
+                beforeEach(() => {
+                  result = idleTaskModule!.waitForIdleTask(firstTaskId, {
+                    timeoutStrategy: 'forceRun',
+                  });
+                  runRequestIdleCallback();
                 });
-                runRequestIdleCallback();
-              });
 
-              it('return result', async () => {
-                await expect(result).resolves.toBe('mockFirstTask');
+                it('return result', async () => {
+                  await expect(result).resolves.toBe('mockFirstTask');
+                });
+              });
+              describe('cache is false', () => {
+                beforeEach(() => {
+                  result = idleTaskModule!.waitForIdleTask(firstTaskId, {
+                    timeoutStrategy: 'forceRun',
+                    cache: false,
+                  });
+                  runRequestIdleCallback();
+                });
+
+                it('return result', async () => {
+                  await expect(result).resolves.toBe('mockFirstTask');
+                });
               });
             });
           });
@@ -1272,15 +1287,30 @@ describe('idle-task', () => {
               });
             });
             describe('with WaitForIdleTaskOptions.timeoutStrategy which is forceRun', () => {
-              beforeEach(() => {
-                result = idleTaskModule!.waitForIdleTask(firstTaskId, {
-                  timeoutStrategy: 'forceRun',
+              describe('cache is true', () => {
+                beforeEach(() => {
+                  result = idleTaskModule!.waitForIdleTask(firstTaskId, {
+                    timeoutStrategy: 'forceRun',
+                  });
+                  runRequestIdleCallback();
                 });
-                runRequestIdleCallback();
-              });
 
-              it('return result', async () => {
-                await expect(result).resolves.toBe('mockFirstTask');
+                it('return result', async () => {
+                  await expect(result).resolves.toBe('mockFirstTask');
+                });
+              });
+              describe('cache is false', () => {
+                beforeEach(() => {
+                  result = idleTaskModule!.waitForIdleTask(firstTaskId, {
+                    timeoutStrategy: 'forceRun',
+                    cache: false,
+                  });
+                  runRequestIdleCallback();
+                });
+
+                it('return result', async () => {
+                  await expect(result).resolves.toBe('mockFirstTask');
+                });
               });
             });
           });

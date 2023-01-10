@@ -34,8 +34,10 @@ const waitForIdleTask = async (
   const waitForIdleTaskOptions = options
     ? { ...mergedDefaultOptions, ...options }
     : mergedDefaultOptions;
-  const result = getResultFromCache(id, waitForIdleTaskOptions.cache === false);
-  const { timeout } = waitForIdleTaskOptions;
+  const { timeoutStrategy, timeout } = waitForIdleTaskOptions;
+  const isDeleteCache =
+    timeoutStrategy !== 'forceRun' && waitForIdleTaskOptions.cache === false;
+  const result = getResultFromCache(id, isDeleteCache);
   if (timeout === undefined && globalTimeout === undefined) {
     return result;
   }
