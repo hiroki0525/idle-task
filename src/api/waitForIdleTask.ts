@@ -35,8 +35,8 @@ const waitForIdleTask = async (
     ? { ...mergedDefaultOptions, ...options }
     : mergedDefaultOptions;
   const { timeoutStrategy, timeout } = waitForIdleTaskOptions;
-  const isDeleteCache =
-    timeoutStrategy !== 'forceRun' && waitForIdleTaskOptions.cache === false;
+  const isForceRun = timeoutStrategy === 'forceRun';
+  const isDeleteCache = !isForceRun && waitForIdleTaskOptions.cache === false;
   const result = getResultFromCache(id, isDeleteCache);
   if (timeout === undefined && globalTimeout === undefined) {
     return result;
@@ -49,7 +49,7 @@ const waitForIdleTask = async (
   });
   const racedResult = await Promise.race([result, timeoutPromise]);
   if (isTimeout) {
-    if (waitForIdleTaskOptions.timeoutStrategy === 'forceRun') {
+    if (isForceRun) {
       return forceRunIdleTask(id);
     } else {
       throw new WaitForIdleTaskTimeoutError();
