@@ -18,13 +18,10 @@ export const cIC =
   typeof cancelIdleCallback !== 'undefined' ? cancelIdleCallback : clearTimeout;
 
 export type IdleTaskFunction = () => any;
-export const idleTaskIdProp = Symbol('idleTaskId');
-export const idleTaskNameProp = Symbol('idleTaskName');
-export const idleTaskPromiseExecutorProp = Symbol('idleTaskPromiseExecutor');
 export interface IdleTask extends IdleTaskFunction {
-  readonly [idleTaskIdProp]: number;
-  readonly [idleTaskNameProp]: string;
-  readonly [idleTaskPromiseExecutorProp]?: Parameters<
+  readonly id: number;
+  readonly name: string;
+  readonly promiseExecutor?: Parameters<
     ConstructorParameters<typeof Promise>[0]
   >;
 }
@@ -35,7 +32,7 @@ export type ConfigurableWaitForIdleTaskOptions = Pick<
 >;
 
 export const executeTask = (task: IdleTask): void => {
-  const promiseExecutor = task[idleTaskPromiseExecutorProp];
+  const promiseExecutor = task.promiseExecutor;
   if (!promiseExecutor) {
     task();
     return;
@@ -48,7 +45,7 @@ export const executeTask = (task: IdleTask): void => {
 };
 
 export const resolveTaskResultWhenCancel = (task: IdleTask): void => {
-  const promiseExecutor = task[idleTaskPromiseExecutorProp];
+  const promiseExecutor = task.promiseExecutor;
   promiseExecutor && promiseExecutor[0](undefined);
 };
 

@@ -1,10 +1,7 @@
 import {
   IdleTask,
   IdleTaskFunction,
-  idleTaskIdProp,
-  idleTaskNameProp,
   rIC,
-  idleTaskPromiseExecutorProp,
   executeTask,
   idleTaskState as its,
 } from '../internals';
@@ -37,9 +34,7 @@ const runIdleTasks = (deadline: IdleDeadline): void => {
       console[executionTime > 50 ? 'warn' : 'info'](
         `%cidle-task`,
         `background: #717171; color: white; padding: 2px 3px; border-radius: 2px; font-size: 0.8em;`,
-        `${task[idleTaskNameProp] || 'anonymous'}(${
-          task[idleTaskIdProp]
-        }) took ${executionTime} ms`
+        `${task.name || 'anonymous'}(${task.id}) took ${executionTime} ms`
       );
     } else {
       executeTask(task);
@@ -65,10 +60,10 @@ const setIdleTask = (
 ): number => {
   const idleTaskId = ++id;
   const idleTask = Object.defineProperties(() => task(), {
-    [idleTaskIdProp]: {
+    id: {
       value: idleTaskId,
     },
-    [idleTaskNameProp]: {
+    name: {
       value: task.name,
     },
   }) as IdleTask;
@@ -77,7 +72,7 @@ const setIdleTask = (
     its.idleTaskResultMap.set(
       idleTaskId,
       new Promise((resolve, reject) => {
-        Object.defineProperty(idleTask, idleTaskPromiseExecutorProp, {
+        Object.defineProperty(idleTask, 'promiseExecutor', {
           value: [resolve, reject],
         });
       })
