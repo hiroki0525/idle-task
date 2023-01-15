@@ -9,6 +9,7 @@ import {
 export interface SetIdleTaskOptions {
   readonly priority?: 'low' | 'high';
   readonly cache?: boolean;
+  readonly revalidateInterval?: number;
 }
 
 const createTimeRemainingDidTimeout = (
@@ -81,6 +82,17 @@ const setIdleTask = (
   options.priority === 'high'
     ? its.tasks.unshift(idleTask)
     : its.tasks.push(idleTask);
+  const { revalidateInterval } = options;
+  if (revalidateInterval !== undefined) {
+    const reregisterIdleTask = (): void => {
+      setTimeout(() => {
+        // Low Priority
+        its.tasks.push(idleTask);
+        reregisterIdleTask();
+      }, revalidateInterval);
+    };
+    reregisterIdleTask();
+  }
   if (its.requestIdleCallbackId) {
     return idleTaskId;
   }
