@@ -1,3 +1,10 @@
+# [3.2.0](https://github.com/hiroki0525/idle-task/compare/v3.1.1...v3.2.0) (2023-01-15)
+
+
+### Features
+
+* add `SetIdleTaskOptions.revalidateInterval` ([b3139a3](https://github.com/hiroki0525/idle-task/commit/b3139a39d839103361635e9c330b95f01c3d918d))
+
 ## [3.1.1](https://github.com/hiroki0525/idle-task/compare/v3.1.0...v3.1.1) (2023-01-10)
 
 
