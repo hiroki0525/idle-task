@@ -317,6 +317,8 @@ const randomNumber = await forceRunIdleTask(taskId, {
 
 You can get the result immediately whether the task was executed during a browser's idle periods or not.
 
+`forceRunIdleTask` gets result from cache if the task was executed.
+
 `forceRunIdleTask` can also be set options as below.
 
 #### `cache?: false`
