@@ -9,6 +9,7 @@ import {
 export interface SetIdleTaskOptions {
   readonly priority?: 'low' | 'high';
   readonly cache?: boolean;
+  readonly revalidateInterval?: number;
 }
 
 const createTimeRemainingDidTimeout = (
@@ -33,7 +34,7 @@ const runIdleTasks = (deadline: IdleDeadline): void => {
       const executionTime = Math.ceil((performance.now() - start) * 100) / 100;
       console[executionTime > 50 ? 'warn' : 'info'](
         `%cidle-task`,
-        `background: #717171; color: white; padding: 2px 3px; border-radius: 2px; font-size: 0.8em;`,
+        `background:#717171;color:white;padding:2px 3px;border-radius:2px;font-size:0.8em;`,
         `${task.name || 'anonymous'}(${task.id}) took ${executionTime} ms`
       );
     } else {
@@ -81,6 +82,17 @@ const setIdleTask = (
   options.priority === 'high'
     ? its.tasks.unshift(idleTask)
     : its.tasks.push(idleTask);
+  const { revalidateInterval } = options;
+  if (revalidateInterval !== undefined) {
+    const reregisterIdleTask = (): void => {
+      setTimeout(() => {
+        // Low Priority
+        its.tasks.push(idleTask);
+        reregisterIdleTask();
+      }, revalidateInterval);
+    };
+    reregisterIdleTask();
+  }
   if (its.requestIdleCallbackId) {
     return idleTaskId;
   }

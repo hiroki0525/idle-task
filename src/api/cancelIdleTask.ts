@@ -4,8 +4,8 @@ import {
 } from '../internals';
 
 const cancelIdleTask = (id: number): void => {
-  const task = its.tasks.find(task => task.id === id);
-  task && resolveTaskResultWhenCancel(task);
+  const tasks = its.tasks.filter(task => task.id === id);
+  tasks.length > 0 && tasks.forEach(resolveTaskResultWhenCancel);
   its.idleTaskResultMap.delete(id);
   its.tasks = its.tasks.filter(task => task.id !== id);
 };

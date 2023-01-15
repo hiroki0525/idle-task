@@ -26,6 +26,7 @@ Improve your website performance by executing JavaScript during a browser's idle
   - [`setIdleTask`](#setidletask)
     - [`priority?: 'low' | 'high'`](#priority-low--high)
     - [`cache?: boolean`](#cache-boolean)
+    - [`revalidateInterval?: number`](#revalidateinterval-number)
   - [`waitForIdleTask`](#waitforidletask)
     - [`cache?: boolean`](#cache-boolean-1)
     - [`timeout?: number`](#timeout-number)
@@ -190,6 +191,22 @@ const generateRandomNumber = () => Math.floor(Math.random() * 100);
 const taskId = setIdleTask(generateRandomNumber, {cache: false});
 // result is undefined
 const result = await waitForIdleTask(taskId);
+```
+
+#### `revalidateInterval?: number`
+
+You can reregister your task by using `revalidateInterval` .
+
+If you set `revalidateInterval: 5000` , `idle-task` will enqueue your task every 5000 ms .
+
+```typescript
+const saveUserArticleDraft = () => {
+    // save user editing article data to database.
+}
+
+// saveUserArticleDraft will be executed when the browser is idle.
+// In addition, idle-task registers saveUserArticleDraft task every 5000 ms.
+setIdleTask(saveUserArticleDraft, { cache: false, revalidateInterval: 5000 });
 ```
 
 ### `waitForIdleTask`

@@ -158,6 +158,102 @@ describe('setIdleTask', () => {
         });
       });
     });
+
+    describe('without revalidateInterval', () => {
+      beforeEach(() => {
+        idleTaskModule!.setIdleTask(createTask(mockFirstTask));
+        idleTaskModule!.setIdleTask(createTask(mockSecondTask));
+        idleTaskModule!.setIdleTask(createTask(mockThirdTask));
+        runRequestIdleCallback();
+      });
+
+      it('first task is called', () => {
+        expect(mockFirstTask.mock.calls.length).toBe(1);
+      });
+
+      it('second task is called', () => {
+        expect(mockSecondTask.mock.calls.length).toBe(1);
+      });
+
+      it('third task is called', () => {
+        expect(mockThirdTask.mock.calls.length).toBe(1);
+      });
+    });
+
+    describe('with revalidateInterval', () => {
+      describe('registered task', () => {
+        describe('registered task once', () => {
+          beforeEach(() => {
+            idleTaskModule!.setIdleTask(createTask(mockFirstTask), {
+              revalidateInterval: 1,
+            });
+            idleTaskModule!.setIdleTask(createTask(mockSecondTask));
+            idleTaskModule!.setIdleTask(createTask(mockThirdTask));
+            runRequestIdleCallback();
+          });
+
+          it('first task is called twice', () => {
+            expect(mockFirstTask.mock.calls.length).toBe(2);
+          });
+
+          it('second task is called', () => {
+            expect(mockSecondTask.mock.calls.length).toBe(1);
+          });
+
+          it('third task is called', () => {
+            expect(mockThirdTask.mock.calls.length).toBe(1);
+          });
+        });
+
+        describe('registered task twice', () => {
+          beforeEach(() => {
+            idleTaskModule!.setIdleTask(createTask(mockFirstTask, 50));
+            idleTaskModule!.setIdleTask(createTask(mockSecondTask), {
+              revalidateInterval: 25,
+            });
+            idleTaskModule!.setIdleTask(createTask(mockThirdTask));
+            // Only mockFirstTask will be executed.
+            runRequestIdleCallback();
+            runRequestIdleCallback();
+          });
+
+          it('first task is called', () => {
+            expect(mockFirstTask.mock.calls.length).toBe(1);
+          });
+
+          it('second task is called three times', () => {
+            expect(mockSecondTask.mock.calls.length).toBe(3);
+          });
+
+          it('third task is called', () => {
+            expect(mockThirdTask.mock.calls.length).toBe(1);
+          });
+        });
+      });
+
+      describe('not registered task', () => {
+        beforeEach(() => {
+          idleTaskModule!.setIdleTask(createTask(mockFirstTask), {
+            revalidateInterval: 2,
+          });
+          idleTaskModule!.setIdleTask(createTask(mockSecondTask));
+          idleTaskModule!.setIdleTask(createTask(mockThirdTask));
+          runRequestIdleCallback();
+        });
+
+        it('first task is called once', () => {
+          expect(mockFirstTask.mock.calls.length).toBe(1);
+        });
+
+        it('second task is called', () => {
+          expect(mockSecondTask.mock.calls.length).toBe(1);
+        });
+
+        it('third task is called', () => {
+          expect(mockThirdTask.mock.calls.length).toBe(1);
+        });
+      });
+    });
   });
 
   describe('debug mode', () => {
