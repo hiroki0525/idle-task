@@ -1,3 +1,10 @@
+## [3.2.1](https://github.com/hiroki0525/idle-task/compare/v3.2.0...v3.2.1) (2023-01-15)
+
+
+### Bug Fixes
+
+*  `forceRunIdleTask` executes a latest task considering the case of `revalidateInterval` ([b8fb2a6](https://github.com/hiroki0525/idle-task/commit/b8fb2a69c7c18a355cfad475591fdc5863a85520))
+
 # [3.2.0](https://github.com/hiroki0525/idle-task/compare/v3.1.1...v3.2.0) (2023-01-15)
 
 
