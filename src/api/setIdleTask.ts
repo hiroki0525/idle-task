@@ -60,6 +60,17 @@ const setIdleTask = (
   options: SetIdleTaskOptions = defaultSetIdleTaskOptions
 ): number => {
   const idleTaskId = ++id;
+  let resolve, reject;
+  const isUseCache = options.cache ?? its.taskGlobalOptions.cache;
+  if (isUseCache !== false) {
+    its.idleTaskResultMap.set(
+      idleTaskId,
+      new Promise((res, rej) => {
+        resolve = res;
+        reject = rej;
+      })
+    );
+  }
   const idleTask = Object.defineProperties(() => task(), {
     id: {
       value: idleTaskId,
@@ -67,18 +78,13 @@ const setIdleTask = (
     name: {
       value: task.name,
     },
+    resolve: {
+      value: resolve,
+    },
+    reject: {
+      value: reject,
+    },
   }) as IdleTask;
-  const isUseCache = options.cache ?? its.taskGlobalOptions.cache;
-  if (isUseCache !== false) {
-    its.idleTaskResultMap.set(
-      idleTaskId,
-      new Promise((resolve, reject) => {
-        Object.defineProperty(idleTask, 'promiseExecutor', {
-          value: [resolve, reject],
-        });
-      })
-    );
-  }
   options.priority === 'high'
     ? its.tasks.unshift(idleTask)
     : its.tasks.push(idleTask);
