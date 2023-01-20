@@ -18,12 +18,17 @@ export const cIC =
   typeof cancelIdleCallback !== 'undefined' ? cancelIdleCallback : clearTimeout;
 
 export type IdleTaskFunction = () => any;
+
+type PromiseResolveReject = Parameters<
+  ConstructorParameters<typeof Promise>[0]
+>;
+
 export interface IdleTask extends IdleTaskFunction {
   readonly id: number;
   readonly name: string;
-  readonly promiseExecutor?: Parameters<
-    ConstructorParameters<typeof Promise>[0]
-  >;
+  readonly resolve?: PromiseResolveReject[0];
+  readonly reject?: PromiseResolveReject[1];
+  readonly revalidateWhenExecuted?: boolean;
 }
 
 export type ConfigurableWaitForIdleTaskOptions = Pick<
@@ -32,21 +37,26 @@ export type ConfigurableWaitForIdleTaskOptions = Pick<
 >;
 
 export const executeTask = (task: IdleTask): void => {
-  const promiseExecutor = task.promiseExecutor;
-  if (!promiseExecutor) {
+  const { resolve, reject, revalidateWhenExecuted } = task;
+  const reregisterIdleTask = () =>
+    revalidateWhenExecuted && idleTaskState.tasks.push(task);
+  if (!resolve || !reject) {
     task();
+    reregisterIdleTask();
     return;
   }
   try {
-    promiseExecutor[0](task());
+    resolve(task());
   } catch (e) {
-    promiseExecutor[1](e);
+    reject(e);
+  } finally {
+    reregisterIdleTask();
   }
 };
 
 export const resolveTaskResultWhenCancel = (task: IdleTask): void => {
-  const promiseExecutor = task.promiseExecutor;
-  promiseExecutor && promiseExecutor[0](undefined);
+  const resolve = task.resolve;
+  resolve && resolve(undefined);
 };
 
 export const getResultFromCache = (id: number, isDeleteCache = false) => {

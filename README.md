@@ -27,6 +27,7 @@ Improve your website performance by executing JavaScript during a browser's idle
     - [`priority?: 'low' | 'high'`](#priority-low--high)
     - [`cache?: boolean`](#cache-boolean)
     - [`revalidateInterval?: number`](#revalidateinterval-number)
+    - [`revalidateWhenExecuted?: boolean`](#revalidatewhenexecuted-boolean)
   - [`waitForIdleTask`](#waitforidletask)
     - [`cache?: boolean`](#cache-boolean-1)
     - [`timeout?: number`](#timeout-number)
@@ -147,7 +148,9 @@ const result = await waitForIdleTask(taskId);
 const sendAnalyticsData = () => console.log("send analytics data");
 const options = {
     priority: 'high',
-    cache: false
+    cache: false,
+    revalidateInterval: 5000,
+    revalidateWhenExecuted: true,
 };
 const taskId = setIdleTask(sendAnalyticsData, options);
 ```
@@ -207,6 +210,22 @@ const saveUserArticleDraft = () => {
 // saveUserArticleDraft will be executed when the browser is idle.
 // In addition, idle-task registers saveUserArticleDraft task every 5000 ms.
 setIdleTask(saveUserArticleDraft, { cache: false, revalidateInterval: 5000 });
+```
+
+#### `revalidateWhenExecuted?: boolean`
+
+You can reregister your task by using `revalidateWhenExecuted` which default is `false`.
+
+`idle-task` will enqueue your task when it had been executed.
+
+```typescript
+const saveUserArticleDraft = () => {
+    // save user editing article data to database.
+}
+
+// saveUserArticleDraft will be executed when the browser is idle.
+// In addition, idle-task registers saveUserArticleDraft task when it had been executed.
+setIdleTask(saveUserArticleDraft, { cache: false, revalidateWhenExecuted: true });
 ```
 
 ### `waitForIdleTask`

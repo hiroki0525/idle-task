@@ -10,6 +10,7 @@ export interface SetIdleTaskOptions {
   readonly priority?: 'low' | 'high';
   readonly cache?: boolean;
   readonly revalidateInterval?: number;
+  readonly revalidateWhenExecuted?: boolean;
 }
 
 const createTimeRemainingDidTimeout = (
@@ -53,13 +54,25 @@ const runIdleTasks = (deadline: IdleDeadline): void => {
 let id = 0;
 const defaultSetIdleTaskOptions: SetIdleTaskOptions = {
   priority: 'low',
-};
+  revalidateWhenExecuted: false,
+} as const;
 
 const setIdleTask = (
   task: IdleTaskFunction,
   options: SetIdleTaskOptions = defaultSetIdleTaskOptions
 ): number => {
   const idleTaskId = ++id;
+  let resolve, reject;
+  const isUseCache = options.cache ?? its.taskGlobalOptions.cache;
+  if (isUseCache !== false) {
+    its.idleTaskResultMap.set(
+      idleTaskId,
+      new Promise((res, rej) => {
+        resolve = res;
+        reject = rej;
+      })
+    );
+  }
   const idleTask = Object.defineProperties(() => task(), {
     id: {
       value: idleTaskId,
@@ -67,18 +80,16 @@ const setIdleTask = (
     name: {
       value: task.name,
     },
+    resolve: {
+      value: resolve,
+    },
+    reject: {
+      value: reject,
+    },
+    revalidateWhenExecuted: {
+      value: options.revalidateWhenExecuted,
+    },
   }) as IdleTask;
-  const isUseCache = options.cache ?? its.taskGlobalOptions.cache;
-  if (isUseCache !== false) {
-    its.idleTaskResultMap.set(
-      idleTaskId,
-      new Promise((resolve, reject) => {
-        Object.defineProperty(idleTask, 'promiseExecutor', {
-          value: [resolve, reject],
-        });
-      })
-    );
-  }
   options.priority === 'high'
     ? its.tasks.unshift(idleTask)
     : its.tasks.push(idleTask);

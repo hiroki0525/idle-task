@@ -254,6 +254,47 @@ describe('setIdleTask', () => {
         });
       });
     });
+
+    describe('without revalidateWhenExecuted', () => {
+      describe('revalidateWhenExecuted is undefined', () => {
+        beforeEach(() => {
+          idleTaskModule!.setIdleTask(createTask(mockFirstTask));
+          runRequestIdleCallback();
+        });
+
+        it('first task is called once', () => {
+          expect(mockFirstTask.mock.calls.length).toBe(1);
+        });
+      });
+
+      describe('revalidateWhenExecuted is false', () => {
+        beforeEach(() => {
+          idleTaskModule!.setIdleTask(createTask(mockFirstTask), {
+            revalidateWhenExecuted: false,
+          });
+          runRequestIdleCallback();
+        });
+
+        it('first task is called once', () => {
+          expect(mockFirstTask.mock.calls.length).toBe(1);
+        });
+      });
+    });
+
+    describe('with revalidateWhenExecuted', () => {
+      describe('revalidateWhenExecuted is true', () => {
+        beforeEach(() => {
+          idleTaskModule!.setIdleTask(createTask(mockFirstTask, 25), {
+            revalidateWhenExecuted: true,
+          });
+          runRequestIdleCallback();
+        });
+
+        it('first task is called twice', () => {
+          expect(mockFirstTask.mock.calls.length).toBe(2);
+        });
+      });
+    });
   });
 
   describe('debug mode', () => {
