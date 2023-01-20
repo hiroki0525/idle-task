@@ -28,6 +28,7 @@ export interface IdleTask extends IdleTaskFunction {
   readonly name: string;
   readonly resolve?: PromiseResolveReject[0];
   readonly reject?: PromiseResolveReject[1];
+  readonly revalidateWhenExecuted?: boolean;
 }
 
 export type ConfigurableWaitForIdleTaskOptions = Pick<
@@ -36,15 +37,20 @@ export type ConfigurableWaitForIdleTaskOptions = Pick<
 >;
 
 export const executeTask = (task: IdleTask): void => {
-  const [resolve, reject] = [task.resolve, task.reject];
+  const { resolve, reject, revalidateWhenExecuted } = task;
+  const reregisterIdleTask = () =>
+    revalidateWhenExecuted && idleTaskState.tasks.push(task);
   if (!resolve || !reject) {
     task();
+    reregisterIdleTask();
     return;
   }
   try {
     resolve(task());
   } catch (e) {
     reject(e);
+  } finally {
+    reregisterIdleTask();
   }
 };
 

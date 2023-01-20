@@ -10,6 +10,7 @@ export interface SetIdleTaskOptions {
   readonly priority?: 'low' | 'high';
   readonly cache?: boolean;
   readonly revalidateInterval?: number;
+  readonly revalidateWhenExecuted?: boolean;
 }
 
 const createTimeRemainingDidTimeout = (
@@ -53,7 +54,8 @@ const runIdleTasks = (deadline: IdleDeadline): void => {
 let id = 0;
 const defaultSetIdleTaskOptions: SetIdleTaskOptions = {
   priority: 'low',
-};
+  revalidateWhenExecuted: false,
+} as const;
 
 const setIdleTask = (
   task: IdleTaskFunction,
@@ -83,6 +85,9 @@ const setIdleTask = (
     },
     reject: {
       value: reject,
+    },
+    revalidateWhenExecuted: {
+      value: options.revalidateWhenExecuted,
     },
   }) as IdleTask;
   options.priority === 'high'

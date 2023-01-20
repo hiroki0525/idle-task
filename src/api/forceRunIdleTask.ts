@@ -19,10 +19,17 @@ const forceRunIdleTask = async (
     return getResultFromCache(id, options.cache === false);
   }
   const tasks = its.tasks.filter(task => task.id === id);
-  // execute latest enqueued task
-  executeTask(tasks[tasks.length - 1]);
+  const latestEnqueuedTask = tasks[tasks.length - 1];
+  executeTask(latestEnqueuedTask);
   const result = getResultFromCache(id, options.cache === false);
-  its.tasks = its.tasks.filter(task => task.id !== id);
+  if (latestEnqueuedTask.revalidateWhenExecuted) {
+    const latestEnqueuedTaskIndex = its.tasks.length - 1;
+    its.tasks = its.tasks.filter(
+      (task, index) => index === latestEnqueuedTaskIndex || task.id !== id
+    );
+  } else {
+    its.tasks = its.tasks.filter(task => task.id !== id);
+  }
   return result;
 };
 
