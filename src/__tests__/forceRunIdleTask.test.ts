@@ -189,7 +189,7 @@ describe('forceRunIdleTask', () => {
   });
 
   describe('existed tasks', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       idleTaskModule!.setIdleTask(createTask(mockSecondTask, 50));
       taskId = idleTaskModule!.setIdleTask(createTask(mockThirdTask), {
         revalidateInterval: 50,
