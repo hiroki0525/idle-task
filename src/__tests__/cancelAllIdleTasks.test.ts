@@ -37,8 +37,8 @@ describe('cancelAllIdleTasks', () => {
       expect(mockCancelIdleCallback.mock.calls.length).toBe(1);
     });
 
-    it('first task result is cleared', () => {
-      expect(
+    it('first task result is cleared', async () => {
+      await expect(
         idleTaskModule!.waitForIdleTask(firstTaskId)
       ).resolves.toBeUndefined();
     });
@@ -49,8 +49,8 @@ describe('cancelAllIdleTasks', () => {
       ).resolves.toBeUndefined();
     });
 
-    it('third task result is cleared', () => {
-      expect(
+    it('third task result is cleared', async () => {
+      await expect(
         idleTaskModule!.waitForIdleTask(thirdTaskId)
       ).resolves.toBeUndefined();
     });
@@ -81,20 +81,20 @@ describe('cancelAllIdleTasks', () => {
       expect(mockCancelIdleCallback.mock.calls.length).toBe(0);
     });
 
-    it('first task result is cleared', () => {
-      expect(
+    it('first task result is cleared', async () => {
+      await expect(
         idleTaskModule!.waitForIdleTask(firstTaskId)
       ).resolves.toBeUndefined();
     });
 
-    it('second task result is cleared', () => {
-      expect(
+    it('second task result is cleared', async () => {
+      await expect(
         idleTaskModule!.waitForIdleTask(secondTaskId)
       ).resolves.toBeUndefined();
     });
 
-    it('third task result is cleared', () => {
-      expect(
+    it('third task result is cleared', async () => {
+      await expect(
         idleTaskModule!.waitForIdleTask(thirdTaskId)
       ).resolves.toBeUndefined();
     });
