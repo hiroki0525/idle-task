@@ -73,6 +73,7 @@ const setIdleTask = (
       })
     );
   }
+  const { revalidateInterval } = options;
   const idleTask = Object.defineProperties(() => task(), {
     id: {
       value: idleTaskId,
@@ -89,21 +90,19 @@ const setIdleTask = (
     revalidateWhenExecuted: {
       value: options.revalidateWhenExecuted,
     },
+    revalidateIntervalId: {
+      value:
+        revalidateInterval === undefined
+          ? NaN
+          : setInterval(() => {
+              // Low Priority
+              its.tasks.push(idleTask);
+            }, revalidateInterval),
+    },
   }) as IdleTask;
   options.priority === 'high'
     ? its.tasks.unshift(idleTask)
     : its.tasks.push(idleTask);
-  const { revalidateInterval } = options;
-  if (revalidateInterval !== undefined) {
-    const reregisterIdleTask = (): void => {
-      setTimeout(() => {
-        // Low Priority
-        its.tasks.push(idleTask);
-        reregisterIdleTask();
-      }, revalidateInterval);
-    };
-    reregisterIdleTask();
-  }
   if (its.requestIdleCallbackId) {
     return idleTaskId;
   }
