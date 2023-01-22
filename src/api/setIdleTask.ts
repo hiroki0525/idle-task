@@ -95,14 +95,10 @@ const setIdleTask = (
     : its.tasks.push(idleTask);
   const { revalidateInterval } = options;
   if (revalidateInterval !== undefined) {
-    const reregisterIdleTask = (): void => {
-      setTimeout(() => {
-        // Low Priority
-        its.tasks.push(idleTask);
-        reregisterIdleTask();
-      }, revalidateInterval);
-    };
-    reregisterIdleTask();
+    setInterval(() => {
+      // Low Priority
+      its.tasks.push(idleTask);
+    }, revalidateInterval);
   }
   if (its.requestIdleCallbackId) {
     return idleTaskId;
