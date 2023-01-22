@@ -1,3 +1,10 @@
+## [3.3.1](https://github.com/hiroki0525/idle-task/compare/v3.3.0...v3.3.1) (2023-01-22)
+
+
+### Bug Fixes
+
+* remove timer to reregister task when it was cancelled ([0e3db76](https://github.com/hiroki0525/idle-task/commit/0e3db766b0730b8dd0286d325c2dcbe67560a1e7))
+
 # [3.3.0](https://github.com/hiroki0525/idle-task/compare/v3.2.1...v3.3.0) (2023-01-20)
 
 
