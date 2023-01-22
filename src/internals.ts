@@ -29,6 +29,7 @@ export interface IdleTask extends IdleTaskFunction {
   readonly resolve?: PromiseResolveReject[0];
   readonly reject?: PromiseResolveReject[1];
   readonly revalidateWhenExecuted?: boolean;
+  readonly revalidateIntervalId: number;
 }
 
 export type ConfigurableWaitForIdleTaskOptions = Pick<
@@ -55,6 +56,7 @@ export const executeTask = (task: IdleTask): void => {
 };
 
 export const resolveTaskResultWhenCancel = (task: IdleTask): void => {
+  clearInterval(task.revalidateIntervalId);
   const resolve = task.resolve;
   resolve && resolve(undefined);
 };

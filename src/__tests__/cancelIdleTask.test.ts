@@ -71,7 +71,7 @@ describe('cancelIdleTask', () => {
       });
     });
 
-    describe('one task is not canceled and another task is canceled', () => {
+    describe('one task is not canceled and others is canceled', () => {
       beforeEach(() => {
         idleTaskModule!.setIdleTask(createTask(mockFirstTask, 50));
         taskId = idleTaskModule!.setIdleTask(createTask(mockSecondTask, 50), {
@@ -79,10 +79,12 @@ describe('cancelIdleTask', () => {
         });
         // mockFirstTask will be executed and 2 mockSecondTask will be remaining.
         runRequestIdleCallback();
-        // one mockSecondTask will be executed and another mockSecondTask will be remaining.
+        // one mockSecondTask will be executed and 2 mockSecondTask will be remaining.
         runRequestIdleCallback();
         idleTaskModule!.setIdleTask(createTask(mockThirdTask));
         idleTaskModule!.cancelIdleTask(taskId);
+        runRequestIdleCallback();
+        // check whether revalidateInterval worked or not
         runRequestIdleCallback();
       });
 
