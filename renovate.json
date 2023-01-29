@@ -7,12 +7,19 @@
   "schedule": [
     "before 3am on the first day of the month"
   ],
+  "automergeSchedule": [
+    "before 3am on the first day of the month"
+  ],
   "dependencyDashboard": false,
   "packageRules": [
     {
-      "matchDepTypes": ["devDependencies"],
-      "matchUpdateTypes": ["patch", "minor"],
-      "groupName": "devDependencies (non-major)"
+      "matchUpdateTypes": ["patch"],
+      "automerge": true,
+      "groupName": "dependencies (patch)"
+    },
+    {
+      "matchUpdateTypes": ["major", "minor"],
+      "groupName": "dependencies (major and minor)"
     }
   ]
 }
