@@ -43,12 +43,16 @@ const runIdleTasks = (deadline: IdleDeadline): void => {
     }
   }
   if (its.tasks.length > 0) {
-    its.requestIdleCallbackId = rIC(runIdleTasks, {
-      timeout: its.taskGlobalOptions.interval,
-    });
+    scheduleIdleTask();
     return;
   }
   its.requestIdleCallbackId = NaN;
+};
+
+const scheduleIdleTask = () => {
+  its.requestIdleCallbackId = rIC(runIdleTasks, {
+    timeout: its.taskGlobalOptions.interval,
+  });
 };
 
 let id = 0;
@@ -97,6 +101,7 @@ const setIdleTask = (
           : setInterval(() => {
               // Low Priority
               its.tasks.push(idleTask);
+              its.requestIdleCallbackId || scheduleIdleTask();
             }, revalidateInterval),
     },
   }) as IdleTask;
@@ -106,9 +111,7 @@ const setIdleTask = (
   if (its.requestIdleCallbackId) {
     return idleTaskId;
   }
-  its.requestIdleCallbackId = rIC(runIdleTasks, {
-    timeout: its.taskGlobalOptions.interval,
-  });
+  scheduleIdleTask();
   return idleTaskId;
 };
 
