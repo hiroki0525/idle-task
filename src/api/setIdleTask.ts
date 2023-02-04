@@ -94,17 +94,17 @@ const setIdleTask = (
     revalidateWhenExecuted: {
       value: options.revalidateWhenExecuted,
     },
-    revalidateIntervalId: {
-      value:
-        revalidateInterval === undefined
-          ? NaN
-          : setInterval(() => {
-              // Low Priority
-              its.tasks.push(idleTask);
-              its.requestIdleCallbackId || scheduleIdleTask();
-            }, revalidateInterval),
-    },
   }) as IdleTask;
+  if (revalidateInterval !== undefined) {
+    its.idleTaskRevalidateIntervalMap.set(
+      idleTaskId,
+      setInterval(() => {
+        // Low Priority
+        its.tasks.push(idleTask);
+        its.requestIdleCallbackId || scheduleIdleTask();
+      }, revalidateInterval)
+    );
+  }
   options.priority === 'high'
     ? its.tasks.unshift(idleTask)
     : its.tasks.push(idleTask);

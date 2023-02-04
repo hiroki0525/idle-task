@@ -29,7 +29,6 @@ export interface IdleTask extends IdleTaskFunction {
   readonly resolve?: PromiseResolveReject[0];
   readonly reject?: PromiseResolveReject[1];
   readonly revalidateWhenExecuted?: boolean;
-  readonly revalidateIntervalId: number;
 }
 
 export type ConfigurableWaitForIdleTaskOptions = Pick<
@@ -55,10 +54,26 @@ export const executeTask = (task: IdleTask): void => {
   }
 };
 
-export const resolveTaskResultWhenCancel = (task: IdleTask): void => {
-  clearInterval(task.revalidateIntervalId);
-  const resolve = task.resolve;
-  resolve && resolve(undefined);
+export const resolveTaskResultWhenCancel = (
+  tasks: IdleTask[],
+  id?: number
+): void => {
+  if (id) {
+    const revalidateIntervalId =
+      idleTaskState.idleTaskRevalidateIntervalMap.get(id);
+    if (revalidateIntervalId) {
+      clearInterval(revalidateIntervalId);
+      idleTaskState.idleTaskRevalidateIntervalMap.delete(id);
+    }
+  } else {
+    Array.from(idleTaskState.idleTaskRevalidateIntervalMap.values()).forEach(
+      clearInterval
+    );
+    idleTaskState.idleTaskRevalidateIntervalMap.clear();
+  }
+  tasks.forEach(task => {
+    task.resolve && task.resolve(undefined);
+  });
 };
 
 export const getResultFromCache = (id: number, isDeleteCache = false) => {
@@ -85,6 +100,7 @@ interface IdleTaskState {
   requestIdleCallbackId: ReturnType<typeof rIC>;
   taskGlobalOptions: ConfigureOptions;
   idleTaskResultMap: Map<number, Promise<any>>;
+  idleTaskRevalidateIntervalMap: Map<number, ReturnType<typeof setInterval>>;
 }
 
 export const idleTaskState: IdleTaskState = {
@@ -92,4 +108,5 @@ export const idleTaskState: IdleTaskState = {
   requestIdleCallbackId: NaN,
   taskGlobalOptions,
   idleTaskResultMap: new Map(),
+  idleTaskRevalidateIntervalMap: new Map(),
 };

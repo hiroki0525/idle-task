@@ -5,7 +5,7 @@ import {
 
 const cancelIdleTask = (id: number): void => {
   const tasks = its.tasks.filter(task => task.id === id);
-  tasks.length > 0 && tasks.forEach(resolveTaskResultWhenCancel);
+  resolveTaskResultWhenCancel(tasks, id);
   its.idleTaskResultMap.delete(id);
   its.tasks = its.tasks.filter(task => task.id !== id);
 };
