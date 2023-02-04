@@ -1,3 +1,10 @@
+## [3.3.3](https://github.com/hiroki0525/idle-task/compare/v3.3.2...v3.3.3) (2023-02-04)
+
+
+### Bug Fixes
+
+* not working `cancelIdleTask` when setting `SetIdleTaskOptions.revalidateInterval` ([0b4f980](https://github.com/hiroki0525/idle-task/commit/0b4f9806b01be30ed566ef2747a54737450dbcf8))
+
 ## [3.3.2](https://github.com/hiroki0525/idle-task/compare/v3.3.1...v3.3.2) (2023-02-02)
 
 
