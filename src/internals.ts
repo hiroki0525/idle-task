@@ -54,23 +54,7 @@ export const executeTask = (task: IdleTask): void => {
   }
 };
 
-export const resolveTaskResultWhenCancel = (
-  tasks: IdleTask[],
-  id?: number
-): void => {
-  if (id) {
-    const revalidateIntervalId =
-      idleTaskState.idleTaskRevalidateIntervalMap.get(id);
-    if (revalidateIntervalId) {
-      clearInterval(revalidateIntervalId);
-      idleTaskState.idleTaskRevalidateIntervalMap.delete(id);
-    }
-  } else {
-    Array.from(idleTaskState.idleTaskRevalidateIntervalMap.values()).forEach(
-      clearInterval
-    );
-    idleTaskState.idleTaskRevalidateIntervalMap.clear();
-  }
+export const resolveTaskResultWhenCancel = (tasks: IdleTask[]): void => {
   tasks.forEach(task => {
     task.resolve && task.resolve(undefined);
   });

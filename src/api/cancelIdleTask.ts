@@ -4,8 +4,14 @@ import {
 } from '../internals';
 
 const cancelIdleTask = (id: number): void => {
+  // delete revalidateInterval
+  const revalidateIntervalId = its.idleTaskRevalidateIntervalMap.get(id);
+  if (revalidateIntervalId) {
+    clearInterval(revalidateIntervalId);
+    its.idleTaskRevalidateIntervalMap.delete(id);
+  }
   const tasks = its.tasks.filter(task => task.id === id);
-  resolveTaskResultWhenCancel(tasks, id);
+  resolveTaskResultWhenCancel(tasks);
   its.idleTaskResultMap.delete(id);
   its.tasks = its.tasks.filter(task => task.id !== id);
 };
