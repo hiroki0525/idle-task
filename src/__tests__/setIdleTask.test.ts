@@ -109,7 +109,7 @@ describe('setIdleTask', () => {
       });
 
       describe('executed time is less than 50ms', () => {
-        beforeEach(async () => {
+        beforeEach(() => {
           idleTaskModule!.setIdleTask(createTask(mockFirstTask, 25));
           idleTaskModule!.setIdleTask(createTask(mockSecondTask, 24));
           idleTaskModule!.setIdleTask(createTask(mockThirdTask, 1));

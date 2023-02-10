@@ -5,6 +5,9 @@ import {
 } from '../internals';
 
 const cancelAllIdleTasks = (): void => {
+  // delete all revalidateInterval
+  Array.from(its.idleTaskRevalidateIntervalMap.values()).forEach(clearInterval);
+  its.idleTaskRevalidateIntervalMap.clear();
   resolveTaskResultWhenCancel(its.tasks);
   its.tasks.length = 0;
   its.idleTaskResultMap.clear();
