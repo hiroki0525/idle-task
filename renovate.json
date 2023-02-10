@@ -5,10 +5,10 @@
   ],
   "labels": ["dependencies"],
   "schedule": [
-    "before 3am on the first day of the month"
+    "every weekend"
   ],
   "automergeSchedule": [
-    "before 3am on the first day of the month"
+    "every weekend"
   ],
   "dependencyDashboard": false,
   "packageRules": [
