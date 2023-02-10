@@ -71,13 +71,13 @@ export const getResultFromCache = (id: number, isDeleteCache = false) => {
 export const defaultWaitForIdleTaskOptions: WaitForIdleTaskOptions = {
   cache: true,
   timeoutStrategy: 'error',
-};
+} as const;
 
 const taskGlobalOptions: ConfigureOptions = {
   debug: false,
   cache: true,
   timeoutStrategy: 'error',
-};
+} as const;
 
 interface IdleTaskState {
   tasks: IdleTask[];
