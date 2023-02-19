@@ -11,6 +11,21 @@ import {
 } from './util';
 
 describe('setIdleTask', () => {
+  const isServer = typeof self === 'undefined';
+
+  let mockInfo: jest.SpyInstance;
+  let mockWarn: jest.SpyInstance;
+
+  beforeEach(() => {
+    mockInfo = jest.spyOn(console, 'info');
+    mockWarn = jest.spyOn(console, 'warn');
+  });
+
+  afterEach(() => {
+    mockInfo!.mockReset();
+    mockWarn!.mockReset();
+  });
+
   describe('not debug mode', () => {
     describe('executed once', () => {
       let taskId: number;
@@ -25,6 +40,14 @@ describe('setIdleTask', () => {
 
       it('called requestIdleCallback', () => {
         expect(mockRequestIdleCallback.mock.calls.length).toBe(1);
+      });
+
+      // check not debug mode
+      it('not called info', () => {
+        expect(console.info).not.toHaveBeenCalled();
+      });
+      it('not called warn', () => {
+        expect(console.warn).not.toHaveBeenCalled();
       });
     });
 
@@ -298,79 +321,181 @@ describe('setIdleTask', () => {
   });
 
   describe('debug mode', () => {
-    let mockInfo: jest.SpyInstance;
-    let mockWarn: jest.SpyInstance;
+    let taskId: number;
 
     beforeEach(() => {
-      mockInfo = jest.spyOn(console, 'info');
-      mockWarn = jest.spyOn(console, 'warn');
       idleTaskModule!.configureIdleTask({ debug: true });
     });
 
-    afterEach(() => {
-      mockInfo!.mockReset();
-      mockWarn!.mockReset();
+    describe('anonymous function', () => {
+      beforeEach(() => {
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        taskId = idleTaskModule!.setIdleTask(() => {});
+        runRequestIdleCallback();
+      });
+
+      if (isServer) {
+        it('not called info', () => {
+          expect(console.info).not.toHaveBeenCalled();
+        });
+      } else {
+        it('include anonymous', () => {
+          expect((console.info as any).mock.calls[1][2]).toMatch(
+            `Run task, name: anonymous(id: ${taskId}), executionTime: 0 ms`
+          );
+        });
+      }
     });
 
-    // server context
-    if (typeof self === 'undefined') {
-      it('not called info', () => {
-        expect(console.info).not.toHaveBeenCalled();
-      });
-      it('not called warn', () => {
-        expect(console.warn).not.toHaveBeenCalled();
-      });
-    } else {
-      describe('anonymous function', () => {
-        let taskId: number;
-
-        beforeEach(() => {
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
-          taskId = idleTaskModule!.setIdleTask(() => {});
-          runRequestIdleCallback();
-        });
-
-        it('include anonymous', () => {
-          expect((console.info as any).mock.calls[0][2]).toMatch(
-            `anonymous(${taskId})`
-          );
-        });
+    describe('named function', () => {
+      beforeEach(() => {
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        const test = () => {};
+        taskId = idleTaskModule!.setIdleTask(test);
+        runRequestIdleCallback();
       });
 
-      describe('named function', () => {
-        let taskId: number;
-
-        beforeEach(() => {
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
-          const test = () => {};
-          taskId = idleTaskModule!.setIdleTask(test);
-          runRequestIdleCallback();
+      if (isServer) {
+        it('not called info', () => {
+          expect(console.info).not.toHaveBeenCalled();
         });
-
+      } else {
         it('include function name and task id', () => {
-          expect((console.info as any).mock.calls[0][2]).toMatch(
-            `test(${taskId})`
+          expect((console.info as any).mock.calls[1][2]).toMatch(
+            `Run task, name: test(id: ${taskId}), executionTime: 0 ms`
           );
         });
+      }
+    });
+
+    describe('not timeout', () => {
+      describe('task took over 50 ms', () => {
+        beforeEach(() => {
+          taskId = idleTaskModule!.setIdleTask(
+            createTask(mockFirstTask, 50.001)
+          );
+          runRequestIdleCallback();
+        });
+
+        if (isServer) {
+          it('not called info', () => {
+            expect(console.info).not.toHaveBeenCalled();
+          });
+          it('not called info', () => {
+            expect(console.info).not.toHaveBeenCalled();
+          });
+        } else {
+          it('called warn', () => {
+            expect(console.warn).toHaveBeenCalled();
+          });
+
+          it('called info once', () => {
+            expect((console.info as any).mock.calls.length).toBe(1);
+          });
+
+          it('timeRemaining is 49 ms and reason is idle', () => {
+            // runRequestIdleCallback took 1ms
+            expect((console.info as any).mock.calls[0][2]).toMatch(
+              `Call requestIdleCallback, reason: idle, timeRemaining: 49 ms`
+            );
+          });
+
+          it('include 50.01 ms', () => {
+            expect((console.warn as any).mock.calls[0][2]).toMatch(
+              `Run task, name: anonymous(id: ${taskId}), executionTime: 50.01 ms`
+            );
+          });
+        }
+      });
+
+      describe('task took less than 50 ms', () => {
+        beforeEach(() => {
+          taskId = idleTaskModule!.setIdleTask(
+            createTask(mockFirstTask, 49.999)
+          );
+          runRequestIdleCallback();
+        });
+
+        if (isServer) {
+          it('not called info', () => {
+            expect(console.info).not.toHaveBeenCalled();
+          });
+          it('not called warn', () => {
+            expect(console.warn).not.toHaveBeenCalled();
+          });
+        } else {
+          it('not called warn', () => {
+            expect(console.warn).not.toHaveBeenCalled();
+          });
+
+          it('called info twice', () => {
+            expect((console.info as any).mock.calls.length).toBe(2);
+          });
+
+          it('timeRemaining is 49 ms and reason is idle', () => {
+            // runRequestIdleCallback took 1ms
+            expect((console.info as any).mock.calls[0][2]).toMatch(
+              `Call requestIdleCallback, reason: idle, timeRemaining: 49 ms`
+            );
+          });
+
+          it('include 50 ms', () => {
+            expect((console.info as any).mock.calls[1][2]).toMatch(
+              `Run task, name: anonymous(id: ${taskId}), executionTime: 50 ms`
+            );
+          });
+        }
+      });
+    });
+
+    describe('timeout', () => {
+      const mockRequestIdleCallbackDidTimeout = jest
+        .fn()
+        .mockImplementation(requestIdleCallbackImpl(true));
+
+      beforeEach(async () => {
+        jest.resetModules();
+        global.requestIdleCallback = mockRequestIdleCallbackDidTimeout;
+        await reloadModule();
+        idleTaskModule!.configureIdleTask({ debug: true });
       });
 
       describe('task took over 50 ms', () => {
         beforeEach(() => {
-          idleTaskModule!.setIdleTask(createTask(mockFirstTask, 50.001));
+          taskId = idleTaskModule!.setIdleTask(
+            createTask(mockFirstTask, 50.001)
+          );
           runRequestIdleCallback();
         });
 
-        it('called warn', () => {
-          expect(console.warn).toHaveBeenCalled();
-        });
+        if (isServer) {
+          it('not called info', () => {
+            expect(console.info).not.toHaveBeenCalled();
+          });
+          it('not called info', () => {
+            expect(console.info).not.toHaveBeenCalled();
+          });
+        } else {
+          it('called warn', () => {
+            expect(console.warn).toHaveBeenCalled();
+          });
 
-        it('not called info', () => {
-          expect(console.info).not.toHaveBeenCalled();
-        });
+          it('called info once', () => {
+            expect((console.info as any).mock.calls.length).toBe(1);
+          });
 
-        it('include 50.01 ms', () => {
-          expect((console.warn as any).mock.calls[0][2]).toMatch('50.01 ms');
-        });
+          it('timeRemaining is 50 ms and reason is timeout', () => {
+            expect((console.info as any).mock.calls[0][2]).toMatch(
+              `Call requestIdleCallback, reason: timeout, timeRemaining: 50 ms`
+            );
+          });
+
+          it('include 50.01 ms', () => {
+            expect((console.warn as any).mock.calls[0][2]).toMatch(
+              `Run task, name: anonymous(id: ${taskId}), executionTime: 50.01 ms`
+            );
+          });
+        }
       });
 
       describe('task took less than 50 ms', () => {
@@ -379,18 +504,35 @@ describe('setIdleTask', () => {
           runRequestIdleCallback();
         });
 
-        it('not called warn', () => {
-          expect(console.warn).not.toHaveBeenCalled();
-        });
+        if (isServer) {
+          it('not called info', () => {
+            expect(console.info).not.toHaveBeenCalled();
+          });
+          it('not called warn', () => {
+            expect(console.warn).not.toHaveBeenCalled();
+          });
+        } else {
+          it('not called warn', () => {
+            expect(console.warn).not.toHaveBeenCalled();
+          });
 
-        it('called info', () => {
-          expect(console.info).toHaveBeenCalled();
-        });
+          it('called info twice', () => {
+            expect((console.info as any).mock.calls.length).toBe(2);
+          });
 
-        it('include 50 ms', () => {
-          expect((console.info as any).mock.calls[0][2]).toMatch('50 ms');
-        });
+          it('timeRemaining is 50 ms and reason is timeout', () => {
+            expect((console.info as any).mock.calls[0][2]).toMatch(
+              `Call requestIdleCallback, reason: timeout, timeRemaining: 50 ms`
+            );
+          });
+
+          it('include 50 ms', () => {
+            expect((console.info as any).mock.calls[1][2]).toMatch(
+              `Run task, name: anonymous(id: ${taskId}), executionTime: 50 ms`
+            );
+          });
+        }
       });
-    }
+    });
   });
 });
