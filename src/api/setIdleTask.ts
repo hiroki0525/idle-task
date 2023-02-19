@@ -20,6 +20,16 @@ const createTimeRemainingDidTimeout = (
   return () => didTimeout && Date.now() - start < 50;
 };
 
+const outputLog = (message: string, level: 'info' | 'warn' = 'info'): void => {
+  if (its.taskGlobalOptions.debug) {
+    console[level](
+      '%cidle-task',
+      'background:#717171;color:white;padding:2px 3px;border-radius:2px;font-size:0.8em;',
+      message
+    );
+  }
+};
+
 const runIdleTasks = (deadline: IdleDeadline): void => {
   const timeRemainingDidTimeout = createTimeRemainingDidTimeout(
     deadline.didTimeout
@@ -33,10 +43,11 @@ const runIdleTasks = (deadline: IdleDeadline): void => {
       const start = performance.now();
       executeTask(task);
       const executionTime = Math.ceil((performance.now() - start) * 100) / 100;
-      console[executionTime > 50 ? 'warn' : 'info'](
-        `%cidle-task`,
-        `background:#717171;color:white;padding:2px 3px;border-radius:2px;font-size:0.8em;`,
-        `${task.name || 'anonymous'}(${task.id}) took ${executionTime} ms`
+      outputLog(
+        `Run task, ${task.name || 'anonymous'}(${
+          task.id
+        }) took ${executionTime} ms`,
+        executionTime > 50 ? 'warn' : 'info'
       );
     } else {
       executeTask(task);
