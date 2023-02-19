@@ -13,40 +13,67 @@ export interface SetIdleTaskOptions {
   readonly revalidateWhenExecuted?: boolean;
 }
 
-const createTimeRemainingDidTimeout = (
-  didTimeout: boolean
-): (() => boolean) => {
-  const start = Date.now();
-  return () => didTimeout && Date.now() - start < 50;
+const createTimeRemainingDidTimeout = (): (() => boolean) => {
+  const start = performance.now();
+  return () => performance.now() - start < 50;
 };
 
-const outputLog = (message: string, level: 'info' | 'warn' = 'info'): void => {
-  if (its.taskGlobalOptions.debug) {
-    console[level](
-      '%cidle-task',
-      'background:#717171;color:white;padding:2px 3px;border-radius:2px;font-size:0.8em;',
-      message
-    );
-  }
+type LogLevel = 'info' | 'warn';
+
+const logIdleTask = (message: string, level: LogLevel = 'info'): void => {
+  console[level](
+    '%cidle-task',
+    'background:#717171;color:white;padding:2px 3px;border-radius:2px;font-size:0.8em;',
+    message
+  );
 };
+
+const logCallRequestIdleCallback = (
+  reason: 'timeout' | 'idle',
+  timeRemaining: number
+) => {
+  logIdleTask(
+    `Call requestIdleCallback, reason: ${reason}, timeRemaining: ${timeRemaining} ms`
+  );
+};
+
+const getTimeRemainingAndLog = (
+  deadline: IdleDeadline
+): readonly [() => boolean, () => void] => {
+  const { didTimeout } = deadline;
+  if (didTimeout) {
+    return [
+      createTimeRemainingDidTimeout(),
+      () => logCallRequestIdleCallback('timeout', 50),
+    ];
+  }
+  return [
+    () => deadline.timeRemaining() > 0,
+    () =>
+      logCallRequestIdleCallback(
+        'idle',
+        normalizeTime(deadline.timeRemaining())
+      ),
+  ];
+};
+
+const normalizeTime = (time: number): number => Math.ceil(time * 100) / 100;
 
 const runIdleTasks = (deadline: IdleDeadline): void => {
-  const timeRemainingDidTimeout = createTimeRemainingDidTimeout(
-    deadline.didTimeout
-  );
-  while (
-    (deadline.timeRemaining() > 0 || timeRemainingDidTimeout()) &&
-    its.tasks.length > 0
-  ) {
+  const [isTimeRemaining, log] = getTimeRemainingAndLog(deadline);
+  const shouldOutputLog =
+    its.taskGlobalOptions.debug && typeof self !== 'undefined';
+  shouldOutputLog && log();
+  while (isTimeRemaining() && its.tasks.length > 0) {
     const task = its.tasks.shift() as IdleTask;
-    if (its.taskGlobalOptions.debug && typeof self !== 'undefined') {
+    if (shouldOutputLog) {
       const start = performance.now();
       executeTask(task);
-      const executionTime = Math.ceil((performance.now() - start) * 100) / 100;
-      outputLog(
-        `Run task, ${task.name || 'anonymous'}(${
+      const executionTime = normalizeTime(performance.now() - start);
+      logIdleTask(
+        `Run task, name: ${task.name || 'anonymous'}(id: ${
           task.id
-        }) took ${executionTime} ms`,
+        }), executionTime: ${executionTime} ms`,
         executionTime > 50 ? 'warn' : 'info'
       );
     } else {
