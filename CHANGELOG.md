@@ -1,3 +1,10 @@
+# [3.4.0](https://github.com/hiroki0525/idle-task/compare/v3.3.3...v3.4.0) (2023-02-19)
+
+
+### Features
+
+* log more information when `debug` mode. See https://github.com/hiroki0525/idle-task/pull/52 ([a752d68](https://github.com/hiroki0525/idle-task/commit/a752d6816f5925ebb92c75d3e6c5965c83049a4d))
+
 ## [3.3.3](https://github.com/hiroki0525/idle-task/compare/v3.3.2...v3.3.3) (2023-02-04)
 
 
