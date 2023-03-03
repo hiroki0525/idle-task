@@ -16,7 +16,6 @@ const getResultFromIdleTask = (
   options?: GetResultFromIdleTaskOptions
 ): ReturnType<typeof waitForIdleTask> =>
   waitForIdleTask(setIdleTask(task, { priority: options?.priority }), {
-    cache: false,
     timeout: options?.timeout,
     timeoutStrategy: options?.timeoutStrategy,
   });

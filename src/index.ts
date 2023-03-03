@@ -1,9 +1,7 @@
 import cancelAllIdleTasks from './api/cancelAllIdleTasks';
 import cancelIdleTask from './api/cancelIdleTask';
 import configureIdleTask, { ConfigureOptions } from './api/configureIdleTask';
-import forceRunIdleTask, {
-  ForceRunIdleTaskOptions,
-} from './api/forceRunIdleTask';
+import forceRunIdleTask from './api/forceRunIdleTask';
 import getResultFromIdleTask, {
   GetResultFromIdleTaskOptions,
 } from './api/getResultFromIdleTask';
@@ -20,7 +18,6 @@ export {
   configureIdleTask,
   ConfigureOptions,
   forceRunIdleTask,
-  ForceRunIdleTaskOptions,
   getResultFromIdleTask,
   GetResultFromIdleTaskOptions,
   getIdleTaskStatus,

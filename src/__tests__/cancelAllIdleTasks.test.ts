@@ -7,18 +7,19 @@ import {
   mockThirdTask,
   runRequestIdleCallback,
 } from './util';
+import { IdleTaskKey } from '../internals';
 
 describe('cancelAllIdleTasks', () => {
-  let firstTaskId: number;
-  let secondTaskId: number;
-  let thirdTaskId: number;
+  let firstTaskKey: IdleTaskKey;
+  let secondTaskKey: IdleTaskKey;
+  let thirdTaskKey: IdleTaskKey;
 
   describe('existed requestIdleCallback id', () => {
     describe('without revalidateInterval', () => {
       beforeEach(() => {
-        firstTaskId = idleTaskModule!.setIdleTask(createTask(mockFirstTask));
-        secondTaskId = idleTaskModule!.setIdleTask(createTask(mockSecondTask));
-        thirdTaskId = idleTaskModule!.setIdleTask(createTask(mockThirdTask));
+        firstTaskKey = idleTaskModule!.setIdleTask(createTask(mockFirstTask));
+        secondTaskKey = idleTaskModule!.setIdleTask(createTask(mockSecondTask));
+        thirdTaskKey = idleTaskModule!.setIdleTask(createTask(mockThirdTask));
         idleTaskModule!.cancelAllIdleTasks();
         // check whether tasks were run or not
         runRequestIdleCallback();
@@ -42,33 +43,33 @@ describe('cancelAllIdleTasks', () => {
 
       it('first task result is cleared', async () => {
         await expect(
-          idleTaskModule!.waitForIdleTask(firstTaskId)
+          idleTaskModule!.waitForIdleTask(firstTaskKey)
         ).resolves.toBeUndefined();
       });
 
       it('second task result is cleared', () => {
         expect(
-          idleTaskModule!.waitForIdleTask(secondTaskId)
+          idleTaskModule!.waitForIdleTask(secondTaskKey)
         ).resolves.toBeUndefined();
       });
 
       it('third task result is cleared', async () => {
         await expect(
-          idleTaskModule!.waitForIdleTask(thirdTaskId)
+          idleTaskModule!.waitForIdleTask(thirdTaskKey)
         ).resolves.toBeUndefined();
       });
     });
 
     describe('with revalidateInterval', () => {
       beforeEach(() => {
-        firstTaskId = idleTaskModule!.setIdleTask(
+        firstTaskKey = idleTaskModule!.setIdleTask(
           createTask(mockFirstTask, 50),
           {
             revalidateInterval: 1,
           }
         );
-        secondTaskId = idleTaskModule!.setIdleTask(createTask(mockSecondTask));
-        thirdTaskId = idleTaskModule!.setIdleTask(createTask(mockThirdTask));
+        secondTaskKey = idleTaskModule!.setIdleTask(createTask(mockSecondTask));
+        thirdTaskKey = idleTaskModule!.setIdleTask(createTask(mockThirdTask));
         // one mockFirstTask will be executed and others will be enqueued
         runRequestIdleCallback();
         idleTaskModule!.cancelAllIdleTasks();
@@ -96,19 +97,19 @@ describe('cancelAllIdleTasks', () => {
 
       it('first task result is cleared', async () => {
         await expect(
-          idleTaskModule!.waitForIdleTask(firstTaskId)
+          idleTaskModule!.waitForIdleTask(firstTaskKey)
         ).resolves.toBeUndefined();
       });
 
       it('second task result is cleared', () => {
         expect(
-          idleTaskModule!.waitForIdleTask(secondTaskId)
+          idleTaskModule!.waitForIdleTask(secondTaskKey)
         ).resolves.toBeUndefined();
       });
 
       it('third task result is cleared', async () => {
         await expect(
-          idleTaskModule!.waitForIdleTask(thirdTaskId)
+          idleTaskModule!.waitForIdleTask(thirdTaskKey)
         ).resolves.toBeUndefined();
       });
     });
@@ -116,9 +117,9 @@ describe('cancelAllIdleTasks', () => {
 
   describe('not existed requestIdleCallback id', () => {
     beforeEach(() => {
-      firstTaskId = idleTaskModule!.setIdleTask(createTask(mockFirstTask));
-      secondTaskId = idleTaskModule!.setIdleTask(createTask(mockSecondTask));
-      thirdTaskId = idleTaskModule!.setIdleTask(createTask(mockThirdTask));
+      firstTaskKey = idleTaskModule!.setIdleTask(createTask(mockFirstTask));
+      secondTaskKey = idleTaskModule!.setIdleTask(createTask(mockSecondTask));
+      thirdTaskKey = idleTaskModule!.setIdleTask(createTask(mockThirdTask));
       runRequestIdleCallback();
       idleTaskModule!.cancelAllIdleTasks();
       // check whether tasks were run or not
@@ -143,19 +144,19 @@ describe('cancelAllIdleTasks', () => {
 
     it('first task result is cleared', async () => {
       await expect(
-        idleTaskModule!.waitForIdleTask(firstTaskId)
+        idleTaskModule!.waitForIdleTask(firstTaskKey)
       ).resolves.toBeUndefined();
     });
 
     it('second task result is cleared', async () => {
       await expect(
-        idleTaskModule!.waitForIdleTask(secondTaskId)
+        idleTaskModule!.waitForIdleTask(secondTaskKey)
       ).resolves.toBeUndefined();
     });
 
     it('third task result is cleared', async () => {
       await expect(
-        idleTaskModule!.waitForIdleTask(thirdTaskId)
+        idleTaskModule!.waitForIdleTask(thirdTaskKey)
       ).resolves.toBeUndefined();
     });
   });

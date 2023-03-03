@@ -1,34 +1,29 @@
-import type { WaitForIdleTaskOptions } from './waitForIdleTask';
 import {
-  defaultWaitForIdleTaskOptions,
   executeTask,
   getResultFromCache,
+  IdleTaskKey,
   idleTaskState as its,
 } from '../internals';
 import getIdleTaskStatus from './getIdleTaskStatus';
 
-export type ForceRunIdleTaskOptions = Pick<WaitForIdleTaskOptions, 'cache'>;
-
-const defaultForceRunIdleTaskOptions = defaultWaitForIdleTaskOptions;
-
-const forceRunIdleTask = async (
-  id: number,
-  options: ForceRunIdleTaskOptions = defaultForceRunIdleTaskOptions
-): Promise<any> => {
-  if (getIdleTaskStatus(id) !== 'ready') {
-    return getResultFromCache(id, options.cache === false);
+const forceRunIdleTask = async (key: IdleTaskKey): Promise<any> => {
+  const cacheResult = getResultFromCache(key);
+  if (getIdleTaskStatus(key) !== 'ready') {
+    return cacheResult;
   }
-  const tasks = its.tasks.filter(task => task.id === id);
+  const targetTaskId = key.id;
+  const tasks = its.tasks.filter(task => task.id === targetTaskId);
   const latestEnqueuedTask = tasks[tasks.length - 1];
   executeTask(latestEnqueuedTask);
-  const result = getResultFromCache(id, options.cache === false);
+  const result = getResultFromCache(key);
   if (latestEnqueuedTask.revalidateWhenExecuted) {
     const latestEnqueuedTaskIndex = its.tasks.length - 1;
     its.tasks = its.tasks.filter(
-      (task, index) => index === latestEnqueuedTaskIndex || task.id !== id
+      (task, index) =>
+        index === latestEnqueuedTaskIndex || task.id !== targetTaskId
     );
   } else {
-    its.tasks = its.tasks.filter(task => task.id !== id);
+    its.tasks = its.tasks.filter(task => task.id !== targetTaskId);
   }
   return result;
 };

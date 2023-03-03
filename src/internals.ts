@@ -60,37 +60,42 @@ export const resolveTaskResultWhenCancel = (tasks: IdleTask[]): void => {
   });
 };
 
-export const getResultFromCache = (id: number, isDeleteCache = false) => {
-  const result = idleTaskState.idleTaskResultMap.get(id);
+export const getResultFromCache = (key: IdleTaskKey, isDeleteCache = false) => {
+  const result = idleTaskState.idleTaskResultMap.get(key);
   if (isDeleteCache) {
-    idleTaskState.idleTaskResultMap.delete(id);
+    idleTaskState.idleTaskResultMap.delete(key);
   }
   return result;
 };
 
 export const defaultWaitForIdleTaskOptions: WaitForIdleTaskOptions = {
-  cache: true,
   timeoutStrategy: 'error',
 } as const;
 
 const taskGlobalOptions: ConfigureOptions = {
   debug: false,
-  cache: true,
   timeoutStrategy: 'error',
 } as const;
+
+export interface IdleTaskKey {
+  readonly id: number;
+}
 
 interface IdleTaskState {
   tasks: IdleTask[];
   requestIdleCallbackId: ReturnType<typeof rIC>;
   taskGlobalOptions: ConfigureOptions;
-  idleTaskResultMap: Map<number, Promise<any>>;
-  idleTaskRevalidateIntervalMap: Map<number, ReturnType<typeof setInterval>>;
+  idleTaskResultMap: WeakMap<IdleTaskKey, Promise<any>>;
+  readonly idleTaskRevalidateIntervalMap: Map<
+    number,
+    ReturnType<typeof setInterval>
+  >;
 }
 
 export const idleTaskState: IdleTaskState = {
   tasks: [],
   requestIdleCallbackId: NaN,
   taskGlobalOptions,
-  idleTaskResultMap: new Map(),
+  idleTaskResultMap: new WeakMap(),
   idleTaskRevalidateIntervalMap: new Map(),
 };

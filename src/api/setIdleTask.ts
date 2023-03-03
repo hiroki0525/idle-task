@@ -4,11 +4,11 @@ import {
   rIC,
   executeTask,
   idleTaskState as its,
+  IdleTaskKey,
 } from '../internals';
 
 export interface SetIdleTaskOptions {
   readonly priority?: 'low' | 'high';
-  readonly cache?: boolean;
   readonly revalidateInterval?: number;
   readonly revalidateWhenExecuted?: boolean;
 }
@@ -102,19 +102,17 @@ const defaultSetIdleTaskOptions: SetIdleTaskOptions = {
 const setIdleTask = (
   task: IdleTaskFunction,
   options: SetIdleTaskOptions = defaultSetIdleTaskOptions
-): number => {
+): IdleTaskKey => {
   const idleTaskId = ++id;
+  const idleTaskKey: IdleTaskKey = Object.freeze({ id: idleTaskId });
   let resolve, reject;
-  const isUseCache = options.cache ?? its.taskGlobalOptions.cache;
-  if (isUseCache !== false) {
-    its.idleTaskResultMap.set(
-      idleTaskId,
-      new Promise((res, rej) => {
-        resolve = res;
-        reject = rej;
-      })
-    );
-  }
+  its.idleTaskResultMap.set(
+    idleTaskKey,
+    new Promise((res, rej) => {
+      resolve = res;
+      reject = rej;
+    })
+  );
   const { revalidateInterval } = options;
   const idleTask = Object.defineProperties(() => task(), {
     id: {
@@ -147,10 +145,10 @@ const setIdleTask = (
     ? its.tasks.unshift(idleTask)
     : its.tasks.push(idleTask);
   if (its.requestIdleCallbackId) {
-    return idleTaskId;
+    return idleTaskKey;
   }
   scheduleIdleTask();
-  return idleTaskId;
+  return idleTaskKey;
 };
 
 export default setIdleTask;

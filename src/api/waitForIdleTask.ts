@@ -1,6 +1,7 @@
 import {
   defaultWaitForIdleTaskOptions,
   getResultFromCache,
+  IdleTaskKey,
   idleTaskState as its,
 } from '../internals';
 import forceRunIdleTask from './forceRunIdleTask';
@@ -8,7 +9,6 @@ import forceRunIdleTask from './forceRunIdleTask';
 type IdleTaskTimeoutStrategy = 'error' | 'forceRun';
 
 export interface WaitForIdleTaskOptions {
-  readonly cache?: boolean;
   readonly timeout?: number;
   readonly timeoutStrategy?: IdleTaskTimeoutStrategy;
 }
@@ -21,7 +21,7 @@ export class WaitForIdleTaskTimeoutError extends Error {
 }
 
 const waitForIdleTask = async (
-  id: number,
+  key: IdleTaskKey,
   options?: WaitForIdleTaskOptions
 ): Promise<any> => {
   const { timeout: globalTimeout, timeoutStrategy: globalTimeoutStrategy } =
@@ -36,8 +36,7 @@ const waitForIdleTask = async (
     : mergedDefaultOptions;
   const { timeoutStrategy, timeout } = waitForIdleTaskOptions;
   const isForceRun = timeoutStrategy === 'forceRun';
-  const isDeleteCache = !isForceRun && waitForIdleTaskOptions.cache === false;
-  const result = getResultFromCache(id, isDeleteCache);
+  const result = getResultFromCache(key, !isForceRun);
   if (timeout === undefined && globalTimeout === undefined) {
     return result;
   }
@@ -50,7 +49,7 @@ const waitForIdleTask = async (
   const racedResult = await Promise.race([result, timeoutPromise]);
   if (isTimeout) {
     if (isForceRun) {
-      return forceRunIdleTask(id);
+      return forceRunIdleTask(key);
     } else {
       throw new WaitForIdleTaskTimeoutError();
     }
