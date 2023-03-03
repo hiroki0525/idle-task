@@ -29,23 +29,10 @@ describe('getIdleTaskStatus', () => {
 
   describe('task is canceled', () => {
     beforeEach(() => {
-      const taskId = idleTaskModule!.setIdleTask(createTask(), {
-        cache: false,
-      });
+      const taskKey = idleTaskModule!.setIdleTask(createTask());
       runRequestIdleCallback();
-      result = idleTaskModule!.getIdleTaskStatus(taskId);
-    });
-
-    it('to be unknown', () => {
-      expect(result).toBe('unknown');
-    });
-  });
-
-  describe('cache is deleted', () => {
-    beforeEach(() => {
-      const taskId = idleTaskModule!.setIdleTask(createTask());
-      idleTaskModule!.cancelIdleTask(taskId);
-      result = idleTaskModule!.getIdleTaskStatus(taskId);
+      idleTaskModule!.cancelIdleTask(taskKey);
+      result = idleTaskModule!.getIdleTaskStatus(taskKey);
     });
 
     it('to be unknown', () => {

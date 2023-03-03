@@ -46,9 +46,8 @@ describe('getResultFromIdleTask', () => {
   });
 
   it('waitForIdleTask calls with options', () => {
-    expect(mockWaitForIdleTask.mock.calls[0][1]).toStrictEqual({
-      ...waitForIdleTaskOptions,
-      cache: false,
-    });
+    expect(mockWaitForIdleTask.mock.calls[0][1]).toStrictEqual(
+      waitForIdleTaskOptions
+    );
   });
 });
