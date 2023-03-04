@@ -6,88 +6,40 @@ import {
   mockThirdTask,
   runRequestIdleCallback,
 } from './util';
+import { IdleTaskKey } from '../api/setIdleTask';
 
 describe('forceRunIdleTask', () => {
-  let taskId: number;
-  let result: Promise<any>;
+  let taskKey: IdleTaskKey | null;
+  let firstResult: Promise<any>;
   let secondResult: Promise<any>;
 
-  beforeEach(() => {
-    taskId = idleTaskModule!.setIdleTask(createTask(mockFirstTask));
+  describe('not existed task', () => {
+    beforeEach(async () => {
+      taskKey = idleTaskModule!.setIdleTask(createTask(mockFirstTask));
+      runRequestIdleCallback();
+      firstResult = await idleTaskModule!.forceRunIdleTask(taskKey);
+      secondResult = await idleTaskModule!.forceRunIdleTask(taskKey);
+    });
+
+    it('task is called once', () => {
+      expect(mockFirstTask.mock.calls.length).toBe(1);
+    });
+
+    it('first result is string', () => {
+      expect(firstResult).toBe('mockFirstTask');
+    });
+
+    it('second result is string', () => {
+      expect(secondResult).toBe('mockFirstTask');
+    });
   });
 
-  describe('not existed task', () => {
-    beforeEach(() => {
-      runRequestIdleCallback();
-    });
-
-    describe('with cache', () => {
-      describe('no ForceRunIdleTaskOptions', () => {
-        beforeEach(async () => {
-          result = await idleTaskModule!.forceRunIdleTask(taskId);
-          secondResult = await idleTaskModule!.forceRunIdleTask(taskId);
-        });
-
-        it('task is called once', () => {
-          expect(mockFirstTask.mock.calls.length).toBe(1);
-        });
-
-        it('first result is string', () => {
-          expect(result).toBe('mockFirstTask');
-        });
-
-        it('second result is string', () => {
-          expect(secondResult).toBe('mockFirstTask');
-        });
-      });
-
-      describe('ForceRunIdleTaskOptions.cache is true', () => {
-        beforeEach(async () => {
-          result = await idleTaskModule!.forceRunIdleTask(taskId, {
-            cache: true,
-          });
-          secondResult = await idleTaskModule!.forceRunIdleTask(taskId);
-        });
-
-        it('task is called once', () => {
-          expect(mockFirstTask.mock.calls.length).toBe(1);
-        });
-
-        it('first result is string', () => {
-          expect(result).toBe('mockFirstTask');
-        });
-
-        it('second result is string', () => {
-          expect(secondResult).toBe('mockFirstTask');
-        });
-      });
-
-      describe('ForceRunIdleTaskOptions.cache is undefined', () => {
-        beforeEach(async () => {
-          result = await idleTaskModule!.forceRunIdleTask(taskId, {});
-          secondResult = await idleTaskModule!.forceRunIdleTask(taskId);
-        });
-
-        it('task is called once', () => {
-          expect(mockFirstTask.mock.calls.length).toBe(1);
-        });
-
-        it('first result is string', () => {
-          expect(result).toBe('mockFirstTask');
-        });
-
-        it('second result is string', () => {
-          expect(secondResult).toBe('mockFirstTask');
-        });
-      });
-    });
-
-    describe('without cache', () => {
+  describe('existed one task', () => {
+    describe('without revalidateWhenExecuted', () => {
       beforeEach(async () => {
-        result = await idleTaskModule!.forceRunIdleTask(taskId, {
-          cache: false,
-        });
-        secondResult = await idleTaskModule!.forceRunIdleTask(taskId);
+        taskKey = idleTaskModule!.setIdleTask(createTask(mockFirstTask));
+        firstResult = await idleTaskModule!.forceRunIdleTask(taskKey);
+        secondResult = await idleTaskModule!.forceRunIdleTask(taskKey);
       });
 
       it('task is called once', () => {
@@ -95,278 +47,58 @@ describe('forceRunIdleTask', () => {
       });
 
       it('first result is string', () => {
-        expect(result).toBe('mockFirstTask');
+        expect(firstResult).toBe('mockFirstTask');
       });
 
-      it('second result is undefined', () => {
-        expect(secondResult).toBeUndefined();
-      });
-    });
-  });
-
-  describe('existed one task', () => {
-    describe('without revalidateWhenExecuted', () => {
-      describe('with cache', () => {
-        describe('no ForceRunIdleTaskOptions', () => {
-          beforeEach(async () => {
-            result = await idleTaskModule!.forceRunIdleTask(taskId);
-            secondResult = await idleTaskModule!.forceRunIdleTask(taskId);
-          });
-
-          it('task is called once', () => {
-            expect(mockFirstTask.mock.calls.length).toBe(1);
-          });
-
-          it('first result is string', () => {
-            expect(result).toBe('mockFirstTask');
-          });
-
-          it('second result is string', () => {
-            expect(secondResult).toBe('mockFirstTask');
-          });
-        });
-
-        describe('ForceRunIdleTaskOptions.cache is true', () => {
-          beforeEach(async () => {
-            result = await idleTaskModule!.forceRunIdleTask(taskId, {
-              cache: true,
-            });
-            secondResult = await idleTaskModule!.forceRunIdleTask(taskId);
-          });
-
-          it('task is called once', () => {
-            expect(mockFirstTask.mock.calls.length).toBe(1);
-          });
-
-          it('first result is string', () => {
-            expect(result).toBe('mockFirstTask');
-          });
-
-          it('second result is string', () => {
-            expect(secondResult).toBe('mockFirstTask');
-          });
-        });
-
-        describe('ForceRunIdleTaskOptions.cache is undefined', () => {
-          beforeEach(async () => {
-            result = await idleTaskModule!.forceRunIdleTask(taskId, {});
-            secondResult = await idleTaskModule!.forceRunIdleTask(taskId);
-          });
-
-          it('task is called once', () => {
-            expect(mockFirstTask.mock.calls.length).toBe(1);
-          });
-
-          it('first result is string', () => {
-            expect(result).toBe('mockFirstTask');
-          });
-
-          it('second result is string', () => {
-            expect(secondResult).toBe('mockFirstTask');
-          });
-        });
-      });
-      describe('without cache', () => {
-        beforeEach(async () => {
-          result = await idleTaskModule!.forceRunIdleTask(taskId, {
-            cache: false,
-          });
-          secondResult = await idleTaskModule!.forceRunIdleTask(taskId);
-        });
-
-        it('task is called once', () => {
-          expect(mockFirstTask.mock.calls.length).toBe(1);
-        });
-
-        it('first result is string', () => {
-          expect(result).toBe('mockFirstTask');
-        });
-
-        it('second result is undefined', () => {
-          expect(secondResult).toBeUndefined();
-        });
+      it('second result is string', () => {
+        expect(secondResult).toBe('mockFirstTask');
       });
     });
     describe('with revalidateWhenExecuted', () => {
-      beforeEach(() => {
-        taskId = idleTaskModule!.setIdleTask(createTask(mockSecondTask), {
+      beforeEach(async () => {
+        taskKey = idleTaskModule!.setIdleTask(createTask(mockFirstTask), {
           revalidateWhenExecuted: true,
         });
+        firstResult = await idleTaskModule!.forceRunIdleTask(taskKey);
+        secondResult = await idleTaskModule!.forceRunIdleTask(taskKey);
       });
 
-      describe('with cache', () => {
-        describe('no ForceRunIdleTaskOptions', () => {
-          beforeEach(async () => {
-            result = await idleTaskModule!.forceRunIdleTask(taskId);
-            secondResult = await idleTaskModule!.forceRunIdleTask(taskId);
-          });
-
-          it('task is called twice', () => {
-            expect(mockSecondTask.mock.calls.length).toBe(2);
-          });
-
-          it('first result is string', () => {
-            expect(result).toBe('mockSecondTask');
-          });
-
-          it('second result is string', () => {
-            expect(secondResult).toBe('mockSecondTask');
-          });
-        });
-
-        describe('ForceRunIdleTaskOptions.cache is true', () => {
-          beforeEach(async () => {
-            result = await idleTaskModule!.forceRunIdleTask(taskId, {
-              cache: true,
-            });
-            secondResult = await idleTaskModule!.forceRunIdleTask(taskId);
-          });
-
-          it('task is called twice', () => {
-            expect(mockSecondTask.mock.calls.length).toBe(2);
-          });
-
-          it('first result is string', () => {
-            expect(result).toBe('mockSecondTask');
-          });
-
-          it('second result is string', () => {
-            expect(secondResult).toBe('mockSecondTask');
-          });
-        });
-
-        describe('ForceRunIdleTaskOptions.cache is undefined', () => {
-          beforeEach(async () => {
-            result = await idleTaskModule!.forceRunIdleTask(taskId, {});
-            secondResult = await idleTaskModule!.forceRunIdleTask(taskId);
-          });
-
-          it('task is called twice', () => {
-            expect(mockSecondTask.mock.calls.length).toBe(2);
-          });
-
-          it('first result is string', () => {
-            expect(result).toBe('mockSecondTask');
-          });
-
-          it('second result is string', () => {
-            expect(secondResult).toBe('mockSecondTask');
-          });
-        });
+      it('task is called twice', () => {
+        expect(mockFirstTask.mock.calls.length).toBe(2);
       });
-      describe('without cache', () => {
-        beforeEach(async () => {
-          result = await idleTaskModule!.forceRunIdleTask(taskId, {
-            cache: false,
-          });
-          secondResult = await idleTaskModule!.forceRunIdleTask(taskId);
-        });
 
-        it('task is called twice', () => {
-          expect(mockSecondTask.mock.calls.length).toBe(2);
-        });
+      it('first result is string', () => {
+        expect(firstResult).toBe('mockFirstTask');
+      });
 
-        it('first result is string', () => {
-          expect(result).toBe('mockSecondTask');
-        });
-
-        it('second result is undefined', () => {
-          expect(secondResult).toBeUndefined();
-        });
+      it('second result is string', () => {
+        expect(secondResult).toBe('mockFirstTask');
       });
     });
   });
 
   describe('existed tasks', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       idleTaskModule!.setIdleTask(createTask(mockSecondTask, 50));
-      taskId = idleTaskModule!.setIdleTask(createTask(mockThirdTask), {
+      taskKey = idleTaskModule!.setIdleTask(createTask(mockThirdTask), {
         revalidateInterval: 50,
       });
       // 2 mockTargetTask will be remaining
       runRequestIdleCallback();
+      firstResult = await idleTaskModule!.forceRunIdleTask(taskKey);
+      secondResult = await idleTaskModule!.forceRunIdleTask(taskKey);
     });
 
-    describe('with cache', () => {
-      describe('no ForceRunIdleTaskOptions', () => {
-        beforeEach(async () => {
-          result = await idleTaskModule!.forceRunIdleTask(taskId);
-          secondResult = await idleTaskModule!.forceRunIdleTask(taskId);
-        });
-
-        it('task is called once', () => {
-          expect(mockThirdTask.mock.calls.length).toBe(1);
-        });
-
-        it('first result is string', () => {
-          expect(result).toBe('mockThirdTask');
-        });
-
-        it('second result is string', () => {
-          expect(secondResult).toBe('mockThirdTask');
-        });
-      });
-
-      describe('ForceRunIdleTaskOptions.cache is true', () => {
-        beforeEach(async () => {
-          result = await idleTaskModule!.forceRunIdleTask(taskId, {
-            cache: true,
-          });
-          secondResult = await idleTaskModule!.forceRunIdleTask(taskId);
-        });
-
-        it('task is called once', () => {
-          expect(mockThirdTask.mock.calls.length).toBe(1);
-        });
-
-        it('first result is string', () => {
-          expect(result).toBe('mockThirdTask');
-        });
-
-        it('second result is string', () => {
-          expect(secondResult).toBe('mockThirdTask');
-        });
-      });
-
-      describe('ForceRunIdleTaskOptions.cache is undefined', () => {
-        beforeEach(async () => {
-          result = await idleTaskModule!.forceRunIdleTask(taskId, {});
-          secondResult = await idleTaskModule!.forceRunIdleTask(taskId);
-        });
-
-        it('task is called once', () => {
-          expect(mockThirdTask.mock.calls.length).toBe(1);
-        });
-
-        it('first result is string', () => {
-          expect(result).toBe('mockThirdTask');
-        });
-
-        it('second result is string', () => {
-          expect(secondResult).toBe('mockThirdTask');
-        });
-      });
+    it('task is called once', () => {
+      expect(mockThirdTask.mock.calls.length).toBe(1);
     });
 
-    describe('without cache', () => {
-      beforeEach(async () => {
-        result = await idleTaskModule!.forceRunIdleTask(taskId, {
-          cache: false,
-        });
-        secondResult = await idleTaskModule!.forceRunIdleTask(taskId);
-      });
+    it('first result is string', () => {
+      expect(firstResult).toBe('mockThirdTask');
+    });
 
-      it('task is called once', () => {
-        expect(mockThirdTask.mock.calls.length).toBe(1);
-      });
-
-      it('first result is string', () => {
-        expect(result).toBe('mockThirdTask');
-      });
-
-      it('second result is undefined', () => {
-        expect(secondResult).toBeUndefined();
-      });
+    it('second result is string', () => {
+      expect(secondResult).toBe('mockThirdTask');
     });
   });
 });

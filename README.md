@@ -25,16 +25,13 @@ Improve your website performance by executing JavaScript during a browser's idle
 - [API](#api)
   - [`setIdleTask`](#setidletask)
     - [`priority?: 'low' | 'high'`](#priority-low--high)
-    - [`cache?: boolean`](#cache-boolean)
     - [`revalidateInterval?: number`](#revalidateinterval-number)
     - [`revalidateWhenExecuted?: boolean`](#revalidatewhenexecuted-boolean)
   - [`waitForIdleTask`](#waitforidletask)
-    - [`cache?: boolean`](#cache-boolean-1)
     - [`timeout?: number`](#timeout-number)
     - [`timeoutStrategy?: 'error' | ’forceRun'`](#timeoutstrategy-error--forcerun)
   - [`getResultFromIdleTask`](#getresultfromidletask)
   - [`forceRunIdleTask`](#forcerunidletask)
-    - [`cache?: false`](#cache-false)
   - [`cancelIdleTask`](#cancelidletask)
   - [`cancelAllIdleTasks`](#cancelallidletasks)
   - [`getIdleTaskStatus`](#getidletaskstatus)
@@ -43,7 +40,6 @@ Improve your website performance by executing JavaScript during a browser's idle
     - [`debug?: boolean`](#debug-boolean)
     - [`timeout?: number`](#timeout-number-1)
     - [`timeoutStrategy?: 'error' | ’forceRun'`](#timeoutstrategy-error--forcerun-1)
-    - [`cache?: false`](#cache-false-1)
 - [Recipes](#recipes)
   - [Vanilla JS](#vanilla-js)
     - [dynamic import](#dynamic-import)
@@ -82,10 +78,10 @@ const result = await getResultFromIdleTask(yourFunction);
 
 ```javascript
 import { setIdleTask, waitForIdleTask } from 'idle-task';
-const taskId = setIdleTask(yourFunction);
-const result1 = await waitForIdleTask(taskId);
+const taskKey = setIdleTask(yourFunction);
+const result1 = await waitForIdleTask(taskKey);
 // from cache
-const result2 = await waitForIdleTask(taskId);
+const result2 = await waitForIdleTask(taskKey);
 ```
 
 ### Optimize executing tasks
@@ -136,8 +132,8 @@ If you want to get the result of a task, please use `waitForIdleTask` .
 ```javascript
 import { setIdleTask, waitForIdleTask } from 'idle-task';
 
-const taskId = setIdleTask(yourFunction);
-const result = await waitForIdleTask(taskId);
+const taskKey = setIdleTask(yourFunction);
+const result = await waitForIdleTask(taskKey);
 ```
 
 ## API
@@ -148,18 +144,17 @@ const result = await waitForIdleTask(taskId);
 const sendAnalyticsData = () => console.log("send analytics data");
 const options = {
     priority: 'high',
-    cache: false,
     revalidateInterval: 5000,
     revalidateWhenExecuted: true,
 };
-const taskId = setIdleTask(sendAnalyticsData, options);
+const taskKey = setIdleTask(sendAnalyticsData, options);
 ```
 
 `idle-task` has a FIFO(First-In-First-Out) queue.
 
 `setIdleTask` enqueues a task which `idle-task` will dequeue and run when the browser is idle.
 
-`setIdleTask` returns task id which is necessary for `cancelIdleTask` , `getIdleTaskStatus` and `waitForIdleTask`.
+`setIdleTask` returns `TaskKey` Object which is necessary for `cancelIdleTask` , `getIdleTaskStatus` and `waitForIdleTask`.
 
 I recommend less than **50 ms** to execute a task because of [RAIL model](https://web.dev/i18n/en/rail/) .
 If you want to know how long did it take to finish a task, please use [debug mode](#debug-boolean) .
@@ -170,31 +165,6 @@ If you want to know how long did it take to finish a task, please use [debug mod
 
 You can run a task preferentially using `priority: 'high'` (default is `false`) option.
 `setIdleTask` adds it to the head of the queue.
-
-#### `cache?: boolean`
-
-This option is to improve performance.
-
-**`idle-task` caches the results of tasks by default** .
-
-I recommend to set `false` if you don't need the result of idle task.
-
-`waitForIdleTask` will return `undefined` when `cache` is `false` .
-
-```typescript
-import {waitForIdleTask} from "idle-task";
-
-const sendAnalyticsData = (): void => {
-    console.log("send analytics data")
-};
-// Recommend: sendAnalyticsData result is not needed
-setIdleTask(sendAnalyticsData, {cache: false});
-
-const generateRandomNumber = () => Math.floor(Math.random() * 100);
-const taskId = setIdleTask(generateRandomNumber, {cache: false});
-// result is undefined
-const result = await waitForIdleTask(taskId);
-```
 
 #### `revalidateInterval?: number`
 
@@ -209,7 +179,7 @@ const saveUserArticleDraft = () => {
 
 // saveUserArticleDraft will be executed when the browser is idle.
 // In addition, idle-task registers saveUserArticleDraft task every 5000 ms.
-setIdleTask(saveUserArticleDraft, { cache: false, revalidateInterval: 5000 });
+setIdleTask(saveUserArticleDraft, { revalidateInterval: 5000 });
 ```
 
 #### `revalidateWhenExecuted?: boolean`
@@ -225,52 +195,20 @@ const saveUserArticleDraft = () => {
 
 // saveUserArticleDraft will be executed when the browser is idle.
 // In addition, idle-task registers saveUserArticleDraft task when it had been executed.
-setIdleTask(saveUserArticleDraft, { cache: false, revalidateWhenExecuted: true });
+setIdleTask(saveUserArticleDraft, { revalidateWhenExecuted: true });
 ```
 
 ### `waitForIdleTask`
 
 ```javascript
 const generateRandomNumber = () => Math.floor( Math.random() * 100 );
-const taskId = setIdleTask(generateRandomNumber);
-const randomNumber = await waitForIdleTask(taskId, {
-    cache: false
-});
+const taskKey = setIdleTask(generateRandomNumber);
+const randomNumber = await waitForIdleTask(taskKey);
 ```
 
 You can get the result of the task by using `waitForIdleTask` .
 
 `waitForIdleTask` can also be set options as below.
-
-#### `cache?: boolean`
-
-**`idle-task` caches the results of tasks by default** .
-
-```javascript
-const generateRandomNumber = () => Math.floor( Math.random() * 100 );
-const taskId = setIdleTask(generateRandomNumber);
-const firstRandomNumber = await waitForIdleTask(taskId);
-// this result from cache
-const secondRandomNumber = await waitForIdleTask(taskId);
-// same objects
-console.log(Object.is(firstRandomNumber, secondRandomNumber));
-// => true
-```
-
-If you get the result of a task **only once**, please set `{ cache: false }` .
-This will improve memory in JavaScript.
-
-```javascript
-const generateRandomNumber = () => Math.floor( Math.random() * 100 );
-const taskId = setIdleTask(generateRandomNumber);
-// delete cache
-const firstRandomNumber = await waitForIdleTask(taskId, { cache: false });
-// this is undefined
-const secondRandomNumber = await waitForIdleTask(taskId);
-// not same objects
-console.log(Object.is(firstRandomNumber, secondRandomNumber));
-// => false
-```
 
 #### `timeout?: number`
 
@@ -279,9 +217,9 @@ console.log(Object.is(firstRandomNumber, secondRandomNumber));
 
 ```javascript
 const generateRandomNumber = () => Math.floor( Math.random() * 100 );
-const taskId = setIdleTask(generateRandomNumber);
+const taskKey = setIdleTask(generateRandomNumber);
 try {
-    const firstRandomNumber = await waitForIdleTask(taskId, { timeout: 1000 });
+    const firstRandomNumber = await waitForIdleTask(taskKey, { timeout: 1000 });
 } catch (e) {
     if (e instanceof WaitForIdleTaskTimeoutError) {
         console.error('this is timeout error')
@@ -295,15 +233,15 @@ In this case, `waitForIdleTask` will throw `WaitForIdleTaskTimeoutError` as defa
 
 ```javascript
 const generateRandomNumber = () => Math.floor( Math.random() * 100 );
-const taskId = setIdleTask(generateRandomNumber);
-const firstRandomNumber = await waitForIdleTask(taskId, { timeout: 1000, timeoutStrategy: 'forceRun' });
+const taskKey = setIdleTask(generateRandomNumber);
+const firstRandomNumber = await waitForIdleTask(taskKey, { timeout: 1000, timeoutStrategy: 'error' });
 ```
 
 You can choose the movement when the idle task is timeout.
 
-`waitForIdleTask` throws an error as default if the task can't be finished within the time which you set.
+`waitForIdleTask` executes the task even if having not yet run it after the time has come.
 
-If you set `forceRun`, `idle-task` executes the task even if having not yet run it after the time has come.
+If you set `error`, `waitForIdleTask` throws an error if the task can't be finished within the time which you set.
 
 ### `getResultFromIdleTask`
 
@@ -312,12 +250,12 @@ const generateRandomNumber = () => Math.floor( Math.random() * 100 );
 const randomNumber = await getResultFromIdleTask(generateRandomNumber, {
     priority: 'high',
     timeout: 3000,
-    timeoutStrategy: 'forceRun'
+    timeoutStrategy: 'error'
 });
 
 // same
-const taskId = setIdleTask(generateRandomNumber, { priority: 'high' });
-const randomNumber = await waitForIdleTask(taskId, { timeout: 3000, cache: false, timeoutStrategy: 'forceRun' });
+const taskKey = setIdleTask(generateRandomNumber, { priority: 'high' });
+const randomNumber = await waitForIdleTask(taskKey, { timeout: 3000, timeoutStrategy: 'error' });
 ```
 
 You can get the result by using `getResultFromIdleTask` if you don't need the task id.
@@ -328,27 +266,19 @@ You can get the result by using `getResultFromIdleTask` if you don't need the ta
 
 ```javascript
 const generateRandomNumber = () => Math.floor( Math.random() * 100 );
-const taskId = setIdleTask(generateRandomNumber);
-const randomNumber = await forceRunIdleTask(taskId, {
-    cache: false,
-});
+const taskKey = setIdleTask(generateRandomNumber);
+const randomNumber = await forceRunIdleTask(taskKey);
 ```
 
 You can get the result immediately whether the task was executed during a browser's idle periods or not.
 
 `forceRunIdleTask` gets result from cache if the task was executed.
 
-`forceRunIdleTask` can also be set options as below.
-
-#### `cache?: false`
-
-This is the same as [`WaitForIdleTaskOptions.cache`](https://github.com/hiroki0525/idle-task#cache-boolean-1) .
-
 ### `cancelIdleTask`
 
 ```javascript
-const taskId = setIdleTask(() => console.log("task will be canceled."));
-cancelIdleTask(taskId);
+const taskKey = setIdleTask(() => console.log("task will be canceled."));
+cancelIdleTask(taskKey);
 ```
 
 You can stop to run a task by using `cancelIdleTask` if it is not executed.
@@ -367,11 +297,11 @@ You can stop to run all tasks by using `cancelAllIdleTasks` if they are not exec
 ### `getIdleTaskStatus`
 
 ```javascript
-const taskId = setIdleTask(() => console.log("task"));
-const idleTaskStatus = getIdleTaskStatus(taskId);
+const taskKey = setIdleTask(() => console.log("task"));
+const idleTaskStatus = getIdleTaskStatus(taskKey);
 // execute immediately if the task has not been executed yet.
 if (idleTaskStatus === 'ready') {
-  forceRunIdleTask(taskId)
+  forceRunIdleTask(taskKey)
 }
 ```
 
@@ -386,7 +316,7 @@ You can know the task status by using `getIdleTaskStatus` .
   - **This doesn't mean that the task has been completed** because JavaScript don't have API which help us to know the promise result like `fullfilled` .
 - `unknown`
   - `idle-task` doesn't know the task status because its result doesn't exist anywhere.
-  - This case means that the task was canceled by API like `cancelIdleTask` or its result was deleted by setting like `SetIdleTaskOptions.cache = false` .
+  - This case means that the task was canceled by API like `cancelIdleTask` .
 
 ### `configureIdleTask`
 
@@ -424,12 +354,12 @@ This option configures `timeout` of `waitForIdleTask` and `getResultFromIdleTask
 ```javascript
 configureIdleTask({ timeout: 3000 });
 
-const taskId = setIdleTask(yourFunction);
+const taskKey = setIdleTask(yourFunction);
 // timeout is 3000
-const result = await waitForIdleTask(taskId);
+const result = await waitForIdleTask(taskKey);
 
 // timeout is 5000 if you set timeout as option
-const result = await waitForIdleTask(taskId, { timeout: 5000 });
+const result = await waitForIdleTask(taskKey, { timeout: 5000 });
 ```
 
 #### `timeoutStrategy?: 'error' | ’forceRun'`
@@ -439,33 +369,16 @@ This option configures `timeoutStrategy` of `waitForIdleTask` and `getResultFrom
 ```javascript
 configureIdleTask({ timeout: 3000, timeoutStrategy: 'forceRun' });
 
-const taskId = setIdleTask(yourFunction);
+const taskKey = setIdleTask(yourFunction);
 // run task in 3000 ms regardless of whether the task has already been executed or not.
-const result = await waitForIdleTask(taskId);
+const result = await waitForIdleTask(taskKey);
 
 // timeoutStrategy is 'error' if you set timeoutStrategy as option
 try {
-  const result = await waitForIdleTask(taskId, { timeoutStrategy: 'error' });  
+  const result = await waitForIdleTask(taskKey, { timeoutStrategy: 'error' });  
 } catch {
   console.error('timeout!')
 }
-```
-
-#### `cache?: false`
-
-This option configures `cache` of `setIdleTask` as **default** setting. Default is `true` .
-You should set `false` if it is make sure not to need all the results of tasks when using `setIdleTask` . 
-
-```javascript
-configureIdleTask({ cache: false });
-
-// cache option is false
-setIdleTask(yourFunction);
-// same
-setIdleTask(yourFunction, { cache: false })
-
-// cache is true if you set cache as option
-setIdleTask(yourFunction, { cache: true });
 ```
 
 ## Recipes
@@ -478,15 +391,15 @@ setIdleTask(yourFunction, { cache: true });
 import { setIdleTask } from 'idle-task';
 
 // this module is loaded during a browser's idle periods because it is not important for UI.
-const taskId = setIdleTask(() => import('./sendAnalyticsData'))
+const taskKey = setIdleTask(() => import('./sendAnalyticsData'))
 
 const button = document.getElementById('button');
 button.addEventListener('click', async () => {
     // You should use waitForIdleTask if the module is not important.
     // On the other hand, I recommend to use forceRunIdleTask if the module is important. 
-    const { default: sendAnalyticsData } = await waitForIdleTask(taskId);
+    const { default: sendAnalyticsData } = await waitForIdleTask(taskKey);
     // Send analytics data to server when the browser is idle.
-    setIdleTask(sendAnalyticsData, { cache: false });
+    setIdleTask(sendAnalyticsData);
 })
 ```
 
@@ -528,13 +441,13 @@ export default function WebsiteNewsList() {
 
   useEffect(() => {
     // fetch news list when the browser is idle and cache it.
-    const taskId = setIdleTask(fetchNewsList)
-    waitForIdleTask(taskId)
+    const taskKey = setIdleTask(fetchNewsList)
+    waitForIdleTask(taskKey)
         .then(setNewsList)
         .finally(() => setIsLoading(false));
     return () => {
         // stop to fetch news list and remove the cache when the component re-render.
-        cancelIdleTask(taskId)
+        cancelIdleTask(taskKey)
     };
   }, [])
   
@@ -557,8 +470,8 @@ export default function WebsiteNewsList() {
 import {useState, useEffect, lazy, Suspense} from 'react';
 import {setIdleTask, waitForIdleTask, forceRunIdleTask} from 'idle-task';
 
-const taskId = setIdleTask(() => import('~/components/Modal'))
-const taskPromise = waitForIdleTask(taskId)
+const taskKey = setIdleTask(() => import('~/components/Modal'))
+const taskPromise = waitForIdleTask(taskKey)
 const Modal = lazy(() => taskPromise);
 
 export default function WebsiteNewsList() {
@@ -568,7 +481,7 @@ export default function WebsiteNewsList() {
   useEffect(() => {
     if (isClicked) {
       // Import Modal immediately whether importing it was completed during the browser's idle periods or not.
-      forceRunIdleTask(taskId);
+      forceRunIdleTask(taskKey);
     }
   }, [isClicked])
 

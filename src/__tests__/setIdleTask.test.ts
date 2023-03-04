@@ -9,6 +9,7 @@ import {
   requestIdleCallbackImpl,
   runRequestIdleCallback,
 } from './util';
+import { IdleTaskKey } from '../api/setIdleTask';
 
 describe('setIdleTask', () => {
   const isServer = typeof self === 'undefined';
@@ -28,14 +29,14 @@ describe('setIdleTask', () => {
 
   describe('not debug mode', () => {
     describe('executed once', () => {
-      let taskId: number;
+      let taskKey: IdleTaskKey;
 
       beforeEach(() => {
-        taskId = idleTaskModule!.setIdleTask(createTask());
+        taskKey = idleTaskModule!.setIdleTask(createTask());
       });
 
       it('task id is 1', () => {
-        expect(taskId).toBe(1);
+        expect(taskKey.id).toBe(1);
       });
 
       it('called requestIdleCallback', () => {
@@ -52,15 +53,15 @@ describe('setIdleTask', () => {
     });
 
     describe('executed twice', () => {
-      let taskId: number;
+      let taskKey: IdleTaskKey;
 
       beforeEach(() => {
         idleTaskModule!.setIdleTask(createTask());
-        taskId = idleTaskModule!.setIdleTask(createTask());
+        taskKey = idleTaskModule!.setIdleTask(createTask());
       });
 
       it('task id is 2', () => {
-        expect(taskId).toBe(2);
+        expect(taskKey.id).toBe(2);
       });
 
       it('called requestIdleCallback once', () => {
@@ -321,7 +322,7 @@ describe('setIdleTask', () => {
   });
 
   describe('debug mode', () => {
-    let taskId: number;
+    let taskKey: IdleTaskKey;
 
     beforeEach(() => {
       idleTaskModule!.configureIdleTask({ debug: true });
@@ -330,7 +331,7 @@ describe('setIdleTask', () => {
     describe('anonymous function', () => {
       beforeEach(() => {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        taskId = idleTaskModule!.setIdleTask(() => {});
+        taskKey = idleTaskModule!.setIdleTask(() => {});
         runRequestIdleCallback();
       });
 
@@ -341,7 +342,7 @@ describe('setIdleTask', () => {
       } else {
         it('include anonymous', () => {
           expect((console.info as any).mock.calls[1][2]).toMatch(
-            `Run task, name: anonymous(id: ${taskId}), executionTime: 0 ms`
+            `Run task, name: anonymous(id: ${taskKey.id}), executionTime: 0 ms`
           );
         });
       }
@@ -351,7 +352,7 @@ describe('setIdleTask', () => {
       beforeEach(() => {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         const test = () => {};
-        taskId = idleTaskModule!.setIdleTask(test);
+        taskKey = idleTaskModule!.setIdleTask(test);
         runRequestIdleCallback();
       });
 
@@ -362,7 +363,7 @@ describe('setIdleTask', () => {
       } else {
         it('include function name and task id', () => {
           expect((console.info as any).mock.calls[1][2]).toMatch(
-            `Run task, name: test(id: ${taskId}), executionTime: 0 ms`
+            `Run task, name: test(id: ${taskKey.id}), executionTime: 0 ms`
           );
         });
       }
@@ -371,7 +372,7 @@ describe('setIdleTask', () => {
     describe('not timeout', () => {
       describe('task took over 50 ms', () => {
         beforeEach(() => {
-          taskId = idleTaskModule!.setIdleTask(
+          taskKey = idleTaskModule!.setIdleTask(
             createTask(mockFirstTask, 50.001)
           );
           runRequestIdleCallback();
@@ -402,7 +403,7 @@ describe('setIdleTask', () => {
 
           it('include 50.01 ms', () => {
             expect((console.warn as any).mock.calls[0][2]).toMatch(
-              `Run task, name: anonymous(id: ${taskId}), executionTime: 50.01 ms`
+              `Run task, name: anonymous(id: ${taskKey.id}), executionTime: 50.01 ms`
             );
           });
         }
@@ -410,7 +411,7 @@ describe('setIdleTask', () => {
 
       describe('task took less than 50 ms', () => {
         beforeEach(() => {
-          taskId = idleTaskModule!.setIdleTask(
+          taskKey = idleTaskModule!.setIdleTask(
             createTask(mockFirstTask, 49.999)
           );
           runRequestIdleCallback();
@@ -441,7 +442,7 @@ describe('setIdleTask', () => {
 
           it('include 50 ms', () => {
             expect((console.info as any).mock.calls[1][2]).toMatch(
-              `Run task, name: anonymous(id: ${taskId}), executionTime: 50 ms`
+              `Run task, name: anonymous(id: ${taskKey.id}), executionTime: 50 ms`
             );
           });
         }
@@ -462,7 +463,7 @@ describe('setIdleTask', () => {
 
       describe('task took over 50 ms', () => {
         beforeEach(() => {
-          taskId = idleTaskModule!.setIdleTask(
+          taskKey = idleTaskModule!.setIdleTask(
             createTask(mockFirstTask, 50.001)
           );
           runRequestIdleCallback();
@@ -492,7 +493,7 @@ describe('setIdleTask', () => {
 
           it('include 50.01 ms', () => {
             expect((console.warn as any).mock.calls[0][2]).toMatch(
-              `Run task, name: anonymous(id: ${taskId}), executionTime: 50.01 ms`
+              `Run task, name: anonymous(id: ${taskKey.id}), executionTime: 50.01 ms`
             );
           });
         }
@@ -528,7 +529,7 @@ describe('setIdleTask', () => {
 
           it('include 50 ms', () => {
             expect((console.info as any).mock.calls[1][2]).toMatch(
-              `Run task, name: anonymous(id: ${taskId}), executionTime: 50 ms`
+              `Run task, name: anonymous(id: ${taskKey.id}), executionTime: 50 ms`
             );
           });
         }

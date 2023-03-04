@@ -10,7 +10,8 @@ const cancelAllIdleTasks = (): void => {
   its.idleTaskRevalidateIntervalMap.clear();
   resolveTaskResultWhenCancel(its.tasks);
   its.tasks.length = 0;
-  its.idleTaskResultMap.clear();
+  // WeakMap has no clear method
+  its.idleTaskResultMap = new WeakMap();
   its.requestIdleCallbackId && cIC(its.requestIdleCallbackId as any); // TypeScript Error because requestIdleCallbackId is number | NodeJS.Timeout.
 };
 
