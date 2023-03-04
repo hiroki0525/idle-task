@@ -1,3 +1,17 @@
+# [4.0.0](https://github.com/hiroki0525/idle-task/compare/v3.4.0...v4.0.0) (2023-03-04)
+
+
+### Features
+
+* `timeoutStrategy` is `forceRun` as default ([b6520ba](https://github.com/hiroki0525/idle-task/commit/b6520ba340341927faa0ad149f7477ba0f5c415e))
+* manage caches automatically ([ed185fd](https://github.com/hiroki0525/idle-task/commit/ed185fd10e7cdcfa7ce14d2a44d794fd7a1c18b8))
+
+
+### BREAKING CHANGES
+
+* ref https://github.com/hiroki0525/idle-task/issues/61
+* ref https://github.com/hiroki0525/idle-task/issues/56
+
 # [3.4.0](https://github.com/hiroki0525/idle-task/compare/v3.3.3...v3.4.0) (2023-02-19)
 
 
