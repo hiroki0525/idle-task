@@ -313,10 +313,8 @@ describe('waitForIdleTask', () => {
             runRequestIdleCallback();
           });
 
-          it('throw WaitForIdleTaskTimeoutError', async () => {
-            await expect(result).rejects.toThrow(
-              new idleTaskModule!.WaitForIdleTaskTimeoutError()
-            );
+          it('return result', async () => {
+            await expect(result).resolves.toBe('mockFirstTask');
           });
         });
 

@@ -42,6 +42,7 @@ describe('configureIdleTask', () => {
       interval: 1000,
       debug: false,
       timeout: 3000,
+      timeoutStrategy: 'error',
     };
 
     beforeEach(() => {

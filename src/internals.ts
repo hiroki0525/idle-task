@@ -70,12 +70,12 @@ export const getResultFromCache = (key: IdleTaskKey, isDeleteCache = false) => {
 };
 
 export const defaultWaitForIdleTaskOptions: WaitForIdleTaskOptions = {
-  timeoutStrategy: 'error',
+  timeoutStrategy: 'forceRun',
 } as const;
 
 const taskGlobalOptions: ConfigureOptions = {
   debug: false,
-  timeoutStrategy: 'error',
+  timeoutStrategy: 'forceRun',
 } as const;
 
 interface IdleTaskState {

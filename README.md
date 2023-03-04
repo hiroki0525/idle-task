@@ -234,14 +234,14 @@ In this case, `waitForIdleTask` will throw `WaitForIdleTaskTimeoutError` as defa
 ```javascript
 const generateRandomNumber = () => Math.floor( Math.random() * 100 );
 const taskKey = setIdleTask(generateRandomNumber);
-const firstRandomNumber = await waitForIdleTask(taskKey, { timeout: 1000, timeoutStrategy: 'forceRun' });
+const firstRandomNumber = await waitForIdleTask(taskKey, { timeout: 1000, timeoutStrategy: 'error' });
 ```
 
 You can choose the movement when the idle task is timeout.
 
-`waitForIdleTask` throws an error as default if the task can't be finished within the time which you set.
+`waitForIdleTask` executes the task even if having not yet run it after the time has come.
 
-If you set `forceRun`, `idle-task` executes the task even if having not yet run it after the time has come.
+If you set `error`, `waitForIdleTask` throws an error if the task can't be finished within the time which you set.
 
 ### `getResultFromIdleTask`
 
@@ -250,12 +250,12 @@ const generateRandomNumber = () => Math.floor( Math.random() * 100 );
 const randomNumber = await getResultFromIdleTask(generateRandomNumber, {
     priority: 'high',
     timeout: 3000,
-    timeoutStrategy: 'forceRun'
+    timeoutStrategy: 'error'
 });
 
 // same
 const taskKey = setIdleTask(generateRandomNumber, { priority: 'high' });
-const randomNumber = await waitForIdleTask(taskKey, { timeout: 3000, timeoutStrategy: 'forceRun' });
+const randomNumber = await waitForIdleTask(taskKey, { timeout: 3000, timeoutStrategy: 'error' });
 ```
 
 You can get the result by using `getResultFromIdleTask` if you don't need the task id.
