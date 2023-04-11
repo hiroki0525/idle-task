@@ -4,15 +4,17 @@
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
+const repositoryUrl = 'https://github.com/hiroki0525/idle-task';
+
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'idle-task',
   tagline: 'Dinosaurs are cool',
   // favicon: 'img/favicon.ico',
   url: 'https://hiroki0525.github.io',
-  baseUrl: '/',
+  baseUrl: '/idle-task/',
   organizationName: 'hiroki0525',
-  projectName: 'hiroki0525.github.io',
+  projectName: 'idle-task',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   // Even if you don't use internalization, you can use this field to set useful
@@ -31,7 +33,7 @@ const config = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           routeBasePath: '/',
-          editUrl: 'https://github.com/hiroki0525/idle-task',
+          editUrl: repositoryUrl,
         },
         blog: false,
         theme: {
@@ -60,7 +62,7 @@ const config = {
             label: 'Docs',
           },
           {
-            href: 'https://github.com/facebook/docusaurus',
+            href: repositoryUrl,
             label: 'GitHub',
             position: 'right',
           },
@@ -91,7 +93,7 @@ const config = {
             items: [
               {
                 label: 'GitHub',
-                href: 'https://github.com/hiroki0525/idle-task',
+                href: repositoryUrl,
               },
             ],
           },
