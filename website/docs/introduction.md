@@ -1,12 +1,9 @@
-# idle-task
+---
+slug: /
+sidebar_position: 1
+---
 
-![idle-task](https://user-images.githubusercontent.com/40714517/202905619-b2319b98-d81a-4cc2-9eac-c88702daf45b.png)
-
-[![npm version](https://badge.fury.io/js/idle-task.svg)](https://badge.fury.io/js/idle-task)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/idle-task)](https://bundlephobia.com/package/idle-task)
-[![Test](https://github.com/hiroki0525/idle-task/actions/workflows/test.yml/badge.svg)](https://github.com/hiroki0525/idle-task/actions/workflows/test.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![semantic-release: angular](https://img.shields.io/badge/semantic--release-commitlint_conventional-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
+# Introduction
 
 Improve your website performance by executing JavaScript during a browser's idle periods.
 
@@ -65,24 +62,43 @@ configureIdleTask({ debug: true })
 setIdleTask(yourFunction1);
 ```
 
-## Installation
+## Install
 
-Please see [installation](https://hiroki0525.github.io/idle-task#installation) .
+```bash
+npm i idle-task
+```
 
-## API
+```bash
+yarn add idle-task
+```
 
-Please see [API](https://hiroki0525.github.io/idle-task/category/api) .
+```bash
+pnpm add idle-task
+```
 
-## Contributing
+You can also use CDN.
 
-Please see [CONTRIBUTING.md](https://github.com/hiroki0525/idle-task/blob/main/CONTRIBUTING.md) .
+```html
+<script crossorigin src="https://unpkg.com/idle-task/dist/umd/index.js"></script>
+```
 
-Thank you for contributing!!
+## Quick Start
 
-[@joeinnes](https://github.com/joeinnes)
-[@m5r](https://github.com/m5r)
-[@yuchi](https://github.com/yuchi)
+The simplest way is to use `setIdleTask` .
 
-## License
+```javascript
+import { setIdleTask } from 'idle-task';
 
-Released under the MIT license.
+const sendAnalyticsData = () =>
+        console.log("send analytics data during a browser's idle periods.");
+setIdleTask(sendAnalyticsData);
+```
+
+If you want to get the result of a task, please use `getResultFromIdleTask` .
+
+```javascript
+import { getResultFromIdleTask } from 'idle-task';
+
+const generateRandomNumber = () => Math.floor( Math.random() * 100 );
+const result = await getResultFromIdleTask(generateRandomNumber);
+```
