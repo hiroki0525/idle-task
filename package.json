@@ -104,5 +104,8 @@
         "path": "es/index.js"
       }
     ]
-  }
+  },
+  "workspaces": [
+    "website"
+  ]
 }
