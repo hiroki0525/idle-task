@@ -9,7 +9,7 @@ const repositoryUrl = 'https://github.com/hiroki0525/idle-task';
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'idle-task',
-  tagline: 'Dinosaurs are cool',
+  // tagline: 'Dinosaurs are cool',
   // favicon: 'img/favicon.ico',
   url: 'https://hiroki0525.github.io',
   baseUrl: '/idle-task/',
