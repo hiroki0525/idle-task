@@ -28,7 +28,8 @@
     "prebuild": "rm -rf dist/",
     "build": "rollup -c",
     "postbuild": "find dist | grep '\\.d\\.ts\\|api$' | grep -v '^dist/index\\.d\\.ts$' | xargs rm -rf",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "release": "changeset publish"
   },
   "repository": {
     "type": "git",
@@ -52,8 +53,6 @@
     "@commitlint/config-conventional": "17.4.4",
     "@rollup/plugin-terser": "^0.4.0",
     "@rollup/plugin-typescript": "11.1.0",
-    "@semantic-release/changelog": "6.0.3",
-    "@semantic-release/git": "10.0.1",
     "@types/jest": "29.5.0",
     "@types/node": "18.15.11",
     "@typescript-eslint/eslint-plugin": "5.57.1",
@@ -70,23 +69,10 @@
     "prettier": "2.8.7",
     "rollup": "3.20.2",
     "rollup-plugin-dts": "^5.0.0",
-    "semantic-release": "21.0.1",
     "ts-jest": "29.1.0",
     "ts-loader": "9.4.2",
-    "typescript": "5.0.4"
-  },
-  "release": {
-    "plugins": [
-      "@semantic-release/commit-analyzer",
-      "@semantic-release/changelog",
-      "@semantic-release/npm",
-      "@semantic-release/github",
-      "@semantic-release/git",
-      "@semantic-release/release-notes-generator"
-    ],
-    "branches": [
-      "main"
-    ]
+    "typescript": "5.0.4",
+    "@changesets/cli": "^2.26.1"
   },
   "bundlemon": {
     "baseDir": "./dist",
