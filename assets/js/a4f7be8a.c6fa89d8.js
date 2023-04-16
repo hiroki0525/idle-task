@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkwebsite=self.webpackChunkwebsite||[]).push([[750],{6966:e=>{e.exports=JSON.parse('{"title":"API","slug":"/category/api","permalink":"/category/api","navigation":{"previous":{"title":"Introduction","permalink":"/"},"next":{"title":"setIdleTask","permalink":"/api/setIdleTask"}}}')}}]);
