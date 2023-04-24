@@ -85,8 +85,6 @@ This is for debugging.
 
 The browser will output the `taskName` to the web console if you set `debug: true` by `configureIdleTask` .
 
-```typescript
-
 ### Returns
 
 `TaskKey` Object which is necessary for `cancelIdleTask` , `getIdleTaskStatus` and `waitForIdleTask`.
