@@ -328,45 +328,96 @@ describe('setIdleTask', () => {
       idleTaskModule!.configureIdleTask({ debug: true });
     });
 
-    describe('anonymous function', () => {
-      beforeEach(() => {
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        taskKey = idleTaskModule!.setIdleTask(() => {});
-        runRequestIdleCallback();
+    describe('with taskName', () => {
+      const taskName = 'taskName';
+
+      describe('anonymous function', () => {
+        beforeEach(() => {
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          taskKey = idleTaskModule!.setIdleTask(() => {}, {
+            taskName,
+          });
+          runRequestIdleCallback();
+        });
+
+        if (isServer) {
+          it('not called info', () => {
+            expect(console.info).not.toHaveBeenCalled();
+          });
+        } else {
+          it('include taskName', () => {
+            expect((console.info as any).mock.calls[1][2]).toMatch(
+              `Run task, name: ${taskName}(id: ${taskKey.id}), executionTime: 0 ms`
+            );
+          });
+        }
       });
 
-      if (isServer) {
-        it('not called info', () => {
-          expect(console.info).not.toHaveBeenCalled();
+      describe('named function', () => {
+        beforeEach(() => {
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          const test = () => {};
+          taskKey = idleTaskModule!.setIdleTask(test, {
+            taskName,
+          });
+          runRequestIdleCallback();
         });
-      } else {
-        it('include anonymous', () => {
-          expect((console.info as any).mock.calls[1][2]).toMatch(
-            `Run task, name: anonymous(id: ${taskKey.id}), executionTime: 0 ms`
-          );
-        });
-      }
+
+        if (isServer) {
+          it('not called info', () => {
+            expect(console.info).not.toHaveBeenCalled();
+          });
+        } else {
+          it('include function name and task id', () => {
+            expect((console.info as any).mock.calls[1][2]).toMatch(
+              `Run task, name: ${taskName}(id: ${taskKey.id}), executionTime: 0 ms`
+            );
+          });
+        }
+      });
     });
 
-    describe('named function', () => {
-      beforeEach(() => {
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        const test = () => {};
-        taskKey = idleTaskModule!.setIdleTask(test);
-        runRequestIdleCallback();
+    describe('without taskName', () => {
+      describe('anonymous function', () => {
+        beforeEach(() => {
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          taskKey = idleTaskModule!.setIdleTask(() => {});
+          runRequestIdleCallback();
+        });
+
+        if (isServer) {
+          it('not called info', () => {
+            expect(console.info).not.toHaveBeenCalled();
+          });
+        } else {
+          it('include anonymous', () => {
+            expect((console.info as any).mock.calls[1][2]).toMatch(
+              `Run task, name: anonymous(id: ${taskKey.id}), executionTime: 0 ms`
+            );
+          });
+        }
       });
 
-      if (isServer) {
-        it('not called info', () => {
-          expect(console.info).not.toHaveBeenCalled();
+      describe('named function', () => {
+        beforeEach(() => {
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          const test = () => {};
+          taskKey = idleTaskModule!.setIdleTask(test);
+          runRequestIdleCallback();
         });
-      } else {
-        it('include function name and task id', () => {
-          expect((console.info as any).mock.calls[1][2]).toMatch(
-            `Run task, name: test(id: ${taskKey.id}), executionTime: 0 ms`
-          );
-        });
-      }
+
+        if (isServer) {
+          it('not called info', () => {
+            expect(console.info).not.toHaveBeenCalled();
+          });
+        } else {
+          it('include function name and task id', () => {
+            expect((console.info as any).mock.calls[1][2]).toMatch(
+              `Run task, name: test(id: ${taskKey.id}), executionTime: 0 ms`
+            );
+          });
+        }
+      });
     });
 
     describe('not timeout', () => {
