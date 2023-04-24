@@ -1,3 +1,10 @@
+# [4.1.0](https://github.com/hiroki0525/idle-task/compare/v4.0.0...v4.1.0) (2023-04-24)
+
+
+### Features
+
+* add `SetIdleTaskOptions.taskName` ([42a8e1c](https://github.com/hiroki0525/idle-task/commit/42a8e1c0708e13be065ac092e855bc55e4288dcf))
+
 # [4.0.0](https://github.com/hiroki0525/idle-task/compare/v3.4.0...v4.0.0) (2023-03-04)
 
 
