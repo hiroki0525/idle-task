@@ -20,6 +20,7 @@ const options = {
     priority: 'high',
     revalidateInterval: 5000,
     revalidateWhenExecuted: true,
+    taskName: 'sendAnalyticsData',
 };
 const taskKey = setIdleTask(sendAnalyticsData, options);
 ```
@@ -77,6 +78,14 @@ const saveUserArticleDraft = () => {
 // In addition, idle-task registers saveUserArticleDraft task when it had been executed.
 setIdleTask(saveUserArticleDraft, { revalidateWhenExecuted: true });
 ```
+
+#### `taskName?: string`
+
+This is for debugging.
+
+The browser will output the `taskName` to the web console if you set `debug: true` by `configureIdleTask` .
+
+```typescript
 
 ### Returns
 

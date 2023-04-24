@@ -14,6 +14,7 @@ export interface SetIdleTaskOptions {
   readonly priority?: 'low' | 'high';
   readonly revalidateInterval?: number;
   readonly revalidateWhenExecuted?: boolean;
+  readonly taskName?: string;
 }
 
 const createTimeRemainingDidTimeout = (): (() => boolean) => {
@@ -122,7 +123,7 @@ const setIdleTask = (
       value: idleTaskId,
     },
     name: {
-      value: task.name,
+      value: options.taskName || task.name,
     },
     resolve: {
       value: resolve,
