@@ -13,13 +13,19 @@
   "dependencyDashboard": false,
   "packageRules": [
     {
+      "groupName": "[all]dependencies (patch)",
       "matchUpdateTypes": ["patch"],
-      "automerge": true,
-      "groupName": "dependencies (patch)"
+      "automerge": true
     },
     {
+      "groupName": "dependencies (major and minor)",
       "matchUpdateTypes": ["major", "minor"],
-      "groupName": "dependencies (major and minor)"
+      "matchPaths": ["package.json"]
+    },
+    {
+      "groupName": "[website]dependencies (major and minor)",
+      "matchUpdateTypes": ["major", "minor"],
+      "matchPaths": ["website/"]
     }
   ]
 }
