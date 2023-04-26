@@ -1,3 +1,10 @@
+# [4.2.0](https://github.com/hiroki0525/idle-task/compare/v4.1.0...v4.2.0) (2023-04-26)
+
+
+### Features
+
+* add `GetResultFromIdleTaskOptions.taskName` ([dfcdd13](https://github.com/hiroki0525/idle-task/commit/dfcdd13bca9142c547716f78b1a935329562e84f))
+
 # [4.1.0](https://github.com/hiroki0525/idle-task/compare/v4.0.0...v4.1.0) (2023-04-24)
 
 
