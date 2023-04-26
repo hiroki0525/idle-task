@@ -18,12 +18,13 @@ import { getResultFromIdleTask } from 'idle-task';
 const generateRandomNumber = () => Math.floor( Math.random() * 100 );
 const randomNumber = await getResultFromIdleTask(generateRandomNumber, {
     priority: 'high',
+    taskName: 'generateRandomNumber',
     timeout: 3000,
     timeoutStrategy: 'error'
 });
 ```
 
-:::tips
+:::tip
 This is same as belows.
 ```javascript
 const taskKey = setIdleTask(generateRandomNumber, { priority: 'high', taskName: 'generateRandomNumber'})
