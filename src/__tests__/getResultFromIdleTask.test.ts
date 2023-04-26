@@ -5,7 +5,10 @@ import { idleTaskModule, reloadModule, runRequestIdleCallback } from './util';
 describe('getResultFromIdleTask', () => {
   const mockSetIdleTask = jest.fn();
   const mockWaitForIdleTask = jest.fn();
-  const setIdleTaskOptions: SetIdleTaskOptions = { priority: 'high' };
+  const setIdleTaskOptions: SetIdleTaskOptions = {
+    priority: 'high',
+    taskName: 'taskName',
+  };
   const waitForIdleTaskOptions: WaitForIdleTaskOptions = {
     timeout: 3000,
     timeoutStrategy: 'forceRun',

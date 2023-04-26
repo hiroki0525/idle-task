@@ -26,14 +26,14 @@ const randomNumber = await getResultFromIdleTask(generateRandomNumber, {
 :::tips
 This is same as belows.
 ```javascript
-const taskKey = setIdleTask(generateRandomNumber, { priority: 'high' });
+const taskKey = setIdleTask(generateRandomNumber, { priority: 'high', taskName: 'generateRandomNumber'})
 const randomNumber = await waitForIdleTask(taskKey, { timeout: 3000, timeoutStrategy: 'error' });
 ```
 :::
 
 You can get the result by using `getResultFromIdleTask` if you don't need the task key which is created by `setIdleTask`.
 
-`getResultFromIdleTask` can also be set options which is `SetIdleTaskOptions.priority` and  `WaitForIdleTaskOptions.timeout` .
+`getResultFromIdleTask` can also be set options which is `SetIdleTaskOptions.priority` , `SetIdleTaskOptions.taskName` , `WaitForIdleTaskOptions.timeout` and `WaitForIdleTaskOptions.timeoutStrategy`.
 
 ### Parameters
 
