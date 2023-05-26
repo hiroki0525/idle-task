@@ -1,3 +1,10 @@
+## [4.2.1](https://github.com/hiroki0525/idle-task/compare/v4.2.0...v4.2.1) (2023-05-26)
+
+
+### Bug Fixes
+
+* **deps:** update [all]dependencies (patch) ([954e85c](https://github.com/hiroki0525/idle-task/commit/954e85cd5682034c48e0b79ca412743c8a10e203))
+
 # [4.2.0](https://github.com/hiroki0525/idle-task/compare/v4.1.0...v4.2.0) (2023-04-26)
 
 
