@@ -2,19 +2,19 @@
   "name": "idle-task",
   "version": "4.2.1",
   "description": "Improve your website performance by executing JavaScript during a browser's idle periods🚀",
-  "main": "dist/cjs/index.js",
-  "module": "dist/es/index.js",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.es.js",
   "exports": {
     "development": {
-      "require": "./dist/cjs/index.development.js",
-      "default": "./dist/es/index.development.js"
+      "require": "./dist/index.development.cjs.js",
+      "default": "./dist/index.development.es.js"
     },
     "production": {
       "require": "./dist/cjs/index.js",
       "default": "./dist/es/index.js"
     }
   },
-  "types": "dist/index.d.ts",
+  "types": "/dist/types/index.d.ts",
   "sideEffects": false,
   "files": [
     "dist"
@@ -27,7 +27,6 @@
     "test:prettier": "prettier src/",
     "prebuild": "rm -rf dist/",
     "build": "rollup -c",
-    "postbuild": "find dist | grep '\\.d\\.ts\\|api$' | grep -v '^dist/index\\.d\\.ts$' | xargs rm -rf",
     "prepare": "husky install"
   },
   "repository": {
@@ -56,24 +55,24 @@
     "@semantic-release/git": "10.0.1",
     "@types/jest": "29.5.3",
     "@types/node": "18.16.19",
-    "@typescript-eslint/eslint-plugin": "5.59.11",
-    "@typescript-eslint/parser": "5.59.11",
+    "@typescript-eslint/eslint-plugin": "6.1.0",
+    "@typescript-eslint/parser": "6.1.0",
     "bundlemon": "^2.0.0",
-    "eslint": "8.39.0",
+    "eslint": "8.45.0",
     "eslint-config-prettier": "8.8.0",
     "eslint-plugin-import": "2.27.5",
-    "eslint-plugin-unused-imports": "2.0.0",
+    "eslint-plugin-unused-imports": "3.0.0",
     "husky": "8.0.3",
-    "jest": "29.5.0",
+    "jest": "29.6.1",
     "jest-environment-jsdom": "^29.3.0",
     "npm-run-all": "^4.1.5",
-    "prettier": "2.8.8",
-    "rollup": "3.21.6",
-    "rollup-plugin-dts": "^5.0.0",
+    "prettier": "3.0.0",
+    "rollup": "3.26.3",
     "semantic-release": "21.0.7",
     "ts-jest": "29.1.1",
     "ts-loader": "9.4.4",
-    "typescript": "5.0.4"
+    "tslib": "^2.6.0",
+    "typescript": "5.1.6"
   },
   "release": {
     "plugins": [
@@ -95,17 +94,18 @@
     ],
     "files": [
       {
-        "path": "cjs/index.js"
+        "path": "index.cjs.js"
       },
       {
-        "path": "umd/index.js"
+        "path": "index.umd.js"
       },
       {
-        "path": "es/index.js"
+        "path": "index.es.js"
       }
     ]
   },
   "workspaces": [
     "website"
-  ]
+  ],
+  "packageManager": "pnpm@8.6.9"
 }
