@@ -14,10 +14,11 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
+          cache: 'pnpm'
       - name: Install dependencies
-        run: npm ci
+        run: pnpm ci
       - name: Build website
-        run: PUBLIC_URL=/idle-task npm run build -w website
+        run: PUBLIC_URL=/idle-task pnpm build -w website
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
