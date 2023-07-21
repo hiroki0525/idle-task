@@ -1,7 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base",  ":timezone(Asia/Tokyo)", "schedule:weekends", "schedule:automergeWeekends"
+    "config:base",  ":timezone(Asia/Tokyo)", "schedule:weekends", "schedule:automergeWeekends", ":semanticCommitScopeDisabled"
   ],
   "labels": ["dependencies"],
   "dependencyDashboard": false,
