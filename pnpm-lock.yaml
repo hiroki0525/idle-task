@@ -4,85 +4,91 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-devDependencies:
-  '@commitlint/cli':
-    specifier: 17.6.6
-    version: 17.6.6
-  '@commitlint/config-conventional':
-    specifier: 17.6.6
-    version: 17.6.6
-  '@rollup/plugin-terser':
-    specifier: ^0.4.0
-    version: 0.4.0(rollup@3.26.3)
-  '@rollup/plugin-typescript':
-    specifier: 11.1.2
-    version: 11.1.2(rollup@3.26.3)(typescript@5.1.6)
-  '@semantic-release/changelog':
-    specifier: 6.0.3
-    version: 6.0.3(semantic-release@21.0.7)
-  '@semantic-release/git':
-    specifier: 10.0.1
-    version: 10.0.1(semantic-release@21.0.7)
-  '@types/jest':
-    specifier: 29.5.3
-    version: 29.5.3
-  '@types/node':
-    specifier: 18.16.19
-    version: 18.16.19
-  '@typescript-eslint/eslint-plugin':
-    specifier: 6.1.0
-    version: 6.1.0(@typescript-eslint/parser@6.1.0)(eslint@8.45.0)(typescript@5.1.6)
-  '@typescript-eslint/parser':
-    specifier: 6.1.0
-    version: 6.1.0(eslint@8.45.0)(typescript@5.1.6)
-  bundlemon:
-    specifier: ^2.0.0
-    version: 2.0.0
-  eslint:
-    specifier: 8.45.0
-    version: 8.45.0
-  eslint-config-prettier:
-    specifier: 8.8.0
-    version: 8.8.0(eslint@8.45.0)
-  eslint-plugin-import:
-    specifier: 2.27.5
-    version: 2.27.5(@typescript-eslint/parser@6.1.0)(eslint@8.45.0)
-  eslint-plugin-unused-imports:
-    specifier: 3.0.0
-    version: 3.0.0(@typescript-eslint/eslint-plugin@6.1.0)(eslint@8.45.0)
-  husky:
-    specifier: 8.0.3
-    version: 8.0.3
-  jest:
-    specifier: 29.6.1
-    version: 29.6.1(@types/node@18.16.19)(ts-node@10.9.1)
-  jest-environment-jsdom:
-    specifier: ^29.3.0
-    version: 29.3.0
-  npm-run-all:
-    specifier: ^4.1.5
-    version: 4.1.5
-  prettier:
-    specifier: 3.0.0
-    version: 3.0.0
-  rollup:
-    specifier: 3.26.3
-    version: 3.26.3
-  rollup-plugin-dts:
-    specifier: ^5.0.0
-    version: 5.0.0(rollup@3.26.3)(typescript@5.1.6)
-  semantic-release:
-    specifier: 21.0.7
-    version: 21.0.7
-  ts-jest:
-    specifier: 29.1.1
-    version: 29.1.1(@babel/core@7.22.9)(jest@29.6.1)(typescript@5.1.6)
-  ts-loader:
-    specifier: 9.4.4
-    version: 9.4.4(typescript@5.1.6)(webpack@5.88.2)
-  typescript:
-    specifier: 5.1.6
-    version: 5.1.6
+importers:
+
+  .:
+    devDependencies:
+      '@commitlint/cli':
+        specifier: 17.6.6
+        version: 17.6.6
+      '@commitlint/config-conventional':
+        specifier: 17.6.6
+        version: 17.6.6
+      '@rollup/plugin-terser':
+        specifier: ^0.4.0
+        version: 0.4.0(rollup@3.26.3)
+      '@rollup/plugin-typescript':
+        specifier: 11.1.2
+        version: 11.1.2(rollup@3.26.3)(tslib@2.6.0)(typescript@5.1.6)
+      '@semantic-release/changelog':
+        specifier: 6.0.3
+        version: 6.0.3(semantic-release@21.0.7)
+      '@semantic-release/git':
+        specifier: 10.0.1
+        version: 10.0.1(semantic-release@21.0.7)
+      '@types/jest':
+        specifier: 29.5.3
+        version: 29.5.3
+      '@types/node':
+        specifier: 18.16.19
+        version: 18.16.19
+      '@typescript-eslint/eslint-plugin':
+        specifier: 6.1.0
+        version: 6.1.0(@typescript-eslint/parser@6.1.0)(eslint@8.45.0)(typescript@5.1.6)
+      '@typescript-eslint/parser':
+        specifier: 6.1.0
+        version: 6.1.0(eslint@8.45.0)(typescript@5.1.6)
+      bundlemon:
+        specifier: ^2.0.0
+        version: 2.0.0
+      eslint:
+        specifier: 8.45.0
+        version: 8.45.0
+      eslint-config-prettier:
+        specifier: 8.8.0
+        version: 8.8.0(eslint@8.45.0)
+      eslint-plugin-import:
+        specifier: 2.27.5
+        version: 2.27.5(@typescript-eslint/parser@6.1.0)(eslint@8.45.0)
+      eslint-plugin-unused-imports:
+        specifier: 3.0.0
+        version: 3.0.0(@typescript-eslint/eslint-plugin@6.1.0)(eslint@8.45.0)
+      husky:
+        specifier: 8.0.3
+        version: 8.0.3
+      jest:
+        specifier: 29.6.1
+        version: 29.6.1(@types/node@18.16.19)(ts-node@10.9.1)
+      jest-environment-jsdom:
+        specifier: ^29.3.0
+        version: 29.3.0
+      npm-run-all:
+        specifier: ^4.1.5
+        version: 4.1.5
+      prettier:
+        specifier: 3.0.0
+        version: 3.0.0
+      rollup:
+        specifier: 3.26.3
+        version: 3.26.3
+      rollup-plugin-dts:
+        specifier: ^5.0.0
+        version: 5.0.0(rollup@3.26.3)(typescript@5.1.6)
+      semantic-release:
+        specifier: 21.0.7
+        version: 21.0.7
+      ts-jest:
+        specifier: 29.1.1
+        version: 29.1.1(@babel/core@7.22.9)(jest@29.6.1)(typescript@5.1.6)
+      ts-loader:
+        specifier: 9.4.4
+        version: 9.4.4(typescript@5.1.6)(webpack@5.88.2)
+      tslib:
+        specifier: ^2.6.0
+        version: 2.6.0
+      typescript:
+        specifier: 5.1.6
+        version: 5.1.6
 
 packages:
 
@@ -1114,7 +1120,7 @@ packages:
       terser: 5.19.1
     dev: true
 
-  /@rollup/plugin-typescript@11.1.2(rollup@3.26.3)(typescript@5.1.6):
+  /@rollup/plugin-typescript@11.1.2(rollup@3.26.3)(tslib@2.6.0)(typescript@5.1.6):
     resolution: {integrity: sha512-0ghSOCMcA7fl1JM+0gYRf+Q/HWyg+zg7/gDSc+fRLmlJWcW5K1I+CLRzaRhXf4Y3DRyPnnDo4M2ktw+a6JcDEg==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
@@ -1130,6 +1136,7 @@ packages:
       '@rollup/pluginutils': 5.0.2(rollup@3.26.3)
       resolve: 1.22.2
       rollup: 3.26.3
+      tslib: 2.6.0
       typescript: 5.1.6
     dev: true
 
@@ -6179,6 +6186,10 @@ packages:
       json5: 1.0.2
       minimist: 1.2.8
       strip-bom: 3.0.0
+    dev: true
+
+  /tslib@2.6.0:
+    resolution: {integrity: sha512-7At1WUettjcSRHXCyYtTselblcHl9PJFFVKiCAy/bY97+BPZXSQ2wbq0P9s8tK2G7dFQfNnlJnPAiArVBVBsfA==}
     dev: true
 
   /type-check@0.4.0:
