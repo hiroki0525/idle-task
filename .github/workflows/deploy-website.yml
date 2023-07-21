@@ -20,7 +20,7 @@ jobs:
           node-version: 18
           cache: 'pnpm'
       - name: Install dependencies
-        run: pnpm ci
+        run: pnpm install
       - name: Build website
         run: PUBLIC_URL=/idle-task pnpm build -w website
       - name: Deploy to GitHub Pages
