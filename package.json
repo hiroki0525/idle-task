@@ -2,19 +2,19 @@
   "name": "idle-task",
   "version": "4.2.1",
   "description": "Improve your website performance by executing JavaScript during a browser's idle periods🚀",
-  "main": "dist/cjs/index.js",
-  "module": "dist/es/index.js",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.es.js",
   "exports": {
     "development": {
-      "require": "./dist/cjs/index.development.js",
-      "default": "./dist/es/index.development.js"
+      "require": "./dist/index.development.cjs.js",
+      "default": "./dist/index.development.es.js"
     },
     "production": {
       "require": "./dist/cjs/index.js",
       "default": "./dist/es/index.js"
     }
   },
-  "types": "dist/index.d.ts",
+  "types": "/dist/types/index.d.ts",
   "sideEffects": false,
   "files": [
     "dist"
@@ -27,7 +27,6 @@
     "test:prettier": "prettier src/",
     "prebuild": "rm -rf dist/",
     "build": "rollup -c",
-    "postbuild": "find dist | grep '\\.d\\.ts\\|api$' | grep -v '^dist/index\\.d\\.ts$' | xargs rm -rf",
     "prepare": "husky install"
   },
   "repository": {
@@ -69,7 +68,6 @@
     "npm-run-all": "^4.1.5",
     "prettier": "3.0.0",
     "rollup": "3.26.3",
-    "rollup-plugin-dts": "^5.0.0",
     "semantic-release": "21.0.7",
     "ts-jest": "29.1.1",
     "ts-loader": "9.4.4",
@@ -96,13 +94,13 @@
     ],
     "files": [
       {
-        "path": "cjs/index.js"
+        "path": "index.cjs.js"
       },
       {
-        "path": "umd/index.js"
+        "path": "index.umd.js"
       },
       {
-        "path": "es/index.js"
+        "path": "index.es.js"
       }
     ]
   },

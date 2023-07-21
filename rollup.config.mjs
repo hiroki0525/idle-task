@@ -1,6 +1,5 @@
 import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
-import dts from 'rollup-plugin-dts';
 import tsConfigJson from './tsconfig.json' assert { type: 'json' };
 
 const outputFormats = ['cjs', 'umd', 'es'];
@@ -17,7 +16,7 @@ const productionConfigs = outputFormats.map(format => ({
   input: 'src/index.ts',
   output: [
     {
-      file: `dist/${format}/index.js`,
+      file: `dist/index.${format}.js`,
       format,
       sourcemap: tsConfigJson.compilerOptions.sourceMap,
       name: 'idleTask',
@@ -37,7 +36,7 @@ const developmentConfigs = outputFormats.map(format => ({
   input: 'src/index.ts',
   output: [
     {
-      file: `dist/${format}/index.development.js`,
+      file: `dist/index.development.${format}.js`,
       format,
       name: 'idleTask',
     },
@@ -47,12 +46,5 @@ const developmentConfigs = outputFormats.map(format => ({
 
 export default [
   ...productionConfigs,
-  ...developmentConfigs,
-  // generate single file.
-  // after build, delete all .d.ts files without index.d.ts
-  {
-    input: './dist/es/index.d.ts',
-    output: [{ file: 'dist/index.d.ts', format: 'es' }],
-    plugins: [dts()],
-  },
+  ...developmentConfigs
 ];
