@@ -1,3 +1,10 @@
+## [4.2.2](https://github.com/hiroki0525/idle-task/compare/v4.2.1...v4.2.2) (2023-09-05)
+
+
+### Reverts
+
+* Revert "ci: remove TOC Generator" ([3a8abb3](https://github.com/hiroki0525/idle-task/commit/3a8abb3421d494c525dddfc6a4b63257a664b3e7))
+
 ## [4.2.1](https://github.com/hiroki0525/idle-task/compare/v4.2.0...v4.2.1) (2023-05-26)
 
 
