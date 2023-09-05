@@ -13,8 +13,7 @@
     },
     {
       "groupName": "dependencies (major and minor)",
-      "matchUpdateTypes": ["major", "minor"],
-      "matchPaths": ["package.json"]
+      "matchUpdateTypes": ["major", "minor"]
     }
   ]
 }
