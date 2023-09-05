@@ -7,7 +7,7 @@
   "dependencyDashboard": false,
   "packageRules": [
     {
-      "groupName": "[all]dependencies (patch)",
+      "groupName": "dependencies (patch)",
       "matchUpdateTypes": ["patch"],
       "automerge": true
     },
@@ -15,11 +15,6 @@
       "groupName": "dependencies (major and minor)",
       "matchUpdateTypes": ["major", "minor"],
       "matchPaths": ["package.json"]
-    },
-    {
-      "groupName": "[website]dependencies (major and minor)",
-      "matchUpdateTypes": ["major", "minor"],
-      "matchPaths": ["website/"]
     }
   ]
 }
