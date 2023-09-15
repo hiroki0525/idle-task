@@ -54,7 +54,7 @@
     "@semantic-release/changelog": "6.0.3",
     "@semantic-release/git": "10.0.1",
     "@types/jest": "29.5.4",
-    "@types/node": "18.17.15",
+    "@types/node": "18.17.16",
     "@typescript-eslint/eslint-plugin": "6.6.0",
     "@typescript-eslint/parser": "6.6.0",
     "bundlemon": "^2.0.0",
@@ -104,5 +104,5 @@
       }
     ]
   },
-  "packageManager": "pnpm@8.7.4"
+  "packageManager": "pnpm@8.7.5"
 }
