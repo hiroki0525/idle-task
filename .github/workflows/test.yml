@@ -16,8 +16,10 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/setup
-      - name: Lint Commit Messages
-        uses: wagoid/commitlint-github-action@v5
+#        Broken this step
+#         https://github.com/wagoid/commitlint-github-action/issues/755
+#      - name: Lint Commit Messages
+#        uses: wagoid/commitlint-github-action@v5
       - name: Test
         run: pnpm t
       - name: Build
