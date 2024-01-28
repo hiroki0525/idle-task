@@ -109,12 +109,6 @@ setIdleTask(yourFunction1);
 npm i idle-task
 ```
 
-You can also use CDN.
-
-```html
-<script crossorigin src="https://unpkg.com/idle-task/dist/umd/index.js"></script>
-```
-
 ## Quick Start
 
 The simplest way is to use `setIdleTask` .
