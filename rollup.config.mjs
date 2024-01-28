@@ -2,13 +2,10 @@ import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
 import tsConfigJson from './tsconfig.json' assert { type: 'json' };
 
-const outputFormats = ['cjs', 'umd', 'es'];
+const outputFormats = ['cjs', 'es'];
 
-const buildTsConfig = ({ format, sourceMap }) => {
-  const extraConfig =
-    format === 'umd'
-      ? { compilerOptions: { target: 'es5', sourceMap } }
-      : { compilerOptions: { sourceMap } };
+const buildTsConfig = ({ sourceMap }) => {
+  const extraConfig = { compilerOptions: { sourceMap } };
   return typescript({ ...tsConfigJson, ...extraConfig });
 };
 
@@ -25,7 +22,6 @@ const productionConfigs = outputFormats.map(format => ({
   ],
   plugins: [
     buildTsConfig({
-      format,
       sourceMap: tsConfigJson.compilerOptions.sourceMap,
     }),
     terser(),
@@ -41,7 +37,7 @@ const developmentConfigs = outputFormats.map(format => ({
       name: 'idleTask',
     },
   ],
-  plugins: [buildTsConfig({ format, sourceMap: false })],
+  plugins: [buildTsConfig({ sourceMap: false })],
 }));
 
 export default [

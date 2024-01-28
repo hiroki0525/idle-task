@@ -97,9 +97,6 @@
         "path": "index.cjs.js"
       },
       {
-        "path": "index.umd.js"
-      },
-      {
         "path": "index.es.js"
       }
     ]
