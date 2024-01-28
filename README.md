@@ -192,6 +192,22 @@ const saveUserArticleDraft = () => {
 setIdleTask(saveUserArticleDraft, { revalidateWhenExecuted: true });
 ```
 
+#### `overwriteTask?: IdleTaskKey`
+
+You can overwrite registered task by using `overwriteTask`.
+
+If the task have already been executed, `idle-task` remove its result from the cache and enqueue the new task, otherwise `idle-task` will remove it from the queue and enqueue the new task.
+
+```typescript
+const generateRandomNumber = () => Math.floor( Math.random() * 100 );
+
+const taskKey = setIdleTask(generateRandomNumber);
+const randomNumber1 = await waitForIdleTask(taskKey);
+
+setIdleTask(generateRandomNumber, { overwriteTask: taskKey });
+const randomNumber2 = await waitForIdleTask(taskKey);
+```
+
 ### `waitForIdleTask`
 
 ```javascript

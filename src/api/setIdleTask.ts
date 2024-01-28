@@ -15,6 +15,7 @@ export interface SetIdleTaskOptions {
   readonly revalidateInterval?: number;
   readonly revalidateWhenExecuted?: boolean;
   readonly taskName?: string;
+  readonly overwriteTask?: IdleTaskKey;
 }
 
 const createTimeRemainingDidTimeout = (): (() => boolean) => {
@@ -107,8 +108,11 @@ const setIdleTask = (
   task: IdleTaskFunction,
   options: SetIdleTaskOptions = defaultSetIdleTaskOptions
 ): IdleTaskKey => {
-  const idleTaskId = ++id;
-  const idleTaskKey: IdleTaskKey = Object.freeze({ id: idleTaskId });
+  const { overwriteTask } = options;
+  const idleTaskKey = overwriteTask ?? Object.freeze({ id: ++id });
+  if (overwriteTask) {
+    its.tasks = its.tasks.filter(task => task.id !== idleTaskKey.id);
+  }
   let resolve, reject;
   its.idleTaskResultMap.set(
     idleTaskKey,
@@ -117,6 +121,7 @@ const setIdleTask = (
       reject = rej;
     })
   );
+  const idleTaskId = idleTaskKey.id;
   const { revalidateInterval } = options;
   const idleTask = Object.defineProperties(() => task(), {
     id: {
