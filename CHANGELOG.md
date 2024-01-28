@@ -1,3 +1,10 @@
+# [4.3.0](https://github.com/hiroki0525/idle-task/compare/v4.2.3...v4.3.0) (2024-01-28)
+
+
+### Features
+
+* add `overwriteTask` option ([4e928b6](https://github.com/hiroki0525/idle-task/commit/4e928b65e26be904c820149bfbd0ae70b036cf63))
+
 ## [4.2.3](https://github.com/hiroki0525/idle-task/compare/v4.2.2...v4.2.3) (2024-01-28)
 
 
