@@ -319,6 +319,24 @@ describe('setIdleTask', () => {
         });
       });
     });
+
+    describe('with overwriteTask', () => {
+      beforeEach(() => {
+        const taskKey = idleTaskModule!.setIdleTask(mockFirstTask);
+        idleTaskModule!.setIdleTask(mockSecondTask, {
+          overwriteTask: taskKey,
+        });
+        runRequestIdleCallback();
+      });
+
+      it('first task is not called', () => {
+        expect(mockFirstTask.mock.calls.length).toBe(0);
+      });
+
+      it('second task is called', () => {
+        expect(mockSecondTask.mock.calls.length).toBe(1);
+      });
+    });
   });
 
   describe('debug mode', () => {

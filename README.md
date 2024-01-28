@@ -27,6 +27,7 @@ Improve your website performance by executing JavaScript during a browser's idle
     - [`priority?: 'low' | 'high'`](#priority-low--high)
     - [`revalidateInterval?: number`](#revalidateinterval-number)
     - [`revalidateWhenExecuted?: boolean`](#revalidatewhenexecuted-boolean)
+    - [`overwriteTask?: IdleTaskKey`](#overwritetask-idletaskkey)
   - [`waitForIdleTask`](#waitforidletask)
     - [`timeout?: number`](#timeout-number)
     - [`timeoutStrategy?: 'error' | ’forceRun'`](#timeoutstrategy-error--forcerun)
@@ -190,6 +191,22 @@ const saveUserArticleDraft = () => {
 // saveUserArticleDraft will be executed when the browser is idle.
 // In addition, idle-task registers saveUserArticleDraft task when it had been executed.
 setIdleTask(saveUserArticleDraft, { revalidateWhenExecuted: true });
+```
+
+#### `overwriteTask?: IdleTaskKey`
+
+You can overwrite registered task by using `overwriteTask`.
+
+If the task have already been executed, `idle-task` remove its result from the cache and enqueue the new task, otherwise `idle-task` will remove it from the queue and enqueue the new task.
+
+```typescript
+const generateRandomNumber = () => Math.floor( Math.random() * 100 );
+
+const taskKey = setIdleTask(generateRandomNumber);
+const randomNumber1 = await waitForIdleTask(taskKey);
+
+setIdleTask(generateRandomNumber, { overwriteTask: taskKey });
+const randomNumber2 = await waitForIdleTask(taskKey);
 ```
 
 ### `waitForIdleTask`

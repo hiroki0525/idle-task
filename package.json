@@ -6,17 +6,19 @@
   "module": "dist/index.mjs",
   "exports": {
     "development": {
+      "types": "./dist/index.d.ts",
       "require": "./dist/index.development.cjs",
       "import": "./dist/index.development.mjs",
       "default": "./dist/index.development.js"
     },
     "production": {
+      "types": "./dist/index.d.ts",
       "require": "./dist/index.cjs",
       "import": "./dist/index.mjs",
       "default": "./dist/index.js"
     }
   },
-  "types": "/dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "sideEffects": false,
   "files": [
     "dist"
