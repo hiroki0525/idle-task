@@ -1,3 +1,12 @@
+## [4.2.3](https://github.com/hiroki0525/idle-task/compare/v4.2.2...v4.2.3) (2024-01-28)
+
+
+### Performance Improvements
+
+* change build system rollup to tsup ([8ff33c8](https://github.com/hiroki0525/idle-task/commit/8ff33c81da28acb53cabd197d1fbd5664a26b617))
+* drop support umd ([38b5c1b](https://github.com/hiroki0525/idle-task/commit/38b5c1b9c86944ddcbfb2d0f3f57ddadaa3b2def))
+* update node version ([089d217](https://github.com/hiroki0525/idle-task/commit/089d2176ec3520363582561c528f64c500bc6677))
+
 ## [4.2.2](https://github.com/hiroki0525/idle-task/compare/v4.2.1...v4.2.2) (2023-09-05)
 
 
