@@ -1,5 +1,7 @@
 import {
+  findIdleTasksFromQueue,
   idleTaskState as its,
+  removeIdleTaskFromQueue,
   resolveTaskResultWhenCancel,
 } from '../internals';
 import { IdleTaskKey } from './setIdleTask';
@@ -13,10 +15,10 @@ const cancelIdleTask = (key: IdleTaskKey): void => {
     clearInterval(revalidateIntervalId);
     its.idleTaskRevalidateIntervalMap.delete(targetTaskId);
   }
-  const tasks = its.tasks.filter(task => task.id === targetTaskId);
+  const tasks = findIdleTasksFromQueue(targetTaskId);
   resolveTaskResultWhenCancel(tasks);
   its.idleTaskResultMap.delete(key);
-  its.tasks = its.tasks.filter(task => task.id !== targetTaskId);
+  removeIdleTaskFromQueue(targetTaskId);
 };
 
 export default cancelIdleTask;

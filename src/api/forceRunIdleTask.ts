@@ -1,7 +1,9 @@
 import {
   executeTask,
+  findIdleTasksFromQueue,
   getResultFromCache,
   idleTaskState as its,
+  removeIdleTaskFromQueue,
 } from '../internals';
 import getIdleTaskStatus from './getIdleTaskStatus';
 import { IdleTaskKey } from './setIdleTask';
@@ -12,7 +14,7 @@ const forceRunIdleTask = async (key: IdleTaskKey): Promise<any> => {
     return cacheResult;
   }
   const targetTaskId = key.id;
-  const tasks = its.tasks.filter(task => task.id === targetTaskId);
+  const tasks = findIdleTasksFromQueue(targetTaskId);
   const latestEnqueuedTask = tasks[tasks.length - 1];
   executeTask(latestEnqueuedTask);
   const result = getResultFromCache(key);
@@ -23,7 +25,7 @@ const forceRunIdleTask = async (key: IdleTaskKey): Promise<any> => {
         index === latestEnqueuedTaskIndex || task.id !== targetTaskId
     );
   } else {
-    its.tasks = its.tasks.filter(task => task.id !== targetTaskId);
+    removeIdleTaskFromQueue(targetTaskId);
   }
   return result;
 };

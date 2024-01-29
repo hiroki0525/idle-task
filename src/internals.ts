@@ -96,3 +96,11 @@ export const idleTaskState: IdleTaskState = {
   idleTaskResultMap: new WeakMap(),
   idleTaskRevalidateIntervalMap: new Map(),
 };
+
+export const removeIdleTaskFromQueue = (taskId: number) => {
+  idleTaskState.tasks = idleTaskState.tasks.filter(task => task.id !== taskId);
+  return idleTaskState.tasks;
+};
+
+export const findIdleTasksFromQueue = (taskId: number) =>
+  idleTaskState.tasks.filter(task => task.id === taskId);
