@@ -4,6 +4,7 @@ import {
   rIC,
   executeTask,
   idleTaskState as its,
+  removeIdleTaskFromQueue,
 } from '../internals';
 
 export interface IdleTaskKey {
@@ -111,7 +112,7 @@ const setIdleTask = (
   const { overwriteTask } = options;
   const idleTaskKey = overwriteTask ?? Object.freeze({ id: ++id });
   if (overwriteTask) {
-    its.tasks = its.tasks.filter(task => task.id !== idleTaskKey.id);
+    removeIdleTaskFromQueue(idleTaskKey.id);
   }
   let resolve, reject;
   its.idleTaskResultMap.set(
