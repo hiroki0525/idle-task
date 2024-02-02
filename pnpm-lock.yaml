@@ -18,8 +18,8 @@ devDependencies:
     specifier: 10.0.1
     version: 10.0.1(semantic-release@23.0.0)
   '@types/jest':
-    specifier: 29.5.11
-    version: 29.5.11
+    specifier: 29.5.12
+    version: 29.5.12
   '@types/node':
     specifier: ^20.11.8
     version: 20.11.8
@@ -45,8 +45,8 @@ devDependencies:
     specifier: 3.0.0
     version: 3.0.0(@typescript-eslint/eslint-plugin@6.19.1)(eslint@8.56.0)
   husky:
-    specifier: 9.0.6
-    version: 9.0.6
+    specifier: 9.0.10
+    version: 9.0.10
   jest:
     specifier: 29.7.0
     version: 29.7.0(@types/node@20.11.8)
@@ -1623,8 +1623,8 @@ packages:
       '@types/istanbul-lib-report': 3.0.3
     dev: true
 
-  /@types/jest@29.5.11:
-    resolution: {integrity: sha512-S2mHmYIVe13vrm6q4kN6fLYYAka15ALQki/vgDC3mIukEOx8WJlv0kQPM+d4w8Gp6u0uSdKND04IlTXBv0rwnQ==}
+  /@types/jest@29.5.12:
+    resolution: {integrity: sha512-eDC8bTvT/QhYdxJAulQikueigY5AsdBRH2yDKW3yveW7svY3+DzN84/2NUgkw10RTiJbWqZrTtoGVdYlvFJdLw==}
     dependencies:
       expect: 29.7.0
       pretty-format: 29.7.0
@@ -3926,8 +3926,8 @@ packages:
     engines: {node: '>=16.17.0'}
     dev: true
 
-  /husky@9.0.6:
-    resolution: {integrity: sha512-EEuw/rfTiMjOfuL7pGO/i9otg1u36TXxqjIA6D9qxVjd/UXoDOsLor/BSFf5hTK50shwzCU3aVVwdXDp/lp7RA==}
+  /husky@9.0.10:
+    resolution: {integrity: sha512-TQGNknoiy6bURzIO77pPRu+XHi6zI7T93rX+QnJsoYFf3xdjKOur+IlfqzJGMHIK/wXrLg+GsvMs8Op7vI2jVA==}
     engines: {node: '>=18'}
     hasBin: true
     dev: true
