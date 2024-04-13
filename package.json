@@ -68,7 +68,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "npm-run-all2": "^6.0.0",
     "prettier": "3.2.5",
-    "semantic-release": "23.0.7",
+    "semantic-release": "23.0.8",
     "ts-jest": "29.1.2",
     "ts-loader": "9.5.1",
     "tslib": "^2.6.2",
@@ -102,5 +102,5 @@
       }
     ]
   },
-  "packageManager": "pnpm@8.15.6"
+  "packageManager": "pnpm@8.15.7"
 }
