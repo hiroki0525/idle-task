@@ -158,7 +158,7 @@ If you want to know how long did it take to finish a task, please use [debug mod
 
 #### `priority?: 'low' | 'high'`
 
-You can run a task preferentially using `priority: 'high'` (default is `false`) option.
+You can run a task preferentially using `priority: 'high'` (default is `low`) option.
 `setIdleTask` adds it to the head of the queue.
 
 #### `revalidateInterval?: number`
