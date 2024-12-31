@@ -32,6 +32,7 @@ export default defineConfig(options => {
       format: 'esm',
       outExtension: () => ({ js: '.mjs' }),
       minify: true,
+      treeshake: true,
       onSuccess: async () => {
         await cp('dist/index.mjs', 'dist/index.js');
       },
@@ -40,6 +41,7 @@ export default defineConfig(options => {
       ...commonOptions,
       format: 'cjs',
       minify: true,
+      treeshake: true,
       outExtension: () => ({ js: '.cjs' }),
     },
   ];
