@@ -1,3 +1,15 @@
+## [4.3.1](https://github.com/hiroki0525/idle-task/compare/v4.3.0...v4.3.1) (2024-12-31)
+
+
+### Bug Fixes
+
+* infinite loop when use `revalidateWhenExecuted` ([c68dcb4](https://github.com/hiroki0525/idle-task/commit/c68dcb470a707840309f9e06062b5b5b176956ea))
+
+
+### Performance Improvements
+
+* enable rollup treeshake ([b98560d](https://github.com/hiroki0525/idle-task/commit/b98560d9c3fa56decb78d5a3d5c4615e6af5b182))
+
 # [4.3.0](https://github.com/hiroki0525/idle-task/compare/v4.2.3...v4.3.0) (2024-01-28)
 
 
