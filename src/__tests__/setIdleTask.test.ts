@@ -351,7 +351,6 @@ describe('setIdleTask', () => {
 
       describe('anonymous function', () => {
         beforeEach(() => {
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
           taskKey = idleTaskModule!.setIdleTask(() => {}, {
             taskName,
           });
@@ -373,7 +372,6 @@ describe('setIdleTask', () => {
 
       describe('named function', () => {
         beforeEach(() => {
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
           const test = () => {};
           taskKey = idleTaskModule!.setIdleTask(test, {
             taskName,
@@ -398,7 +396,6 @@ describe('setIdleTask', () => {
     describe('without taskName', () => {
       describe('anonymous function', () => {
         beforeEach(() => {
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
           taskKey = idleTaskModule!.setIdleTask(() => {});
           runRequestIdleCallback();
         });
@@ -418,7 +415,6 @@ describe('setIdleTask', () => {
 
       describe('named function', () => {
         beforeEach(() => {
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
           const test = () => {};
           taskKey = idleTaskModule!.setIdleTask(test);
           runRequestIdleCallback();
