@@ -307,15 +307,35 @@ describe('setIdleTask', () => {
 
     describe('with revalidateWhenExecuted', () => {
       describe('revalidateWhenExecuted is true', () => {
-        beforeEach(() => {
-          idleTaskModule!.setIdleTask(createTask(mockFirstTask, 25), {
-            revalidateWhenExecuted: true,
+        describe('not called cancelIdleTask', () => {
+          beforeEach(() => {
+            idleTaskModule!.setIdleTask(createTask(mockFirstTask, 25), {
+              revalidateWhenExecuted: true,
+            });
+            runRequestIdleCallback();
           });
-          runRequestIdleCallback();
-        });
 
-        it('first task is called twice', () => {
-          expect(mockFirstTask.mock.calls.length).toBe(2);
+          it('first task is called twice', () => {
+            expect(mockFirstTask.mock.calls.length).toBe(2);
+          });
+        });
+        describe('called cancelIdleTask', () => {
+          beforeEach(() => {
+            const key = idleTaskModule!.setIdleTask(
+              createTask(() => {
+                mockFirstTask();
+                idleTaskModule!.cancelIdleTask(key);
+              }, 25),
+              {
+                revalidateWhenExecuted: true,
+              }
+            );
+            runRequestIdleCallback();
+          });
+
+          it('first task is called once', () => {
+            expect(mockFirstTask.mock.calls.length).toBe(1);
+          });
         });
       });
     });
