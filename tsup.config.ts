@@ -1,5 +1,5 @@
-import { defineConfig, Options } from 'tsup';
-import { cp } from 'fs/promises';
+import { defineConfig, type Options } from 'tsup';
+import { cp } from 'node:fs/promises';
 
 export default defineConfig(options => {
   const commonOptions: Partial<Options> = {

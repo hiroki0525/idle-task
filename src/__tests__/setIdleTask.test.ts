@@ -1,3 +1,4 @@
+import type { IdleTaskKey } from '../api/setIdleTask';
 import {
   createTask,
   idleTaskModule,
@@ -9,7 +10,6 @@ import {
   requestIdleCallbackImpl,
   runRequestIdleCallback,
 } from './util';
-import { IdleTaskKey } from '../api/setIdleTask';
 
 describe('setIdleTask', () => {
   const isServer = typeof self === 'undefined';
@@ -351,7 +351,6 @@ describe('setIdleTask', () => {
 
       describe('anonymous function', () => {
         beforeEach(() => {
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
           taskKey = idleTaskModule!.setIdleTask(() => {}, {
             taskName,
           });
@@ -373,7 +372,6 @@ describe('setIdleTask', () => {
 
       describe('named function', () => {
         beforeEach(() => {
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
           const test = () => {};
           taskKey = idleTaskModule!.setIdleTask(test, {
             taskName,
@@ -398,7 +396,6 @@ describe('setIdleTask', () => {
     describe('without taskName', () => {
       describe('anonymous function', () => {
         beforeEach(() => {
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
           taskKey = idleTaskModule!.setIdleTask(() => {});
           runRequestIdleCallback();
         });
@@ -418,7 +415,6 @@ describe('setIdleTask', () => {
 
       describe('named function', () => {
         beforeEach(() => {
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
           const test = () => {};
           taskKey = idleTaskModule!.setIdleTask(test);
           runRequestIdleCallback();
@@ -466,7 +462,7 @@ describe('setIdleTask', () => {
           it('timeRemaining is 49 ms and reason is idle', () => {
             // runRequestIdleCallback took 1ms
             expect((console.info as any).mock.calls[0][2]).toMatch(
-              `Call requestIdleCallback, reason: idle, timeRemaining: 49 ms`
+              'Call requestIdleCallback, reason: idle, timeRemaining: 49 ms'
             );
           });
 
@@ -505,7 +501,7 @@ describe('setIdleTask', () => {
           it('timeRemaining is 49 ms and reason is idle', () => {
             // runRequestIdleCallback took 1ms
             expect((console.info as any).mock.calls[0][2]).toMatch(
-              `Call requestIdleCallback, reason: idle, timeRemaining: 49 ms`
+              'Call requestIdleCallback, reason: idle, timeRemaining: 49 ms'
             );
           });
 
@@ -556,7 +552,7 @@ describe('setIdleTask', () => {
 
           it('timeRemaining is 50 ms and reason is timeout', () => {
             expect((console.info as any).mock.calls[0][2]).toMatch(
-              `Call requestIdleCallback, reason: timeout, timeRemaining: 50 ms`
+              'Call requestIdleCallback, reason: timeout, timeRemaining: 50 ms'
             );
           });
 
@@ -592,7 +588,7 @@ describe('setIdleTask', () => {
 
           it('timeRemaining is 50 ms and reason is timeout', () => {
             expect((console.info as any).mock.calls[0][2]).toMatch(
-              `Call requestIdleCallback, reason: timeout, timeRemaining: 50 ms`
+              'Call requestIdleCallback, reason: timeout, timeRemaining: 50 ms'
             );
           });
 
