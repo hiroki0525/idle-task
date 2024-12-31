@@ -1,5 +1,5 @@
-import { SetIdleTaskOptions } from '../api/setIdleTask';
-import { WaitForIdleTaskOptions } from '../api/waitForIdleTask';
+import type { SetIdleTaskOptions } from '../api/setIdleTask';
+import type { WaitForIdleTaskOptions } from '../api/waitForIdleTask';
 import { idleTaskModule, reloadModule, runRequestIdleCallback } from './util';
 
 describe('getResultFromIdleTask', () => {

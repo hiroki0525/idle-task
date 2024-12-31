@@ -1,4 +1,4 @@
-import { ConfigureOptions } from '../api/configureIdleTask';
+import type { ConfigureOptions } from '../api/configureIdleTask';
 import {
   createTask,
   idleTaskModule,

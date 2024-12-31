@@ -1,5 +1,5 @@
 import {
-  ConfigurableWaitForIdleTaskOptions,
+  type ConfigurableWaitForIdleTaskOptions,
   idleTaskState as its,
 } from '../internals';
 

@@ -23,6 +23,15 @@
       "recommended": true,
       "correctness": {
         "noUnusedImports": "error"
+      },
+      "suspicious": {
+        "noExplicitAny": "off"
+      },
+      "style": {
+        "noNonNullAssertion": "off"
+      },
+      "complexity": {
+        "noExcessiveNestedTestSuites": "off"
       }
     }
   },

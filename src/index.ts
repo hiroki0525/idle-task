@@ -2,18 +2,18 @@ import cancelAllIdleTasks from './api/cancelAllIdleTasks';
 import cancelIdleTask from './api/cancelIdleTask';
 import configureIdleTask, { ConfigureOptions } from './api/configureIdleTask';
 import forceRunIdleTask from './api/forceRunIdleTask';
+import getIdleTaskStatus, { IdleTaskStatus } from './api/getIdleTaskStatus';
 import getResultFromIdleTask, {
   GetResultFromIdleTaskOptions,
 } from './api/getResultFromIdleTask';
-import waitForIdleTask, {
-  WaitForIdleTaskOptions,
-  WaitForIdleTaskTimeoutError,
-} from './api/waitForIdleTask';
 import setIdleTask, {
   SetIdleTaskOptions,
   IdleTaskKey,
 } from './api/setIdleTask';
-import getIdleTaskStatus, { IdleTaskStatus } from './api/getIdleTaskStatus';
+import waitForIdleTask, {
+  WaitForIdleTaskOptions,
+  WaitForIdleTaskTimeoutError,
+} from './api/waitForIdleTask';
 
 export {
   cancelAllIdleTasks,

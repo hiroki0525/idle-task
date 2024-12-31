@@ -6,7 +6,7 @@ import {
   removeIdleTaskFromQueue,
 } from '../internals';
 import getIdleTaskStatus from './getIdleTaskStatus';
-import { IdleTaskKey } from './setIdleTask';
+import type { IdleTaskKey } from './setIdleTask';
 
 const forceRunIdleTask = async (key: IdleTaskKey): Promise<any> => {
   const cacheResult = getResultFromCache(key);

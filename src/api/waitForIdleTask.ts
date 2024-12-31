@@ -4,7 +4,7 @@ import {
   idleTaskState as its,
 } from '../internals';
 import forceRunIdleTask from './forceRunIdleTask';
-import { IdleTaskKey } from './setIdleTask';
+import type { IdleTaskKey } from './setIdleTask';
 
 type IdleTaskTimeoutStrategy = 'error' | 'forceRun';
 
@@ -43,16 +43,16 @@ const waitForIdleTask = async (
   let isTimeout = false;
   const timeoutPromise = new Promise(resolve => {
     setTimeout(() => {
-      resolve((isTimeout = true));
+      isTimeout = true;
+      resolve(undefined);
     }, timeout ?? globalTimeout);
   });
   const racedResult = await Promise.race([result, timeoutPromise]);
   if (isTimeout) {
     if (isForceRun) {
       return forceRunIdleTask(key);
-    } else {
-      throw new WaitForIdleTaskTimeoutError();
     }
+    throw new WaitForIdleTaskTimeoutError();
   }
   return racedResult;
 };

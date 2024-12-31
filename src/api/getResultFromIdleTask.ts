@@ -2,8 +2,8 @@ import type {
   ConfigurableWaitForIdleTaskOptions,
   IdleTaskFunction,
 } from '../internals';
+import setIdleTask, { type SetIdleTaskOptions } from './setIdleTask';
 import waitForIdleTask from './waitForIdleTask';
-import setIdleTask, { SetIdleTaskOptions } from './setIdleTask';
 
 export type GetResultFromIdleTaskOptions = Pick<
   SetIdleTaskOptions,
