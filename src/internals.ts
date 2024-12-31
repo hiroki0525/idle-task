@@ -39,19 +39,18 @@ export type ConfigurableWaitForIdleTaskOptions = Pick<
 
 export const executeTask = (task: IdleTask): void => {
   const { resolve, reject, revalidateWhenExecuted } = task;
-  const reregisterIdleTask = () =>
-    revalidateWhenExecuted && idleTaskState.tasks.push(task);
+  // reregister a task before executing the task because it may contain `cancelIdleTask` .
+  if (revalidateWhenExecuted) {
+    idleTaskState.tasks.push(task);
+  }
   if (!resolve || !reject) {
     task();
-    reregisterIdleTask();
     return;
   }
   try {
     resolve(task());
   } catch (e) {
     reject(e);
-  } finally {
-    reregisterIdleTask();
   }
 };
 

@@ -35,7 +35,7 @@ export const mockThirdTask = jest
   .mockImplementation(() => 'mockThirdTask');
 
 export const createTask =
-  (mockFunction?: jest.Mock, time = 0) =>
+  (mockFunction?: () => any, time = 0) =>
   () => {
     if (mockFunction) {
       jest.advanceTimersByTime(time);
