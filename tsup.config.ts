@@ -1,5 +1,5 @@
-import { defineConfig, Options } from 'tsup';
-import { cp } from 'fs/promises';
+import { defineConfig, type Options } from 'tsup';
+import { cp } from 'node:fs/promises';
 
 export default defineConfig(options => {
   const commonOptions: Partial<Options> = {
@@ -32,6 +32,7 @@ export default defineConfig(options => {
       format: 'esm',
       outExtension: () => ({ js: '.mjs' }),
       minify: true,
+      treeshake: true,
       onSuccess: async () => {
         await cp('dist/index.mjs', 'dist/index.js');
       },
@@ -40,6 +41,7 @@ export default defineConfig(options => {
       ...commonOptions,
       format: 'cjs',
       minify: true,
+      treeshake: true,
       outExtension: () => ({ js: '.cjs' }),
     },
   ];

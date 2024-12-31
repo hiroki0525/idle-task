@@ -1,3 +1,4 @@
+import type { IdleTaskKey } from '../api/setIdleTask';
 import {
   createTask,
   idleTaskModule,
@@ -6,7 +7,6 @@ import {
   mockThirdTask,
   runRequestIdleCallback,
 } from './util';
-import { IdleTaskKey } from '../api/setIdleTask';
 
 describe('waitForIdleTask', () => {
   let firstTaskKey: IdleTaskKey;

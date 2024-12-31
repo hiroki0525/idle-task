@@ -1,6 +1,6 @@
-import type { WaitForIdleTaskOptions } from './api/waitForIdleTask';
 import type { ConfigureOptions } from './api/configureIdleTask';
-import { IdleTaskKey } from './api/setIdleTask';
+import type { IdleTaskKey } from './api/setIdleTask';
+import type { WaitForIdleTaskOptions } from './api/waitForIdleTask';
 
 export const rIC =
   typeof requestIdleCallback !== 'undefined'
@@ -39,26 +39,25 @@ export type ConfigurableWaitForIdleTaskOptions = Pick<
 
 export const executeTask = (task: IdleTask): void => {
   const { resolve, reject, revalidateWhenExecuted } = task;
-  const reregisterIdleTask = () =>
-    revalidateWhenExecuted && idleTaskState.tasks.push(task);
+  // reregister a task before executing the task because it may contain `cancelIdleTask` .
+  if (revalidateWhenExecuted) {
+    idleTaskState.tasks.push(task);
+  }
   if (!resolve || !reject) {
     task();
-    reregisterIdleTask();
     return;
   }
   try {
     resolve(task());
   } catch (e) {
     reject(e);
-  } finally {
-    reregisterIdleTask();
   }
 };
 
 export const resolveTaskResultWhenCancel = (tasks: IdleTask[]): void => {
-  tasks.forEach(task => {
-    task.resolve && task.resolve(undefined);
-  });
+  for (const task of tasks) {
+    task.resolve?.(undefined);
+  }
 };
 
 export const getResultFromCache = (key: IdleTaskKey, isDeleteCache = false) => {
@@ -91,7 +90,7 @@ interface IdleTaskState {
 
 export const idleTaskState: IdleTaskState = {
   tasks: [],
-  requestIdleCallbackId: NaN,
+  requestIdleCallbackId: Number.NaN,
   taskGlobalOptions,
   idleTaskResultMap: new WeakMap(),
   idleTaskRevalidateIntervalMap: new Map(),

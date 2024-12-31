@@ -4,7 +4,7 @@ import {
   removeIdleTaskFromQueue,
   resolveTaskResultWhenCancel,
 } from '../internals';
-import { IdleTaskKey } from './setIdleTask';
+import type { IdleTaskKey } from './setIdleTask';
 
 const cancelIdleTask = (key: IdleTaskKey): void => {
   const targetTaskId = key.id;

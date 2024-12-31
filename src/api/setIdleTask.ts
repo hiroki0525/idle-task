@@ -1,9 +1,9 @@
 import {
-  IdleTask,
-  IdleTaskFunction,
-  rIC,
+  type IdleTask,
+  type IdleTaskFunction,
   executeTask,
   idleTaskState as its,
+  rIC,
   removeIdleTaskFromQueue,
 } from '../internals';
 
@@ -90,7 +90,7 @@ const runIdleTasks = (deadline: IdleDeadline): void => {
     scheduleIdleTask();
     return;
   }
-  its.requestIdleCallbackId = NaN;
+  its.requestIdleCallbackId = Number.NaN;
 };
 
 const scheduleIdleTask = () => {
@@ -114,7 +114,8 @@ const setIdleTask = (
   if (overwriteTask) {
     removeIdleTaskFromQueue(idleTaskKey.id);
   }
-  let resolve, reject;
+  let resolve: any;
+  let reject: any;
   its.idleTaskResultMap.set(
     idleTaskKey,
     new Promise((res, rej) => {

@@ -1,5 +1,5 @@
 import { getResultFromCache, idleTaskState as its } from '../internals';
-import { IdleTaskKey } from './setIdleTask';
+import type { IdleTaskKey } from './setIdleTask';
 
 export type IdleTaskStatus = 'ready' | 'executed' | 'unknown';
 

@@ -1,4 +1,4 @@
-import { IdleTaskStatus } from '../api/getIdleTaskStatus';
+import type { IdleTaskStatus } from '../api/getIdleTaskStatus';
 import { createTask, idleTaskModule, runRequestIdleCallback } from './util';
 
 describe('getIdleTaskStatus', () => {
