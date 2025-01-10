@@ -67,7 +67,7 @@
     "ts-loader": "9.5.1",
     "tslib": "^2.8.1",
     "tsup": "^8.3.5",
-    "typescript": "5.7.2"
+    "typescript": "5.7.3"
   },
   "release": {
     "plugins": [
@@ -99,5 +99,5 @@
   "engines": {
     "node": ">=20"
   },
-  "packageManager": "pnpm@9.15.2"
+  "packageManager": "pnpm@9.15.3"
 }
