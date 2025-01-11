@@ -64,7 +64,7 @@
     "npm-run-all2": "^7.0.2",
     "semantic-release": "24.2.1",
     "ts-jest": "29.2.5",
-    "ts-loader": "9.5.1",
+    "ts-loader": "9.5.2",
     "tslib": "^2.8.1",
     "tsup": "^8.3.5",
     "typescript": "5.7.3"
