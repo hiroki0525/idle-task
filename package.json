@@ -63,7 +63,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "npm-run-all2": "^7.0.2",
     "semantic-release": "24.2.3",
-    "ts-jest": "29.2.5",
+    "ts-jest": "29.2.6",
     "ts-loader": "9.5.2",
     "tslib": "^2.8.1",
     "tsup": "^8.3.5",
