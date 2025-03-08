@@ -51,8 +51,8 @@
   "homepage": "https://github.com/hiroki0525/idle-task#readme",
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@commitlint/cli": "19.6.1",
-    "@commitlint/config-conventional": "19.6.0",
+    "@commitlint/cli": "19.8.0",
+    "@commitlint/config-conventional": "19.8.0",
     "@semantic-release/changelog": "6.0.3",
     "@semantic-release/git": "10.0.1",
     "@types/jest": "29.5.14",
@@ -67,7 +67,7 @@
     "ts-loader": "9.5.2",
     "tslib": "^2.8.1",
     "tsup": "^8.3.5",
-    "typescript": "5.7.3"
+    "typescript": "5.8.2"
   },
   "release": {
     "plugins": [
