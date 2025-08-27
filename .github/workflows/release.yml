@@ -11,7 +11,7 @@ jobs:
     timeout-minutes: 180
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - uses: ./.github/actions/setup
       - name: Build
         run: pnpm build
